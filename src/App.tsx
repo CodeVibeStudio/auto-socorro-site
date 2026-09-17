@@ -15,7 +15,6 @@ import logo from "./assets/logo.png";
 function App() {
   // 1. Preparamos o terreno com os valores padrão (Plano B)
   const [telefone, setTelefone] = useState(siteConfig.contact.mainPhone);
-  const [email, setEmail] = useState(siteConfig.contact.email);
 
   // 2. O espião que busca os dados no Supabase
   useEffect(() => {
@@ -28,7 +27,6 @@ function App() {
       if (data && data.length > 0) {
         // Se encontrou no banco, substitui!
         if (data[0].whatsapp_number) setTelefone(data[0].whatsapp_number);
-        if (data[0].contact_email) setEmail(data[0].contact_email);
       }
     }
     fetchSettings();
