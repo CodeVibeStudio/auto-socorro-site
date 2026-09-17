@@ -366,7 +366,7 @@ function App() {
         </div>
 
         {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS */}
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="container mx-auto px-4 mt-12 pt-8 pb-20 md:pb-0 md:pr-28 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500">
             © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
             reservados.
