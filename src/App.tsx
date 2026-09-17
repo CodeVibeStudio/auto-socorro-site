@@ -12,6 +12,7 @@ import {
 import { siteConfig } from "./config/site";
 import { BudgetCalculator } from "./components/BudgetCalculator";
 import logo from "./assets/logo.png";
+import meuLogo from "./assets/logocodevibestudio.png";
 
 function App() {
   const [config, setConfig] = useState({
@@ -306,10 +307,32 @@ function App() {
               </li>
             </ul>
 
-            <p className="text-sm">
-              © {new Date().getFullYear()} - Todos os direitos reservados.
-            </p>
-          </div>
+            {/* ... Fim da Coluna 3 (Mapa) ... */}
+        </div> {/* <-- Fechamento da grade (grid) das 3 colunas */}
+
+        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS */}
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos reservados.
+          </p>
+          
+          <a 
+            href="https://codevibestudio.vercel.app/" 
+            target="_blank" 
+            rel="noreferrer"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+          >
+            <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
+              Desenvolvido por
+            </span>
+            <img 
+              src={meuLogo} 
+              alt="Logo do Desenvolvedor" 
+              className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all duration-300" 
+            />
+          </a>
+        </div>
+      </footer>
 
           {/* COLUNA 2: Contatos */}
           <div>
