@@ -365,18 +365,18 @@ function App() {
           </div>
         </div>
 
-        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS */}
-        <div className="container mx-auto px-4 mt-12 pt-8 pb-20 md:pb-0 md:pr-28 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS (CENTRALIZADA) */}
+        <div className="container mx-auto px-4 mt-12 pt-8 pb-24 border-t border-slate-800 flex flex-col items-center justify-center gap-4 text-center">
           <p className="text-sm text-slate-500">
             © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
             reservados.
           </p>
 
           <a
-            href="https://codevibestudio.vercel.app/"
+            href="https://www.SUA-OUTRA-PAGINA.com.br"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+            className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity group"
           >
             <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
               Desenvolvido por
