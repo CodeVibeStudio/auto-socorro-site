@@ -65,6 +65,15 @@ function App() {
       ? safeLink(config.mapsUrl)
       : `https://maps.google.com/?q=${encodeURIComponent(config.endereco)}`;
 
+  const formatarTelefone = (numero: string) => {
+    if (!numero) return "";
+    const limpo = numero.replace(/\D/g, ""); // Remove qualquer traço ou espaço extra
+    if (limpo.length === 11) {
+      return `(${limpo.slice(0, 2)}) ${limpo.slice(2, 7)}-${limpo.slice(7)}`;
+    }
+    return numero; // Se não tiver 11 dígitos, exibe como estiver no banco
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       {/* HEADER */}
@@ -307,8 +316,8 @@ function App() {
             <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
 
             <p className="flex items-center gap-2 mb-2">
-              <Phone className="h-4 w-4 text-orange-500" /> {config.whatsapp}{" "}
-              (WhatsApp)
+              <Phone className="h-4 w-4 text-orange-500" />{" "}
+              {formatarTelefone(config.whatsapp)} (WhatsApp)
             </p>
 
             {config.telefone2 && (
