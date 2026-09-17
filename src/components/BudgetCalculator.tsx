@@ -17,22 +17,29 @@ export function BudgetCalculator() {
 
   useEffect(() => {
     async function fetchPrices() {
+      // 1. Busca os dados no Supabase
       const { data, error } = await supabase
         .from("pricing_rules")
         .select("*")
         .eq("active", true);
-      if (data && !error && data.length > 0) {
-        const dbPrices: Record<string, any> = {};
-        data.forEach((rule) => {
-          dbPrices[rule.category] = {
-            base: Number(rule.base_price),
-            includedKm: rule.included_km,
-            extraKm: Number(rule.price_per_extra_km),
+
+      // 2. Se encontrou dados, traduz para o formato do site
+      if (data && data.length > 0) {
+        const precosDoBanco: Record<string, any> = {};
+
+        data.forEach((linha) => {
+          precosDoBanco[linha.category] = {
+            base: linha.base_price,
+            includedKm: linha.included_km,
+            extraKm: linha.price_per_extra_km,
           };
         });
-        setPricing(dbPrices as any);
+
+        // 3. Atualiza o site com os preços novos!
+        setPricing(precosDoBanco as any);
       }
     }
+
     fetchPrices();
   }, []);
 
