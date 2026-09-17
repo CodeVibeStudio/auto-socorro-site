@@ -17,13 +17,11 @@ export function BudgetCalculator() {
 
   useEffect(() => {
     async function fetchPrices() {
-      // Trazendo o "error" de volta só para vermos se o banco está reclamando
       const { data, error } = await supabase
         .from('pricing_rules')
         .select('*')
         .eq('active', true);
 
-      // O nosso espião: vai imprimir a resposta do banco no seu navegador!
       console.log("DADOS DO SUPABASE:", data);
       console.log("ERRO DO SUPABASE:", error);
 
