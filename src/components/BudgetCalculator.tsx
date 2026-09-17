@@ -17,13 +17,13 @@ export function BudgetCalculator() {
 
   useEffect(() => {
     async function fetchPrices() {
-      const { data, error } = await supabase
+      // 1. Deixamos apenas o "data" (sem o error)
+      const { data } = await supabase
         .from("pricing_rules")
         .select("*")
         .eq("active", true);
 
-      console.log("DADOS DO SUPABASE:", data);
-      console.log("ERRO DO SUPABASE:", error);
+      // 2. Removemos os console.log daqui!
 
       if (data && data.length > 0) {
         const precosDoBanco: Record<string, any> = {};
