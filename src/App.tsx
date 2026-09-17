@@ -50,30 +50,28 @@ function App() {
     fetchSettings();
   }, []);
 
+  const formatarTelefone = (numero: string) => {
+    if (!numero) return "";
+    const limpo = numero.replace(/\D/g, "");
+    if (limpo.length === 11) {
+      return `(${limpo.slice(0, 2)}) ${limpo.slice(2, 7)}-${limpo.slice(7)}`;
+    }
+    return numero;
+  };
+
   const mensagemPadrao = "Olá! Preciso de atendimento. Pode me ajudar?";
   const whatsappMsg = `https://wa.me/55${config.whatsapp}?text=${encodeURIComponent(
     mensagemPadrao,
   )}`;
 
-  // Trava de segurança: garante que os links sempre tenham https://
   const safeLink = (url: string) =>
     url?.startsWith("http") ? url : `https://${url}`;
 
-  // Se não houver link do mapa configurado, cria uma pesquisa automática pelo texto do endereço
   const linkDoMapa =
     config.mapsUrl &&
     config.mapsUrl !== "[CONFIGURAÇÃO NECESSÁRIA - INSERIR URL DO GOOGLE MAPS]"
       ? safeLink(config.mapsUrl)
       : `https://maps.google.com/?q=${encodeURIComponent(config.endereco)}`;
-
-  const formatarTelefone = (numero: string) => {
-    if (!numero) return "";
-    const limpo = numero.replace(/\D/g, ""); // Remove qualquer traço ou espaço extra
-    if (limpo.length === 11) {
-      return `(${limpo.slice(0, 2)}) ${limpo.slice(2, 7)}-${limpo.slice(7)}`;
-    }
-    return numero; // Se não tiver 11 dígitos, exibe como estiver no banco
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -272,7 +270,7 @@ function App() {
         </div>
       </section>
 
-      {/* FOOTER - COM MINI MAPA */}
+      {/* FOOTER */}
       <footer className="bg-slate-900 text-slate-400 py-12 border-t-4 border-orange-500">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* COLUNA 1: Empresa & Redes */}
@@ -306,33 +304,7 @@ function App() {
                 </a>
               </li>
             </ul>
-
-            {/* ... Fim da Coluna 3 (Mapa) ... */}
-        </div> {/* <-- Fechamento da grade (grid) das 3 colunas */}
-
-        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS */}
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos reservados.
-          </p>
-          
-          <a 
-            href="https://codevibestudio.vercel.app/" 
-            target="_blank" 
-            rel="noreferrer"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
-          >
-            <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
-              Desenvolvido por
-            </span>
-            <img 
-              src={meuLogo} 
-              alt="Logo do Desenvolvedor" 
-              className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all duration-300" 
-            />
-          </a>
-        </div>
-      </footer>
+          </div>
 
           {/* COLUNA 2: Contatos */}
           <div>
@@ -391,6 +363,30 @@ function App() {
               Abrir Rota no Google Maps <ChevronRight className="h-4 w-4" />
             </a>
           </div>
+        </div>
+
+        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS */}
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
+            reservados.
+          </p>
+
+          <a
+            href="https://codevibestudio.vercel.app/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+          >
+            <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
+              Desenvolvido por
+            </span>
+            <img
+              src={meuLogo}
+              alt="Logo do Desenvolvedor"
+              className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all duration-300"
+            />
+          </a>
         </div>
       </footer>
 
