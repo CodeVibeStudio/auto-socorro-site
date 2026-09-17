@@ -18,16 +18,16 @@ export function BudgetCalculator() {
   useEffect(() => {
     async function fetchPrices() {
       const { data, error } = await supabase
-        .from('pricing_rules')
-        .select('*')
-        .eq('active', true);
+        .from("pricing_rules")
+        .select("*")
+        .eq("active", true);
 
       console.log("DADOS DO SUPABASE:", data);
       console.log("ERRO DO SUPABASE:", error);
 
       if (data && data.length > 0) {
         const precosDoBanco: Record<string, any> = {};
-        
+
         data.forEach((linha) => {
           precosDoBanco[linha.category] = {
             base: linha.base_price,
@@ -36,14 +36,6 @@ export function BudgetCalculator() {
           };
         });
 
-        setPricing(precosDoBanco as any);
-      }
-    }
-
-    fetchPrices();
-  }, []);
-
-        // 3. Atualiza o site com os preços novos!
         setPricing(precosDoBanco as any);
       }
     }
