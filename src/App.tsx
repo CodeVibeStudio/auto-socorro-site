@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { siteConfig, generateWhatsAppLink } from "./config/site";
 import { BudgetCalculator } from "./components/BudgetCalculator";
+import logo from "./assets/logo.png";
 
 function App() {
   const whatsappMsg = generateWhatsAppLink(
@@ -21,7 +22,11 @@ function App() {
       <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Truck className="h-8 w-8 text-orange-500" />
+            <img
+              src={logo}
+              alt="Auto Socorro Laranjal"
+              className="h-14 w-auto object-contain"
+            />
             <div>
               <h1 className="text-xl font-bold tracking-wider leading-none">
                 AUTO SOCORRO
