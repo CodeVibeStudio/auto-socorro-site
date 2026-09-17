@@ -14,7 +14,6 @@ import { BudgetCalculator } from "./components/BudgetCalculator";
 import logo from "./assets/logo.png";
 
 function App() {
-  // 1. Preparamos o pacote de dados com o "Plano B" (siteConfig)
   const [config, setConfig] = useState({
     whatsapp: siteConfig.contact.mainPhone,
     telefone2: siteConfig.contact.secondaryPhones[0] || "",
@@ -26,7 +25,6 @@ function App() {
     facebook: siteConfig.social.facebook,
   });
 
-  // 2. O espião agora busca todas as colunas novas
   useEffect(() => {
     async function fetchSettings() {
       const { data } = await supabase
@@ -55,6 +53,17 @@ function App() {
   const whatsappMsg = `https://wa.me/55${config.whatsapp}?text=${encodeURIComponent(
     mensagemPadrao,
   )}`;
+
+  // Trava de segurança: garante que os links sempre tenham https://
+  const safeLink = (url: string) =>
+    url?.startsWith("http") ? url : `https://${url}`;
+
+  // Se não houver link do mapa configurado, cria uma pesquisa automática pelo texto do endereço
+  const linkDoMapa =
+    config.mapsUrl &&
+    config.mapsUrl !== "[CONFIGURAÇÃO NECESSÁRIA - INSERIR URL DO GOOGLE MAPS]"
+      ? safeLink(config.mapsUrl)
+      : `https://maps.google.com/?q=${encodeURIComponent(config.endereco)}`;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -253,69 +262,22 @@ function App() {
         </div>
       </section>
 
-      {/* FOOTER - AGORA COM TODOS OS CONTATOS DINÂMICOS */}
+      {/* FOOTER - COM MINI MAPA */}
       <footer className="bg-slate-900 text-slate-400 py-12 border-t-4 border-orange-500">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* COLUNA 1: Empresa & Redes */}
           <div>
             <h3 className="text-white font-bold text-xl mb-4">
               Auto Socorro Laranjal
             </h3>
             <p className="mb-2">Razão Social: {siteConfig.legalName}</p>
             <p className="mb-6">CNPJ: {siteConfig.cnpj}</p>
-            <p className="text-sm">
-              © {new Date().getFullYear()} - Todos os direitos reservados.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
 
-            {/* WhatsApp Principal */}
-            <p className="flex items-center gap-2 mb-2">
-              <Phone className="h-4 w-4 text-orange-500" /> {config.whatsapp}{" "}
-              (WhatsApp)
-            </p>
-
-            {/* Telefone 2 */}
-            {config.telefone2 && (
-              <p className="flex items-center gap-2 mb-2">
-                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone2}
-              </p>
-            )}
-
-            {/* Telefone 3 */}
-            {config.telefone3 && (
-              <p className="flex items-center gap-2 mb-2">
-                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone3}
-              </p>
-            )}
-
-            {/* E-mail */}
-            <p className="flex items-center gap-2 mb-4">
-              <Mail className="h-4 w-4 text-orange-500" /> {config.email}
-            </p>
-
-            {/* Endereço com Link do Maps */}
-            <a
-              href={
-                config.mapsUrl !==
-                "[CONFIGURAÇÃO NECESSÁRIA - INSERIR URL DO GOOGLE MAPS]"
-                  ? config.mapsUrl
-                  : "#"
-              }
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-start gap-2 mb-2 hover:text-white transition"
-            >
-              <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
-              <span className="text-sm leading-relaxed">{config.endereco}</span>
-            </a>
-          </div>
-          <div>
             <h3 className="text-white font-bold text-lg mb-4">Redes Sociais</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 mb-6">
               <li>
                 <a
-                  href={config.instagram}
+                  href={safeLink(config.instagram)}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-white transition flex items-center gap-2"
@@ -325,7 +287,7 @@ function App() {
               </li>
               <li>
                 <a
-                  href={config.facebook}
+                  href={safeLink(config.facebook)}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-white transition flex items-center gap-2"
@@ -334,6 +296,68 @@ function App() {
                 </a>
               </li>
             </ul>
+
+            <p className="text-sm">
+              © {new Date().getFullYear()} - Todos os direitos reservados.
+            </p>
+          </div>
+
+          {/* COLUNA 2: Contatos */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
+
+            <p className="flex items-center gap-2 mb-2">
+              <Phone className="h-4 w-4 text-orange-500" /> {config.whatsapp}{" "}
+              (WhatsApp)
+            </p>
+
+            {config.telefone2 && (
+              <p className="flex items-center gap-2 mb-2">
+                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone2}
+              </p>
+            )}
+
+            {config.telefone3 && (
+              <p className="flex items-center gap-2 mb-2">
+                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone3}
+              </p>
+            )}
+
+            <p className="flex items-center gap-2 mb-4">
+              <Mail className="h-4 w-4 text-orange-500" /> {config.email}
+            </p>
+
+            <div className="flex items-start gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+              <span className="text-sm leading-relaxed">{config.endereco}</span>
+            </div>
+          </div>
+
+          {/* COLUNA 3: Mini Mapa Automático */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-4">Nossa Base</h3>
+
+            <div className="w-full h-40 bg-slate-800 rounded-lg overflow-hidden mb-4 border border-slate-700 shadow-inner">
+              <iframe
+                title="Mapa da Base"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(config.endereco)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+
+            <a
+              href={linkDoMapa}
+              target="_blank"
+              rel="noreferrer"
+              className="text-orange-500 hover:text-orange-400 text-sm font-bold flex items-center gap-1 transition"
+            >
+              Abrir Rota no Google Maps <ChevronRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </footer>
