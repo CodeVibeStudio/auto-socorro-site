@@ -7,16 +7,26 @@ import {
   Shield,
   Wrench,
   ChevronRight,
+  Mail,
 } from "lucide-react";
 import { siteConfig } from "./config/site";
 import { BudgetCalculator } from "./components/BudgetCalculator";
 import logo from "./assets/logo.png";
 
 function App() {
-  // 1. Preparamos o terreno com os valores padrão (Plano B)
-  const [telefone, setTelefone] = useState(siteConfig.contact.mainPhone);
+  // 1. Preparamos o pacote de dados com o "Plano B" (siteConfig)
+  const [config, setConfig] = useState({
+    whatsapp: siteConfig.contact.mainPhone,
+    telefone2: siteConfig.contact.secondaryPhones[0] || "",
+    telefone3: siteConfig.contact.secondaryPhones[1] || "",
+    email: siteConfig.contact.email,
+    endereco: siteConfig.address.base,
+    mapsUrl: siteConfig.address.mapsUrl,
+    instagram: siteConfig.social.instagram,
+    facebook: siteConfig.social.facebook,
+  });
 
-  // 2. O espião que busca os dados no Supabase
+  // 2. O espião agora busca todas as colunas novas
   useEffect(() => {
     async function fetchSettings() {
       const { data } = await supabase
@@ -25,16 +35,26 @@ function App() {
         .limit(1);
 
       if (data && data.length > 0) {
-        // Se encontrou no banco, substitui!
-        if (data[0].whatsapp_number) setTelefone(data[0].whatsapp_number);
+        const bd = data[0];
+        setConfig((prev) => ({
+          whatsapp: bd.whatsapp_number || prev.whatsapp,
+          telefone2: bd.phone_2 || prev.telefone2,
+          telefone3: bd.phone_3 || prev.telefone3,
+          email: bd.contact_email || prev.email,
+          endereco: bd.base_address || prev.endereco,
+          mapsUrl: bd.maps_url || prev.mapsUrl,
+          instagram: bd.instagram_url || prev.instagram,
+          facebook: bd.facebook_url || prev.facebook,
+        }));
       }
     }
     fetchSettings();
   }, []);
 
-  // 3. Montamos o link dinâmico com o telefone que veio do banco
   const mensagemPadrao = "Olá! Preciso de atendimento. Pode me ajudar?";
-  const whatsappMsg = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagemPadrao)}`;
+  const whatsappMsg = `https://wa.me/55${config.whatsapp}?text=${encodeURIComponent(
+    mensagemPadrao,
+  )}`;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -229,11 +249,11 @@ function App() {
               Calcule uma estimativa e envie direto para o nosso WhatsApp.
             </p>
           </div>
-          <BudgetCalculator telefone={telefone} />
+          <BudgetCalculator telefone={config.whatsapp} />
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* FOOTER - AGORA COM TODOS OS CONTATOS DINÂMICOS */}
       <footer className="bg-slate-900 text-slate-400 py-12 border-t-4 border-orange-500">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -248,30 +268,67 @@ function App() {
           </div>
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
+
+            {/* WhatsApp Principal */}
             <p className="flex items-center gap-2 mb-2">
-              <Phone className="h-4 w-4 text-orange-500" /> {telefone}{" "}
+              <Phone className="h-4 w-4 text-orange-500" /> {config.whatsapp}{" "}
               (WhatsApp)
             </p>
-            <p className="flex items-center gap-2 mb-2">
-              <MapPin className="h-4 w-4 text-orange-500" />{" "}
-              {siteConfig.address.base}
+
+            {/* Telefone 2 */}
+            {config.telefone2 && (
+              <p className="flex items-center gap-2 mb-2">
+                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone2}
+              </p>
+            )}
+
+            {/* Telefone 3 */}
+            {config.telefone3 && (
+              <p className="flex items-center gap-2 mb-2">
+                <Phone className="h-4 w-4 text-slate-500" /> {config.telefone3}
+              </p>
+            )}
+
+            {/* E-mail */}
+            <p className="flex items-center gap-2 mb-4">
+              <Mail className="h-4 w-4 text-orange-500" /> {config.email}
             </p>
+
+            {/* Endereço com Link do Maps */}
+            <a
+              href={
+                config.mapsUrl !==
+                "[CONFIGURAÇÃO NECESSÁRIA - INSERIR URL DO GOOGLE MAPS]"
+                  ? config.mapsUrl
+                  : "#"
+              }
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-start gap-2 mb-2 hover:text-white transition"
+            >
+              <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+              <span className="text-sm leading-relaxed">{config.endereco}</span>
+            </a>
           </div>
           <div>
-            <h3 className="text-white font-bold text-lg mb-4">Links Rápidos</h3>
-            <ul className="space-y-2">
+            <h3 className="text-white font-bold text-lg mb-4">Redes Sociais</h3>
+            <ul className="space-y-3">
               <li>
                 <a
-                  href={siteConfig.social.instagram}
-                  className="hover:text-white transition"
+                  href={config.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition flex items-center gap-2"
                 >
                   Instagram
                 </a>
               </li>
               <li>
                 <a
-                  href={siteConfig.social.facebook}
-                  className="hover:text-white transition"
+                  href={config.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition flex items-center gap-2"
                 >
                   Facebook
                 </a>
