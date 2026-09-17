@@ -1,6 +1,5 @@
-// src/components/BudgetCalculator.tsx
 import { supabase } from "../lib/supabase";
-import { siteConfig, generateWhatsAppLink } from "../config/site";
+import { siteConfig } from "../config/site";
 import { useState, useEffect } from "react";
 
 interface QuoteForm {
@@ -12,18 +11,16 @@ interface QuoteForm {
   observations: string;
 }
 
-export function BudgetCalculator() {
+// 1. A mágica acontece aqui: recebemos o telefone que o App.tsx nos entregou!
+export function BudgetCalculator({ telefone }: { telefone?: string }) {
   const [pricing, setPricing] = useState(siteConfig.defaultPricing);
 
   useEffect(() => {
     async function fetchPrices() {
-      // 1. Deixamos apenas o "data" (sem o error)
       const { data } = await supabase
         .from("pricing_rules")
         .select("*")
         .eq("active", true);
-
-      // 2. Removemos os console.log daqui!
 
       if (data && data.length > 0) {
         const precosDoBanco: Record<string, any> = {};
@@ -57,9 +54,6 @@ export function BudgetCalculator() {
   const calculateEstimate = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Na versão final, isso buscará as regras do Supabase.
-    // Usando fallback para MVP.
-    // Substitua a linha do const rule = ... por:
     const rule =
       pricing[form.serviceType as keyof typeof pricing] || pricing.LEVE;
 
@@ -73,20 +67,13 @@ export function BudgetCalculator() {
   };
 
   const handleWhatsApp = () => {
-    const msg = `Olá! Gostaria de solicitar um orçamento ao Auto Socorro Laranjal.
-    
-*Serviço:* ${form.serviceType}
-*Veículo:* ${form.vehicleType}
-*Origem:* ${form.origin}
-*Destino:* ${form.destination}
-*Distância:* ${form.distance} km
-*Valor Estimado:* R$ ${estimate?.toFixed(2)}
+    const msg = `Olá! Gostaria de solicitar um orçamento ao Auto Socorro Laranjal.\n\n*Serviço:* ${form.serviceType}\n*Veículo:* ${form.vehicleType}\n*Origem:* ${form.origin}\n*Destino:* ${form.destination}\n*Distância:* ${form.distance} km\n*Valor Estimado:* R$ ${estimate?.toFixed(2)}\n\n*Observações:* ${form.observations}\n\nGostaria de confirmar o atendimento.`;
 
-*Observações:* ${form.observations}
+    // 2. Usamos o telefone dinâmico (ou o plano B se o telefone vier vazio)
+    const numeroFinal = telefone || siteConfig.contact.mainPhone;
+    const link = `https://wa.me/55${numeroFinal}?text=${encodeURIComponent(msg)}`;
 
-Gostaria de confirmar o atendimento.`;
-
-    window.open(generateWhatsAppLink(msg), "_blank");
+    window.open(link, "_blank");
   };
 
   return (

@@ -229,7 +229,7 @@ function App() {
               Calcule uma estimativa e envie direto para o nosso WhatsApp.
             </p>
           </div>
-          <BudgetCalculator />
+          <BudgetCalculator telefone={telefone} />
         </div>
       </section>
 
