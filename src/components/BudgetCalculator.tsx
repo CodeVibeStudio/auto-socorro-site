@@ -18,7 +18,7 @@ export function BudgetCalculator() {
   useEffect(() => {
     async function fetchPrices() {
       // 1. Busca os dados no Supabase
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("pricing_rules")
         .select("*")
         .eq("active", true);
