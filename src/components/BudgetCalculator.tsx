@@ -1,8 +1,7 @@
 // src/components/BudgetCalculator.tsx
-import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import React, { useState } from "react";
 import { siteConfig, generateWhatsAppLink } from "../config/site";
+import { useState, useEffect } from "react";
 
 interface QuoteForm {
   serviceType: string;
@@ -31,7 +30,7 @@ export function BudgetCalculator() {
             extraKm: Number(rule.price_per_extra_km),
           };
         });
-        setPricing(dbPrices);
+        setPricing(dbPrices as any);
       }
     }
     fetchPrices();

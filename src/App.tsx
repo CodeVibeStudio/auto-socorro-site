@@ -4,7 +4,6 @@ import {
   Clock,
   Shield,
   Wrench,
-  Truck,
   ChevronRight,
 } from "lucide-react";
 import { siteConfig, generateWhatsAppLink } from "./config/site";
