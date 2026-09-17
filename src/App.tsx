@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { supabase } from "./lib/supabase";
 import {
   Phone,
   MapPin,
@@ -6,14 +8,35 @@ import {
   Wrench,
   ChevronRight,
 } from "lucide-react";
-import { siteConfig, generateWhatsAppLink } from "./config/site";
+import { siteConfig } from "./config/site";
 import { BudgetCalculator } from "./components/BudgetCalculator";
 import logo from "./assets/logo.png";
 
 function App() {
-  const whatsappMsg = generateWhatsAppLink(
-    "Olá! Preciso de atendimento. Pode me ajudar?",
-  );
+  // 1. Preparamos o terreno com os valores padrão (Plano B)
+  const [telefone, setTelefone] = useState(siteConfig.contact.mainPhone);
+  const [email, setEmail] = useState(siteConfig.contact.email);
+
+  // 2. O espião que busca os dados no Supabase
+  useEffect(() => {
+    async function fetchSettings() {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("*")
+        .limit(1);
+
+      if (data && data.length > 0) {
+        // Se encontrou no banco, substitui!
+        if (data[0].whatsapp_number) setTelefone(data[0].whatsapp_number);
+        if (data[0].contact_email) setEmail(data[0].contact_email);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  // 3. Montamos o link dinâmico com o telefone que veio do banco
+  const mensagemPadrao = "Olá! Preciso de atendimento. Pode me ajudar?";
+  const whatsappMsg = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagemPadrao)}`;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -228,8 +251,8 @@ function App() {
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
             <p className="flex items-center gap-2 mb-2">
-              <Phone className="h-4 w-4 text-orange-500" />{" "}
-              {siteConfig.contact.mainPhoneDisplay} (WhatsApp)
+              <Phone className="h-4 w-4 text-orange-500" /> {telefone}{" "}
+              (WhatsApp)
             </p>
             <p className="flex items-center gap-2 mb-2">
               <MapPin className="h-4 w-4 text-orange-500" />{" "}
