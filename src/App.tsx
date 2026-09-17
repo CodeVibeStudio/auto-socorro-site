@@ -373,7 +373,7 @@ function App() {
           </p>
 
           <a
-            href="https://www.SUA-OUTRA-PAGINA.com.br"
+            href="https://codevibestudio.vercel.app/"
             target="_blank"
             rel="noreferrer"
             className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity group"
