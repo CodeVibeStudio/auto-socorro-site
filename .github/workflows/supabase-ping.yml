@@ -1,0 +1,16 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    - cron: "0 0 */5 * *" # Executa a cada 5 dias
+  workflow_dispatch: # Permite rodar o ping manualmente no painel do GitHub
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fazer requisição na tabela para simular atividade
+        run: |
+          curl -s -X GET '${{ secrets.VITE_SUPABASE_URL }}/rest/v1/site_settings?select=*&limit=1' \
+          -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}"
