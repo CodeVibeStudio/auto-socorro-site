@@ -10,7 +10,6 @@ import {
   Mail,
   Lock,
   Calculator,
-  Truck,
   CheckCircle2,
 } from "lucide-react";
 import { siteConfig } from "./config/site";
