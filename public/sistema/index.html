@@ -3352,7 +3352,7 @@
             document.getElementById("modalSupabase").classList.remove("hidden");
           });
 
-        // 3. LOGIN SUBMIT
+        // 3. LOGIN SUBMIT (SUPABASE AUTH OU DEMONSTRAÇÃO LOCAL)
         formLoginAuth.addEventListener("submit", async (e) => {
           e.preventDefault();
           hideAuthAlert();
@@ -3384,7 +3384,69 @@
               document.getElementById("loggedUserLabel").textContent =
                 "🔒 Sair / Bloquear";
               authOverlay.classList.add("hidden");
-              showToast("Bem-vindo! Sessão autenticada via Supabase Auth.");
+
+              // NOVA ROTINA: Buscar os dados REAIS agora que a senha foi confirmada e o acesso autorizado pelo Supabase!
+              showToast(
+                "Acesso liberado! Baixando seus registros do Supabase...",
+              );
+
+              const [reb, col, mat, cred, desp] = await Promise.all([
+                state.supabaseClient
+                  .from("reboque_fabio")
+                  .select("*")
+                  .order("data_servico", { ascending: false })
+                  .limit(3000),
+                state.supabaseClient
+                  .from("servicos_colaboradores")
+                  .select("*")
+                  .order("data_servico", { ascending: false })
+                  .limit(3000),
+                state.supabaseClient
+                  .from("servicos_mateus")
+                  .select("*")
+                  .order("data_servico", { ascending: false })
+                  .limit(2000),
+                state.supabaseClient
+                  .from("creditos_faturamento")
+                  .select("*")
+                  .order("data_credito", { ascending: false })
+                  .limit(3000),
+                state.supabaseClient
+                  .from("despesas_gerais")
+                  .select("*")
+                  .order("data_despesa", { ascending: false })
+                  .limit(4000),
+              ]);
+
+              if (!reb.error && reb.data) state.reboque = reb.data;
+              if (!col.error && col.data) state.colaboradores = col.data;
+              if (!mat.error && mat.data) state.mateus = mat.data;
+              if (!cred.error && cred.data) state.creditos = cred.data;
+              if (!desp.error && desp.data) state.despesas = desp.data;
+
+              // Atualiza os contadores reais no topo da tela
+              document.getElementById("count-reboque").textContent =
+                state.reboque.length;
+              document.getElementById("count-colaboradores").textContent =
+                state.colaboradores.length;
+              document.getElementById("count-mateus").textContent =
+                state.mateus.length;
+              document.getElementById("count-creditos").textContent =
+                state.creditos.length;
+              document.getElementById("count-despesas").textContent =
+                state.despesas.length;
+
+              if (
+                state.activeTab !== "dashboard" &&
+                state.activeTab !== "site" &&
+                state.activeTab !== "parceiros"
+              ) {
+                renderActiveTable();
+              }
+
+              showToast(
+                "Bem-vindo! Todos os dados foram sincronizados com sucesso.",
+              );
               return;
             } catch (err) {
               showAuthAlert(
@@ -3395,7 +3457,7 @@
             }
           }
 
-          // Modo local
+          // Modo local / demonstração
           document.getElementById("loggedUserLabel").textContent =
             "🔒 Sair / Bloquear";
           authOverlay.classList.add("hidden");
