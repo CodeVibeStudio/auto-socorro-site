@@ -1,3 +1,7 @@
+import { supabase } from "./lib/supabase";
+import logo from "./assets/logo.png";
+import meuLogo from "./assets/logocodevibestudio.png";
+import { siteConfig } from "./config/site";
 import React, { useState } from "react";
 import {
   Phone,
@@ -321,7 +325,7 @@ function App() {
     },
   ]);
 
-  const [colabRows, setColabRows] = useState([
+  const [colabRows] = useState([
     {
       data: "17/10/2026",
       colab: "Luis Cataguases",
@@ -1003,9 +1007,12 @@ function App() {
       <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-orange-600 flex items-center justify-center shadow-md">
-              <Truck className="h-7 w-7 text-white" />
-            </div>
+            {/* IMAGEM DO LOGO INSERIDA AQUI */}
+            <img
+              src={logo}
+              alt="Auto Socorro Laranjal"
+              className="h-14 w-auto object-contain"
+            />
             <div>
               <h1 className="text-xl font-bold tracking-wider leading-none">
                 AUTO SOCORRO
@@ -1321,12 +1328,17 @@ function App() {
             href="https://codevibestudio.vercel.app/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity group"
           >
-            <span className="text-xs text-slate-500">
-              Desenvolvido por{" "}
-              <strong className="text-slate-300">CodeVibeStudio</strong>
+            {/* TEXTO E LOGO DO DESENVOLVEDOR INSERIDOS AQUI */}
+            <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
+              Desenvolvido por
             </span>
+            <img
+              src={meuLogo}
+              alt="Logo do Desenvolvedor"
+              className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all duration-300"
+            />
           </a>
         </div>
       </footer>
