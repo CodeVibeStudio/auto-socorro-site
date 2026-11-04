@@ -43,10 +43,39 @@
       .pulse-badge {
         animation: pulseSubtle 2.4s infinite;
       }
+      @media print {
+        header,
+        .nav-tab,
+        button,
+        #toastBanner,
+        #authOverlay,
+        #modalQuickAdd,
+        #modalSupabase {
+          display: none !important;
+        }
+        body {
+          background-color: white !important;
+          color: black !important;
+        }
+        .bg-gradient-to-r {
+          background: white !important;
+          border: none !important;
+          color: black !important;
+        }
+        .shadow-sm,
+        .shadow-md,
+        .shadow-lg {
+          box-shadow: none !important;
+          border: 1px solid #ccc !important;
+        }
+        .text-white {
+          color: black !important;
+        }
+      }
     </style>
   </head>
   <body class="min-h-screen flex flex-col">
-    <!-- AUTHENTICATION / LOGIN OVERLAY (SUPABASE AUTH + REVELADOR DE SENHA + ESQUECI MINHA SENHA) -->
+    <!-- AUTHENTICATION / LOGIN OVERLAY -->
     <div
       id="authOverlay"
       class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-center items-center p-4 overflow-y-auto"
@@ -75,13 +104,12 @@
           </div>
         </div>
 
-        <!-- Status Alert inside Auth Card -->
         <div
           id="authAlertBox"
           class="hidden p-3 rounded-xl text-xs font-medium border"
         ></div>
 
-        <!-- VIEW A: LOGIN FORM (E-MAIL + SENHA COM REVELADOR) -->
+        <!-- VIEW A: LOGIN FORM -->
         <form id="formLoginAuth" class="space-y-4">
           <div>
             <label
@@ -127,15 +155,14 @@
                 id="btnTogglePassword"
                 type="button"
                 class="absolute right-2 px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-[11px] font-semibold flex items-center gap-1 transition select-none"
-                title="Mostrar ou ocultar a senha digitada"
               >
                 <span id="eyeIconLogin">👁️</span>
                 <span id="eyeTextLogin">Mostrar</span>
               </button>
             </div>
             <p class="text-[11px] text-slate-400 mt-1">
-              Clique em <strong>👁️ Mostrar</strong> ao lado do campo para
-              conferir se digitou a senha corretamente.
+              Clique em <strong>👁️ Mostrar</strong> para conferir se digitou a
+              senha corretamente.
             </p>
           </div>
 
@@ -169,7 +196,7 @@
           </button>
         </form>
 
-        <!-- VIEW B: FORGOT PASSWORD ("ESQUECI MINHA SENHA") -->
+        <!-- VIEW B: FORGOT PASSWORD -->
         <form id="formForgotPassword" class="hidden space-y-4">
           <div
             class="bg-slate-800/80 border border-slate-700 rounded-xl p-3.5 space-y-1"
@@ -193,7 +220,6 @@
               id="forgotEmail"
               type="email"
               required
-              value="contato@autosocorrolaranjal.com.br"
               placeholder="seuemail@autosocorrolaranjal.com.br"
               class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
             />
@@ -216,7 +242,7 @@
           </div>
         </form>
 
-        <!-- VIEW C: UPDATE NEW PASSWORD (WHEN RETURNING FROM EMAIL RECOVERY LINK) -->
+        <!-- VIEW C: RESET PASSWORD -->
         <form id="formResetNewPassword" class="hidden space-y-4">
           <div
             class="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-3.5 space-y-1"
@@ -273,7 +299,7 @@
           </div>
         </form>
 
-        <!-- Footer Link to Main Public Website -->
+        <!-- Footer Link -->
         <div
           class="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400"
         >
@@ -283,9 +309,8 @@
             target="_blank"
             rel="noopener noreferrer"
             class="text-amber-400 hover:underline font-semibold"
+            >Ir para autosocorrolaranjal.com.br ↗</a
           >
-            Ir para autosocorrolaranjal.com.br ↗
-          </a>
         </div>
       </div>
     </div>
@@ -311,9 +336,8 @@
               <span
                 id="connectionBadge"
                 class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30"
+                >Modo Local (8.054 registros)</span
               >
-                Modo Local (8.054 registros)
-              </span>
             </div>
             <p class="text-xs text-slate-400">
               Painel Integrado •
@@ -343,7 +367,6 @@
             id="btnLogout"
             type="button"
             class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white border border-slate-700 transition flex items-center gap-1.5"
-            title="Bloquear Painel / Sair"
           >
             <span>🔒</span> <span id="loggedUserLabel">Sair</span>
           </button>
@@ -360,7 +383,14 @@
             data-tab="dashboard"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-amber-500 text-slate-950"
           >
-            📊 Dashboard (2018–2026)
+            📊 Dashboard
+          </button>
+          <button
+            type="button"
+            data-tab="parceiros"
+            class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
+          >
+            💰 Valor Parceiros
           </button>
           <button
             type="button"
@@ -433,17 +463,27 @@
               Auto Socorro Laranjal — Histórico 2018 a 2026
             </h2>
             <p class="text-xs text-slate-300 mt-1">
-              Dados sincronizados da planilha oficial (8.054 registros) prontos
-              para operação no Supabase.
+              Dados sincronizados da base de dados prontos para análise
+              gerencial e impressão.
             </p>
           </div>
           <div class="flex items-center gap-2">
+            <button
+              type="button"
+              onclick="window.print()"
+              class="bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg px-3 py-2 font-semibold flex items-center gap-2 border border-slate-600 transition"
+            >
+              🖨️ Imprimir
+            </button>
             <select
               id="dashPeriodFilter"
-              class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-3 py-2 font-semibold"
+              class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-3 py-2 font-semibold cursor-pointer"
             >
-              <option value="2026">Exercício 2026 (Atual)</option>
-              <option value="all">Acumulado 9 Anos (2018–2026)</option>
+              <option value="2026">Exercício 2026</option>
+              <option value="2025">Exercício 2025</option>
+              <option value="2024">Exercício 2024</option>
+              <option value="2023">Exercício 2023</option>
+              <option value="all">Acumulado Geral (2018–2026)</option>
             </select>
           </div>
         </div>
@@ -579,9 +619,115 @@
         </div>
       </section>
 
+      <!-- VIEW PARCEIROS (CALCULADORA DE CUSTOS PISO 280) -->
+      <section id="view-parceiros" class="hidden space-y-4">
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4"
+          >
+            <div>
+              <h2 class="text-lg font-extrabold text-slate-900">
+                Tabela Rápida de Orçamentos de Parceiros
+              </h2>
+              <p class="text-xs text-slate-500 mt-1">
+                Piso mínimo automático de R$ 280,00 • Lucro líquido travado em
+                30%
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <label class="text-xs font-bold text-slate-700"
+                >Adicional Projetado (%):</label
+              >
+              <input
+                id="calcImpostoAdicional"
+                type="number"
+                step="0.5"
+                value="11"
+                class="w-20 px-3 py-1.5 text-sm font-bold rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div class="p-4 rounded-xl bg-sky-50 border border-sky-200">
+              <label class="text-xs font-bold text-sky-900 block mb-1"
+                >Valor Colaborador (A3)</label
+              >
+              <input
+                id="calcBaseColab"
+                type="number"
+                value="300"
+                class="w-full px-3 py-2 rounded-lg border border-sky-300 bg-white font-extrabold text-lg text-slate-900 focus:outline-none focus:border-sky-500"
+              />
+            </div>
+            <div
+              class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center"
+            >
+              <span class="text-[11px] font-bold text-slate-500 uppercase"
+                >Regra Antiga (+40%)</span
+              >
+              <p
+                id="calcRegraAntiga"
+                class="text-xl font-extrabold text-slate-800 mt-1"
+              >
+                R$ 420,00
+              </p>
+            </div>
+            <div
+              class="p-4 rounded-xl bg-yellow-50 border border-yellow-300 flex flex-col justify-center"
+            >
+              <span class="text-[11px] font-bold text-yellow-900 uppercase"
+                >Sem Reforma (DAS)</span
+              >
+              <p
+                id="calcSemReforma"
+                class="text-xl font-extrabold text-yellow-900 mt-1"
+              >
+                R$ 445,58
+              </p>
+            </div>
+            <div
+              class="p-4 rounded-xl bg-rose-600 text-white flex flex-col justify-center shadow-md"
+            >
+              <span class="text-[11px] font-bold uppercase text-rose-100"
+                >Cobrar c/ Imposto</span
+              >
+              <p id="calcComImposto" class="text-xl font-extrabold mt-1">
+                R$ 509,62
+              </p>
+            </div>
+            <div
+              class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center"
+            >
+              <span class="text-[11px] font-bold text-slate-500 uppercase"
+                >Imp. + Escritório</span
+              >
+              <p id="calcImpostos" class="text-lg font-bold text-rose-700 mt-1">
+                R$ 119,62
+              </p>
+            </div>
+            <div
+              class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col justify-center"
+            >
+              <span class="text-[11px] font-bold text-emerald-800 uppercase"
+                >Seu Lucro (G3)</span
+              >
+              <p
+                id="calcLucro"
+                class="text-xl font-extrabold text-emerald-700 mt-1"
+              >
+                R$ 90,00
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- VIEW 2: OPERATIONAL TABLES (REBOQUE, COLABORADORES, MATEUS, CREDITOS, DESPESAS) -->
       <section id="view-table" class="hidden space-y-4">
-        <!-- TOP ACTION BAR (EQUIVALENT TO EXCEL ROW 4 BUTTON) -->
+        <!-- TOP ACTION BAR -->
         <div
           class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3"
         >
@@ -668,11 +814,11 @@
         <div
           class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
         >
-          <div class="overflow-x-auto custom-scroll">
+          <div class="overflow-x-auto custom-scroll max-h-[60vh]">
             <table class="w-full text-left border-collapse">
               <thead
                 id="tableHead"
-                class="bg-slate-900 text-white text-xs uppercase tracking-wider"
+                class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10"
               ></thead>
               <tbody
                 id="tableBody"
@@ -683,7 +829,7 @@
         </div>
       </section>
 
-      <!-- VIEW 3: SITE INTEGRATION (www.autosocorrolaranjal.com.br) -->
+      <!-- VIEW 3: SITE INTEGRATION -->
       <section id="view-site" class="hidden space-y-5">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <!-- LEFT: SIMULATOR OF PUBLIC WIDGET ON WWW.AUTOSOCORROLARANJAL.COM.BR -->
@@ -863,7 +1009,7 @@
       </section>
     </main>
 
-    <!-- MODAL 1: QUICK ADD NEW ROW AT TOP (INSERIR NOVA LINHA NO TOPO) -->
+    <!-- MODAL 1: QUICK ADD NEW ROW AT TOP -->
     <div
       id="modalQuickAdd"
       class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -2339,17 +2485,71 @@
         vDash.classList.add("hidden");
         vTable.classList.add("hidden");
         vSite.classList.add("hidden");
+        document.getElementById("view-parceiros").classList.add("hidden");
 
         if (tabName === "dashboard") {
           vDash.classList.remove("hidden");
         } else if (tabName === "site") {
           vSite.classList.remove("hidden");
           renderSiteQueue();
+        } else if (tabName === "parceiros") {
+          document.getElementById("view-parceiros").classList.remove("hidden");
         } else {
           vTable.classList.remove("hidden");
           renderActiveTable();
         }
       }
+
+      // CALCULADORA DE PARCEIROS LOGIC
+      function atualizarCalculadoraParceiros() {
+        const valColab =
+          Number(document.getElementById("calcBaseColab").value) || 0;
+        const impAdicional =
+          Number(document.getElementById("calcImpostoAdicional").value) || 0;
+
+        const dasAtualPct = 7.4729;
+        const escritorioPct = 5.0;
+        const lucroMinPct = 30.0;
+
+        const baseColab = Math.max(200, valColab);
+        const regraAntiga = Math.max(280, baseColab * 1.4);
+        const cobrarSemReforma = Math.max(
+          280,
+          (baseColab * (1 + lucroMinPct / 100)) /
+            (1 - (dasAtualPct + escritorioPct) / 100),
+        );
+
+        const aliqProjetadaTotal = dasAtualPct + impAdicional;
+        const cobrarComImposto = Math.max(
+          280,
+          (baseColab * (1 + lucroMinPct / 100)) /
+            (1 - (aliqProjetadaTotal + escritorioPct) / 100),
+        );
+
+        const impostosReais = cobrarComImposto * (aliqProjetadaTotal / 100);
+        const custoEscritorioReais = cobrarComImposto * (escritorioPct / 100);
+        const lucroLiquidoParceiro =
+          cobrarComImposto - impostosReais - custoEscritorioReais - valColab;
+
+        document.getElementById("calcRegraAntiga").textContent =
+          formatBRL(regraAntiga);
+        document.getElementById("calcSemReforma").textContent =
+          formatBRL(cobrarSemReforma);
+        document.getElementById("calcComImposto").textContent =
+          formatBRL(cobrarComImposto);
+        document.getElementById("calcImpostos").textContent = formatBRL(
+          impostosReais + custoEscritorioReais,
+        );
+        document.getElementById("calcLucro").textContent =
+          formatBRL(lucroLiquidoParceiro);
+      }
+
+      document
+        .getElementById("calcBaseColab")
+        .addEventListener("input", atualizarCalculadoraParceiros);
+      document
+        .getElementById("calcImpostoAdicional")
+        .addEventListener("input", atualizarCalculadoraParceiros);
 
       function renderActiveTable() {
         const tab = state.activeTab;
@@ -2636,53 +2836,53 @@
           container.innerHTML = `
           <div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Nº Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 126509981" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" value="Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Destino / Rota *</label><input id="f_rota" type="text" placeholder="Ex: Laranjal / Juiz de Fora" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" value="120" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" value="18.40" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" value="640.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" placeholder="Ex: 120" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" placeholder="Ex: 18.40" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 640.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Assistência Paga?</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Não (A Receber)</option><option value="Pago">Sim (Pago)</option></select></div>
         `;
         } else if (tab === "colaboradores") {
           title.textContent = "Nova Linha no Topo — Colaboradores";
           container.innerHTML = `
           <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" value="Luis Cataguases" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" value="SOS / Reboque" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" value="AWP" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" value="Cataguases / Miraí" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" value="450.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" value="180.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" placeholder="Ex: Luis Cataguases" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" placeholder="Ex: SOS / Reboque" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: AWP" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" placeholder="Ex: Cataguases / Miraí" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 450.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Total Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" placeholder="Ex: 180.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Status Acerto</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select></div>
         `;
         } else if (tab === "mateus") {
           title.textContent = "Nova Linha no Topo — Parceiro Mateus";
           container.innerHTML = `
           <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Assistência / OS *</label><input id="f_os" type="text" value="2026149001" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" value="Movida" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" value="Cataguases / Leopoldina" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" value="65" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" value="520.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Repasse Mateus (R$)</label><input id="f_pago_colab" type="number" step="0.01" value="220.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 2026149001" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Movida" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" placeholder="Ex: Cataguases / Leopoldina" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" placeholder="Ex: 65" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 520.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Repasse Mateus (R$)</label><input id="f_pago_colab" type="number" step="0.01" placeholder="Ex: 220.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
         `;
         } else if (tab === "creditos") {
           title.textContent = "Nova Linha no Topo — Créditos e Notas Fiscais";
           container.innerHTML = `
           <div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora / Fonte *</label><input id="f_seg" type="text" value="Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Número da NF *</label><input id="f_nf" type="text" value="225/2026" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor Bruto NF (R$) *</label><input id="f_valor" type="number" step="0.01" value="3450.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Seguradora / Fonte *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Número da NF *</label><input id="f_nf" type="text" placeholder="Ex: 225/2026" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Valor Bruto NF (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 3450.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option></select></div>
         `;
         } else if (tab === "despesas") {
           title.textContent = "Nova Linha no Topo — Despesas Gerais";
           container.innerHTML = `
           <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Categoria Gerencial *</label><input id="f_cat" type="text" value="1. Combustível / Abastecimento" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Descrição / Favorecido *</label><input id="f_desc" type="text" value="Abastecimento Diesel S10" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" value="Auto Socorro Laranjal (Matriz)" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" value="480.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Categoria Gerencial *</label><input id="f_cat" type="text" placeholder="Ex: 1. Combustível / Abastecimento" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Descrição / Favorecido *</label><input id="f_desc" type="text" placeholder="Ex: Abastecimento Diesel S10" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" placeholder="Ex: Auto Socorro Laranjal (Matriz)" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+          <div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 480.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pago">Pago</option><option value="A Pagar">A Pagar</option></select></div>
         `;
         }
@@ -3075,7 +3275,7 @@
           authAlertBox.classList.add("hidden");
         }
 
-        // 1. REVELADOR DE SENHA (MOSTRAR / OCULTAR SENHA)
+        // 1. REVELADOR DE SENHA
         document
           .getElementById("btnTogglePassword")
           .addEventListener("click", () => {
@@ -3112,7 +3312,7 @@
             pwdInput.focus();
           });
 
-        // 2. ALTERNAR ENTRE LOGIN E "ESQUECI MINHA SENHA"
+        // 2. ALTERNAR ENTRE LOGIN E ESQUECI MINHA SENHA
         document
           .getElementById("btnShowForgotBox")
           .addEventListener("click", () => {
@@ -3152,7 +3352,7 @@
             document.getElementById("modalSupabase").classList.remove("hidden");
           });
 
-        // 3. LOGIN SUBMIT (SUPABASE AUTH OU DEMONSTRAÇÃO LOCAL)
+        // 3. LOGIN SUBMIT
         formLoginAuth.addEventListener("submit", async (e) => {
           e.preventDefault();
           hideAuthAlert();
@@ -3181,15 +3381,10 @@
                 );
                 return;
               }
-              const userEmail = data?.user?.email || email;
               document.getElementById("loggedUserLabel").textContent =
-                userEmail.split("@")[0] + " (Sair)";
+                "🔒 Sair / Bloquear";
               authOverlay.classList.add("hidden");
-              showToast(
-                "Bem-vindo! Sessão autenticada via Supabase Auth (" +
-                  userEmail +
-                  ").",
-              );
+              showToast("Bem-vindo! Sessão autenticada via Supabase Auth.");
               return;
             } catch (err) {
               showAuthAlert(
@@ -3200,14 +3395,14 @@
             }
           }
 
-          // Modo local / demonstração
+          // Modo local
           document.getElementById("loggedUserLabel").textContent =
-            email.split("@")[0] + " (Sair)";
+            "🔒 Sair / Bloquear";
           authOverlay.classList.add("hidden");
-          showToast("Login efetuado com sucesso (" + email + ")!");
+          showToast("Login efetuado no Modo de Demonstração Local!");
         });
 
-        // 4. ENVIAR E-MAIL DE RECUPERAÇÃO ("ESQUECI MINHA SENHA")
+        // 4. ENVIAR E-MAIL DE RECUPERAÇÃO
         formForgotPassword.addEventListener("submit", async (e) => {
           e.preventDefault();
           hideAuthAlert();
@@ -3251,11 +3446,11 @@
             }
           }
 
-          // Simulação caso ainda não tenha colado as chaves do Supabase
+          // Simulação caso não esteja conectado
           showAuthAlert(
             "✔ Simulação de envio concluída para " +
               email +
-              "! (Quando conectado ao Supabase, um e-mail real com link de redefinição é disparado; clique abaixo para testar a tela de Nova Senha).",
+              "! (Quando conectado ao Supabase, um e-mail real é disparado; clique abaixo para testar a tela de Nova Senha).",
             "success",
           );
           setTimeout(() => {
@@ -3264,7 +3459,7 @@
           }, 1800);
         });
 
-        // 5. SALVAR NOVA SENHA APÓS CLICAR NO LINK DE RECUPERAÇÃO
+        // 5. SALVAR NOVA SENHA
         formResetNewPassword.addEventListener("submit", async (e) => {
           e.preventDefault();
           const newPassword = document.getElementById("newResetPassword").value;
@@ -3303,7 +3498,7 @@
           );
         });
 
-        // 6. BOTÃO SAIR / BLOQUEAR PAINEL NO TOPO
+        // 6. BOTÃO SAIR
         document
           .getElementById("btnLogout")
           .addEventListener("click", async () => {
@@ -3320,6 +3515,7 @@
             showToast("Sessão encerrada com segurança.");
           });
 
+        // 7. CONEXÃO COM O SUPABASE
         document
           .getElementById("formSupabaseConfig")
           .addEventListener("submit", async (e) => {
@@ -3337,31 +3533,80 @@
             try {
               if (window.supabase && window.supabase.createClient) {
                 state.supabaseClient = window.supabase.createClient(url, key);
-                const { data, error } = await state.supabaseClient
-                  .from("reboque_fabio")
-                  .select("*")
-                  .order("data_servico", { ascending: false })
-                  .limit(50);
-                if (!error && Array.isArray(data) && data.length > 0) {
-                  state.reboque = data;
-                }
+
+                showToast(
+                  "Sincronizando tabelas oficiais, por favor aguarde...",
+                );
+
+                const [reb, col, mat, cred, desp] = await Promise.all([
+                  state.supabaseClient
+                    .from("reboque_fabio")
+                    .select("*")
+                    .order("data_servico", { ascending: false })
+                    .limit(3000),
+                  state.supabaseClient
+                    .from("servicos_colaboradores")
+                    .select("*")
+                    .order("data_servico", { ascending: false })
+                    .limit(3000),
+                  state.supabaseClient
+                    .from("servicos_mateus")
+                    .select("*")
+                    .order("data_servico", { ascending: false })
+                    .limit(2000),
+                  state.supabaseClient
+                    .from("creditos_faturamento")
+                    .select("*")
+                    .order("data_credito", { ascending: false })
+                    .limit(3000),
+                  state.supabaseClient
+                    .from("despesas_gerais")
+                    .select("*")
+                    .order("data_despesa", { ascending: false })
+                    .limit(4000),
+                ]);
+
+                if (!reb.error && reb.data) state.reboque = reb.data;
+                if (!col.error && col.data) state.colaboradores = col.data;
+                if (!mat.error && mat.data) state.mateus = mat.data;
+                if (!cred.error && cred.data) state.creditos = cred.data;
+                if (!desp.error && desp.data) state.despesas = desp.data;
+
+                document.getElementById("count-reboque").textContent =
+                  state.reboque.length;
+                document.getElementById("count-colaboradores").textContent =
+                  state.colaboradores.length;
+                document.getElementById("count-mateus").textContent =
+                  state.mateus.length;
+                document.getElementById("count-creditos").textContent =
+                  state.creditos.length;
+                document.getElementById("count-despesas").textContent =
+                  state.despesas.length;
+
                 if (
                   state.supabaseClient.auth &&
                   state.supabaseClient.auth.onAuthStateChange
                 ) {
-                  state.supabaseClient.auth.onAuthStateChange((event) => {
-                    if (event === "PASSWORD_RECOVERY") {
-                      authOverlay.classList.remove("hidden");
-                      formLoginAuth.classList.add("hidden");
-                      formForgotPassword.classList.add("hidden");
-                      formResetNewPassword.classList.remove("hidden");
-                      showAuthAlert(
-                        "Link de recuperação validado! Digite sua nova senha abaixo.",
-                        "success",
-                      );
-                    }
-                  });
+                  state.supabaseClient.auth.onAuthStateChange(
+                    (event, session) => {
+                      if (event === "PASSWORD_RECOVERY") {
+                        authOverlay.classList.remove("hidden");
+                        formLoginAuth.classList.add("hidden");
+                        formForgotPassword.classList.add("hidden");
+                        formResetNewPassword.classList.remove("hidden");
+                        showAuthAlert(
+                          "Link de recuperação validado! Digite sua nova senha abaixo.",
+                          "success",
+                        );
+                      }
+                      if (session && session.user) {
+                        document.getElementById("loggedUserLabel").textContent =
+                          "🔒 Sair / Bloquear";
+                      }
+                    },
+                  );
                 }
+
                 state.isConnected = true;
                 document.getElementById("connectionBadge").textContent =
                   "🟢 Conectado ao Supabase";
@@ -3370,10 +3615,15 @@
                 document
                   .getElementById("modalSupabase")
                   .classList.add("hidden");
-                showToast(
-                  "Conectado com sucesso ao seu banco de dados no Supabase!",
-                );
-                if (state.activeTab !== "dashboard") renderActiveTable();
+                showToast("Conectado com sucesso! Dados reais carregados.");
+
+                if (
+                  state.activeTab !== "dashboard" &&
+                  state.activeTab !== "site" &&
+                  state.activeTab !== "parceiros"
+                ) {
+                  renderActiveTable();
+                }
               }
             } catch (err) {
               showToast(
