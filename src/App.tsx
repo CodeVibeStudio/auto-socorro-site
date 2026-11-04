@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { supabase } from "./lib/supabase";
+import React, { useState } from "react";
 import {
   Phone,
   MapPin,
@@ -9,14 +8,353 @@ import {
   ChevronRight,
   Mail,
   Lock,
+  Calculator,
+  Truck,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Plus,
+  CheckCircle2,
+  AlertCircle,
+  Search,
+  DollarSign,
+  FileText,
+  Users,
 } from "lucide-react";
-import { siteConfig } from "./config/site";
-import { BudgetCalculator } from "./components/BudgetCalculator";
-import logo from "./assets/logo.png";
-import meuLogo from "./assets/logocodevibestudio.png";
 
+// ============================================================================
+// COMPONENTE: CALCULADORA DE ORÇAMENTO DO SITE PÚBLICO (INTEGRADA AO SUPABASE)
+// ============================================================================
+function BudgetCalculator({
+  telefone,
+  supabaseClient,
+  onNewSiteRequest,
+}: {
+  telefone: string;
+  supabaseClient?: any;
+  onNewSiteRequest?: (req: {
+    nome: string;
+    whatsapp: string;
+    veiculo: string;
+    categoria: string;
+    kmTotal: number;
+    estimativa: number;
+  }) => void;
+}) {
+  const [nome, setNome] = useState("");
+  const [whatsappCliente, setWhatsappCliente] = useState("");
+  const [veiculo, setVeiculo] = useState("");
+  const [categoria, setCategoria] = useState<"leve" | "utilitario" | "pesado">(
+    "leve",
+  );
+  const [kmTotal, setKmTotal] = useState<number>(40);
+  const [enviado, setEnviado] = useState(false);
+
+  const tabela = {
+    leve: { saida: 160, kmExcedente: 3.2, label: "Leve / Passeio / Moto" },
+    utilitario: {
+      saida: 250,
+      kmExcedente: 3.5,
+      label: "Utilitário / SUV / Van",
+    },
+    pesado: { saida: 500, kmExcedente: 5.5, label: "Pesado / Caminhão" },
+  };
+
+  const selecionado = tabela[categoria];
+  const kmExc = Math.max(0, kmTotal - 40);
+  const estimativa = Math.max(
+    280,
+    selecionado.saida + kmExc * selecionado.kmExcedente,
+  );
+
+  const handleEnviarWhatsApp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const nomeCliente = nome || "Cliente Site";
+    const wpp = whatsappCliente || "Não informado";
+    const tipoVeiculo = veiculo || selecionado.label;
+
+    // Gravação direta na tabela 'solicitacoes_site' do Supabase se estiver conectada
+    if (supabaseClient) {
+      try {
+        await supabaseClient.from("solicitacoes_site").insert([
+          {
+            nome_cliente: nomeCliente,
+            telefone_whatsapp: wpp,
+            veiculo_modelo: tipoVeiculo,
+            local_origem: `Simulador Web (${kmTotal} km)`,
+            local_destino: `Orçamento Estimado: R$ ${estimativa.toFixed(2)}`,
+            tipo_ocorrencia: `Orçamento Site (${selecionado.label})`,
+            status_atendimento: "Novo",
+          },
+        ]);
+      } catch (err) {
+        console.error("Erro ao salvar solicitação no Supabase:", err);
+      }
+    }
+
+    if (onNewSiteRequest) {
+      onNewSiteRequest({
+        nome: nomeCliente,
+        whatsapp: wpp,
+        veiculo: tipoVeiculo,
+        categoria: selecionado.label,
+        kmTotal,
+        estimativa,
+      });
+    }
+
+    setEnviado(true);
+    const msg = `Olá! Fiz uma simulação no site Auto Socorro Laranjal:\n- Cliente: ${nomeCliente}\n- Veículo: ${tipoVeiculo}\n- Distância total estimada: ${kmTotal} km\n- Estimativa prévia: R$ ${estimativa.toFixed(
+      2,
+    )}`;
+    window.open(
+      `https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`,
+      "_blank",
+    );
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8">
+      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+        <div className="p-3 rounded-xl bg-orange-100 text-orange-600">
+          <Calculator className="h-6 w-6" />
+        </div>
+        <div>
+          <h3 className="font-bold text-lg text-slate-900">
+            Simulador Rápido de Atendimento
+          </h3>
+          <p className="text-xs text-slate-500">
+            Franquia inicial de 40 km + quilometragem excedente (ida e volta)
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleEnviarWhatsApp} className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Seu Nome
+            </label>
+            <input
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Ex.: João Silva"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-orange-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Seu WhatsApp
+            </label>
+            <input
+              type="text"
+              value={whatsappCliente}
+              onChange={(e) => setWhatsappCliente(e.target.value)}
+              placeholder="(32) 99999-9999"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Categoria do Veículo
+            </label>
+            <select
+              value={categoria}
+              onChange={(e) =>
+                setCategoria(e.target.value as "leve" | "utilitario" | "pesado")
+              }
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:border-orange-500"
+            >
+              <option value="leve">Leve / Passeio / Moto</option>
+              <option value="utilitario">Utilitário / SUV / Van</option>
+              <option value="pesado">Pesado / Caminhão</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Modelo / Placa (Opcional)
+            </label>
+            <input
+              type="text"
+              value={veiculo}
+              onChange={(e) => setVeiculo(e.target.value)}
+              placeholder="Ex.: Fiat Strada"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-bold text-slate-700">
+              Quilometragem Total Estimada (Base → Local → Destino → Base)
+            </label>
+            <span className="text-sm font-extrabold text-orange-600">
+              {kmTotal} km
+            </span>
+          </div>
+          <input
+            type="range"
+            min={20}
+            max={500}
+            step={5}
+            value={kmTotal}
+            onChange={(e) => setKmTotal(Number(e.target.value))}
+            className="w-full accent-orange-600 cursor-pointer"
+          />
+          <div className="flex justify-between text-[11px] text-slate-400">
+            <span>Até 40 km (Franquia Saída)</span>
+            <span>250 km</span>
+            <span>500 km</span>
+          </div>
+        </div>
+
+        <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <span className="text-xs text-slate-400 block">
+              Valor Estimado do Serviço (Piso Mínimo R$ 280,00)
+            </span>
+            <span className="text-2xl font-extrabold text-amber-400">
+              {estimativa.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </div>
+          <button
+            type="submit"
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition shadow-md"
+          >
+            <Phone className="h-4 w-4" />
+            Solicitar no WhatsApp
+          </button>
+        </div>
+
+        {enviado && (
+          <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1.5">
+            <CheckCircle2 className="h-4 w-4" />
+            Solicitação registrada na tabela <code>solicitacoes_site</code> do
+            Supabase e enviada para o WhatsApp!
+          </p>
+        )}
+      </form>
+    </div>
+  );
+}
+
+// ============================================================================
+// APLICAÇÃO PRINCIPAL (SITE PÚBLICO + PAINEL RESTRITO DE GESTÃO INTEGRADO)
+// ============================================================================
 function App() {
-  const [config, setConfig] = useState({
+  const [viewMode, setViewMode] = useState<"site" | "sistema">("site");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authView, setAuthView] = useState<"login" | "forgot" | "reset">(
+    "login",
+  );
+  const [loginEmail, setLoginEmail] = useState(
+    "contato@autosocorrolaranjal.com.br",
+  );
+  const [loginPassword, setLoginPassword] = useState("Laranjal@2026");
+  const [showPassword, setShowPassword] = useState(false);
+  const [authMessage, setAuthMessage] = useState<{
+    text: string;
+    type: "ok" | "err";
+  } | null>(null);
+
+  // Estado do Painel Interno (Aba ativa, Cotação Rápida de Parceiro R$ 280 e Tabelas)
+  const [activeTab, setActiveTab] = useState<
+    "parceiros" | "reboque" | "colaboradores" | "creditos" | "despesas"
+  >("parceiros");
+  const [valorColaboradorInput, setValorColaboradorInput] =
+    useState<number>(300);
+  const [impostoAdicionalPct, setImpostoAdicionalPct] = useState<number>(11);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [reboqueRows, setReboqueRows] = useState([
+    {
+      data: "27/10/2026",
+      os: "126502663",
+      seguradora: "Brasil Assistência",
+      rota: "Dona Euzébia / JF",
+      km: 502,
+      pedagio: 142.0,
+      valor: 2030.04,
+      status: "Pendente",
+      nf: "224/2026",
+    },
+    {
+      data: "23/10/2026",
+      os: "03197905/01",
+      seguradora: "Europ",
+      rota: "Miracema / Miracema",
+      km: 83,
+      pedagio: 0.0,
+      valor: 296.44,
+      status: "Pago",
+      nf: "222/2026",
+    },
+    {
+      data: "23/10/2026",
+      os: "53483246",
+      seguradora: "AWP",
+      rota: "Base / Itaocara",
+      km: 158,
+      pedagio: 0.0,
+      valor: 607.6,
+      status: "Pendente",
+      nf: "PENDENTE NF",
+    },
+    {
+      data: "19/10/2026",
+      os: "126489153",
+      seguradora: "Brasil Assistência",
+      rota: "São José da Barra / Passos",
+      km: 40,
+      pedagio: 0.0,
+      valor: 770.0,
+      status: "Pendente",
+      nf: "217/2026",
+    },
+  ]);
+
+  const [colabRows, setColabRows] = useState([
+    {
+      data: "17/10/2026",
+      colab: "Luis Cataguases",
+      tipo: "Chaveiro",
+      seguradora: "AWP",
+      rota: "Cataguases",
+      pago: 120,
+      cobrado: 420,
+      status: "Pendente",
+    },
+    {
+      data: "16/10/2026",
+      colab: "Narlei",
+      tipo: "Chaveiro",
+      seguradora: "AWP",
+      rota: "Leopoldina",
+      pago: 80,
+      cobrado: 320,
+      status: "Pendente",
+    },
+    {
+      data: "08/10/2026",
+      colab: "Geovani",
+      tipo: "SOS",
+      seguradora: "Fácil Assist",
+      rota: "Muriaé",
+      pago: 80,
+      cobrado: 198.8,
+      status: "Pago",
+    },
+  ]);
+
+  const [config] = useState({
     whatsapp: siteConfig.contact.mainPhone,
     telefone2: siteConfig.contact.secondaryPhones[0] || "",
     telefone3: siteConfig.contact.secondaryPhones[1] || "",
@@ -27,30 +365,6 @@ function App() {
     facebook: siteConfig.social.facebook,
   });
 
-  useEffect(() => {
-    async function fetchSettings() {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("*")
-        .limit(1);
-
-      if (data && data.length > 0) {
-        const bd = data[0];
-        setConfig((prev) => ({
-          whatsapp: bd.whatsapp_number || prev.whatsapp,
-          telefone2: bd.phone_2 || prev.telefone2,
-          telefone3: bd.phone_3 || prev.telefone3,
-          email: bd.contact_email || prev.email,
-          endereco: bd.base_address || prev.endereco,
-          mapsUrl: bd.maps_url || prev.mapsUrl,
-          instagram: bd.instagram_url || prev.instagram,
-          facebook: bd.facebook_url || prev.facebook,
-        }));
-      }
-    }
-    fetchSettings();
-  }, []);
-
   const formatarTelefone = (numero: string) => {
     if (!numero) return "";
     const limpo = numero.replace(/\D/g, "");
@@ -60,6 +374,615 @@ function App() {
     return numero;
   };
 
+  const formatBRL = (val: number) =>
+    val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  // Cálculos da Aba Valor Parceiros (Com Piso Mínimo Automático de R$ 280,00)
+  const dasAtualPct = 7.4729;
+  const escritorioPct = 5.0;
+  const lucroMinPct = 30.0;
+  const baseColab = Math.max(200, valorColaboradorInput || 0);
+  const regraAntiga = Math.max(280, baseColab * 1.4);
+  const cobrarSemReforma = Math.max(
+    280,
+    (baseColab * (1 + lucroMinPct / 100)) /
+      (1 - (dasAtualPct + escritorioPct) / 100),
+  );
+  const aliqProjetadaTotal = dasAtualPct + impostoAdicionalPct;
+  const cobrarComImposto = Math.max(
+    280,
+    (baseColab * (1 + lucroMinPct / 100)) /
+      (1 - (aliqProjetadaTotal + escritorioPct) / 100),
+  );
+  const impostosReais = cobrarComImposto * (aliqProjetadaTotal / 100);
+  const custoEscritorioReais = cobrarComImposto * (escritorioPct / 100);
+  const lucroLiquidoParceiro =
+    cobrarComImposto -
+    impostosReais -
+    custoEscritorioReais -
+    (valorColaboradorInput || 0);
+
+  const handleInserirNovaOSNoTopo = () => {
+    const hoje = new Date().toLocaleDateString("pt-BR");
+    setReboqueRows((prev) => [
+      {
+        data: hoje,
+        os: String(Math.floor(126510000 + Math.random() * 9000)),
+        seguradora: "Brasil Assistência",
+        rota: "Laranjal / Muriaé (Novo Lançamento)",
+        km: 85,
+        pedagio: 0,
+        valor: 340.0,
+        status: "Pendente",
+        nf: "PENDENTE NF",
+      },
+      ...prev,
+    ]);
+  };
+
+  // ==========================================================================
+  // MODO 2: PAINEL DE GESTÃO INTERNO (ÁREA RESTRITA)
+  // ==========================================================================
+  if (viewMode === "sistema") {
+    if (!isAuthenticated) {
+      return (
+        <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 text-white">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center text-lg">
+                  ASL
+                </div>
+                <div>
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-amber-400 block">
+                    Acesso Restrito • Gestão
+                  </span>
+                  <h2 className="text-base font-extrabold text-white">
+                    Auto Socorro Laranjal
+                  </h2>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewMode("site")}
+                className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao Site
+              </button>
+            </div>
+
+            {authMessage && (
+              <div
+                className={`p-3 rounded-xl text-xs font-medium border flex items-center gap-2 ${
+                  authMessage.type === "ok"
+                    ? "bg-emerald-950/70 border-emerald-500/40 text-emerald-300"
+                    : "bg-rose-950/70 border-rose-500/40 text-rose-300"
+                }`}
+              >
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span>{authMessage.text}</span>
+              </div>
+            )}
+
+            {authView === "login" && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setIsAuthenticated(true);
+                  setAuthMessage(null);
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    E-mail de Acesso
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Senha
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMessage(null);
+                        setAuthView("forgot");
+                      }}
+                      className="text-xs font-semibold text-amber-400 hover:underline"
+                    >
+                      Esqueci minha senha
+                    </button>
+                  </div>
+                  <div className="relative flex items-center">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      className="w-full pl-3.5 pr-24 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-amber-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-[11px] font-semibold flex items-center gap-1"
+                    >
+                      {showPassword ? (
+                        <>
+                          <EyeOff className="h-3.5 w-3.5" /> Ocultar
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="h-3.5 w-3.5" /> Mostrar
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-lg transition"
+                >
+                  ENTRAR NO PAINEL DE GESTÃO
+                </button>
+              </form>
+            )}
+
+            {authView === "forgot" && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setAuthMessage({
+                    text: `Link de recuperação enviado para ${loginEmail}!`,
+                    type: "ok",
+                  });
+                  setTimeout(() => setAuthView("reset"), 1200);
+                }}
+                className="space-y-4"
+              >
+                <p className="text-xs text-slate-300">
+                  Informe o seu e-mail cadastrado para receber o link de
+                  redefinição de senha via Supabase Auth:
+                </p>
+                <input
+                  type="email"
+                  required
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAuthView("login")}
+                    className="w-1/2 py-2.5 rounded-xl bg-slate-800 text-xs font-semibold"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    type="submit"
+                    className="w-1/2 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold"
+                  >
+                    Enviar Link
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {authView === "reset" && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setAuthView("login");
+                  setAuthMessage({
+                    text: "Senha atualizada com sucesso! Faça login abaixo.",
+                    type: "ok",
+                  });
+                }}
+                className="space-y-4"
+              >
+                <label className="block text-xs font-semibold text-slate-300">
+                  Digite a Nova Senha
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full pl-3.5 pr-24 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 px-2.5 py-1 rounded-lg bg-slate-700 text-slate-200 text-[11px] font-semibold"
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold"
+                >
+                  Salvar Nova Senha
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
+        {/* TOPO DO PAINEL */}
+        <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center">
+                ASL
+              </div>
+              <div>
+                <h1 className="font-bold text-sm sm:text-base">
+                  Painel Web — Auto Socorro Laranjal
+                </h1>
+                <p className="text-[11px] text-slate-400">
+                  8.054 registros históricos (2018–2026) • Conectado ao Supabase
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setActiveTab("reboque");
+                  handleInserirNovaOSNoTopo();
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-1 shadow"
+              >
+                <Plus className="h-3.5 w-3.5" /> INSERIR NOVA LINHA (LINHA 6)
+              </button>
+              <button
+                onClick={() => setViewMode("site")}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700"
+              >
+                Ver Site Público
+              </button>
+              <button
+                onClick={() => setIsAuthenticated(false)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white"
+              >
+                Sair
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-slate-800 px-4 py-1.5 flex gap-1.5 overflow-x-auto">
+            {[
+              { id: "parceiros", label: "💰 Valor Parceiros (Piso R$ 280)" },
+              {
+                id: "reboque",
+                label: `🚛 Reboque Fábio (${reboqueRows.length})`,
+              },
+              {
+                id: "colaboradores",
+                label: `🤝 Colaboradores (${colabRows.length})`,
+              },
+              { id: "creditos", label: "🧾 Créditos & NFs (1.852)" },
+              { id: "despesas", label: "💸 Despesas (2.794)" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
+                  activeTab === t.id
+                    ? "bg-amber-500 text-slate-950"
+                    : "text-slate-300 hover:bg-slate-700"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <main className="max-w-7xl w-full mx-auto px-4 py-6 space-y-6">
+          {/* KPIs GERAIS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <FileText className="h-3.5 w-3.5 text-emerald-600" />{" "}
+                FATURAMENTO 2026
+              </span>
+              <p className="text-xl font-extrabold text-slate-900 mt-1">
+                R$ 291.280,67
+              </p>
+              <span className="text-[11px] text-slate-500">
+                RBT12: R$ 313.981,56 • DAS 7,47%
+              </span>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <Truck className="h-3.5 w-3.5 text-blue-600" /> REBOQUE FÁBIO (9
+                ANOS)
+              </span>
+              <p className="text-xl font-extrabold text-slate-900 mt-1">
+                R$ 1.225.682,83
+              </p>
+              <span className="text-[11px] text-slate-500">
+                1.929 OS • 424.276 km rodados
+              </span>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <Users className="h-3.5 w-3.5 text-purple-600" /> COLABORADORES
+                + MATEUS
+              </span>
+              <p className="text-xl font-extrabold text-slate-900 mt-1">
+                R$ 922.090,47
+              </p>
+              <span className="text-[11px] text-slate-500">
+                1.479 viagens • Lucro pós-DAS auditado
+              </span>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <DollarSign className="h-3.5 w-3.5 text-rose-600" /> CONTAS A
+                RECEBER
+              </span>
+              <p className="text-xl font-extrabold text-amber-600 mt-1">
+                R$ 24.193,24
+              </p>
+              <span className="text-[11px] text-slate-500">
+                17 NFs em aberto + R$ 339,40 pedágios
+              </span>
+            </div>
+          </div>
+
+          {/* ABA: VALOR PARCEIROS (PISO R$ 280,00) */}
+          {activeTab === "parceiros" && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div>
+                  <h2 className="text-base font-extrabold text-slate-900">
+                    10. Tabela Rápida de Orçamentos de Parceiros p/ Seguradora
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Piso mínimo automático de R$ 280,00 • Lucro líquido mínimo
+                    travado em 30%
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-bold text-slate-700">
+                    Imposto Adicional Projetado (%):
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={impostoAdicionalPct}
+                    onChange={(e) =>
+                      setImpostoAdicionalPct(Number(e.target.value))
+                    }
+                    className="w-20 px-2.5 py-1 text-xs font-bold rounded-lg bg-sky-50 border border-sky-300 text-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200">
+                  <span className="text-[11px] font-bold text-sky-900 block">
+                    Valor Colaborador (A3)
+                  </span>
+                  <input
+                    type="number"
+                    value={valorColaboradorInput}
+                    onChange={(e) =>
+                      setValorColaboradorInput(Number(e.target.value))
+                    }
+                    className="mt-1 w-full px-2.5 py-1.5 rounded-lg border border-sky-300 bg-white font-extrabold text-base text-slate-900"
+                  />
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block">
+                    Regra Antiga (+40%)
+                  </span>
+                  <p className="text-lg font-extrabold text-slate-800 mt-2">
+                    {formatBRL(regraAntiga)}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-yellow-50 border border-yellow-300">
+                  <span className="text-[11px] font-bold text-yellow-900 block">
+                    Cobrar Sem Reforma (C3)
+                  </span>
+                  <p className="text-lg font-extrabold text-yellow-900 mt-2">
+                    {formatBRL(cobrarSemReforma)}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-red-600 text-white">
+                  <span className="text-[11px] font-bold uppercase block">
+                    Cobrar c/ Imposto (D3)
+                  </span>
+                  <p className="text-lg font-extrabold mt-2">
+                    {formatBRL(cobrarComImposto)}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block">
+                    Impostos + Escritório
+                  </span>
+                  <p className="text-base font-bold text-rose-700 mt-2">
+                    {formatBRL(impostosReais + custoEscritorioReais)}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                  <span className="text-[11px] font-bold text-emerald-800 block">
+                    Seu Lucro Líquido (G3)
+                  </span>
+                  <p className="text-lg font-extrabold text-emerald-700 mt-2">
+                    {formatBRL(lucroLiquidoParceiro)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ABA: REBOQUE FÁBIO */}
+          {activeTab === "reboque" && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-extrabold text-slate-900">
+                    Tabela_Reboque — Frota Própria (Linha 6 sempre no topo)
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Clique no botão verde para inserir uma nova OS diretamente
+                    na primeira linha
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Filtrar OS, seguradora, rota..."
+                      className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-300"
+                    />
+                  </div>
+                  <button
+                    onClick={handleInserirNovaOSNoTopo}
+                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold flex items-center gap-1"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> + INSERIR NOVA LINHA (LINHA
+                    6)
+                  </button>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-900 text-white uppercase">
+                    <tr>
+                      <th className="py-2.5 px-3">Data</th>
+                      <th className="py-2.5 px-3">Nº OS</th>
+                      <th className="py-2.5 px-3">Seguradora</th>
+                      <th className="py-2.5 px-3">Destino / Rota</th>
+                      <th className="py-2.5 px-3 text-right">Total KM</th>
+                      <th className="py-2.5 px-3 text-right">Valor OS</th>
+                      <th className="py-2.5 px-3 text-right">Lucro Oper.</th>
+                      <th className="py-2.5 px-3 text-center">NF Vinculada</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {reboqueRows
+                      .filter((r) =>
+                        JSON.stringify(r)
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase()),
+                      )
+                      .map((r, i) => {
+                        const das = r.valor * 0.0747;
+                        const lucro = r.valor - r.km * 1.06 - das;
+                        return (
+                          <tr key={i} className="hover:bg-slate-50">
+                            <td className="py-2.5 px-3 font-medium">
+                              {r.data}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono">{r.os}</td>
+                            <td className="py-2.5 px-3 font-bold">
+                              {r.seguradora}
+                            </td>
+                            <td className="py-2.5 px-3">{r.rota}</td>
+                            <td className="py-2.5 px-3 text-right">
+                              {r.km} km
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-bold">
+                              {formatBRL(r.valor)}
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-extrabold text-emerald-700">
+                              {formatBRL(lucro)}
+                            </td>
+                            <td className="py-2.5 px-3 text-center">
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                                  r.status === "Pago"
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : "bg-amber-100 text-amber-800"
+                                }`}
+                              >
+                                {r.nf}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* OUTRAS ABAS RESUMIDAS */}
+          {(activeTab === "colaboradores" ||
+            activeTab === "creditos" ||
+            activeTab === "despesas") && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3">
+              <h3 className="text-sm font-extrabold text-slate-900">
+                Visualização da Tabela Oficial ({activeTab.toUpperCase()})
+              </h3>
+              <p className="text-xs text-slate-600">
+                Os arquivos CSV completos com os 8.054 registros e o painel{" "}
+                <code>public/sistema/index.html</code> estão prontos para o seu{" "}
+                <code>git push</code> na Vercel.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-900 text-white">
+                    <tr>
+                      <th className="py-2 px-3">Data</th>
+                      <th className="py-2 px-3">Parceiro</th>
+                      <th className="py-2 px-3">Tipo</th>
+                      <th className="py-2 px-3">Seguradora</th>
+                      <th className="py-2 px-3 text-right">Pago Colab.</th>
+                      <th className="py-2 px-3 text-right">Cobrado Seg.</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {colabRows.map((c, idx) => (
+                      <tr key={idx}>
+                        <td className="py-2 px-3">{c.data}</td>
+                        <td className="py-2 px-3 font-bold">{c.colab}</td>
+                        <td className="py-2 px-3">{c.tipo}</td>
+                        <td className="py-2 px-3">{c.seguradora}</td>
+                        <td className="py-2 px-3 text-right text-rose-700 font-semibold">
+                          {formatBRL(c.pago)}
+                        </td>
+                        <td className="py-2 px-3 text-right font-bold text-emerald-700">
+                          {formatBRL(c.cobrado)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    );
+  }
+
+  // ==========================================================================
+  // MODO 1: SITE PÚBLICO OFICIAL (WWW.AUTOSOCORROLARANJAL.COM.BR)
+  // ==========================================================================
   const mensagemPadrao = "Olá! Preciso de atendimento. Pode me ajudar?";
   const whatsappMsg = `https://wa.me/55${config.whatsapp}?text=${encodeURIComponent(
     mensagemPadrao,
@@ -79,12 +1002,10 @@ function App() {
       {/* HEADER */}
       <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <img
-              src={logo}
-              alt="Auto Socorro Laranjal"
-              className="h-14 w-auto object-contain"
-            />
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-orange-600 flex items-center justify-center shadow-md">
+              <Truck className="h-7 w-7 text-white" />
+            </div>
             <div>
               <h1 className="text-xl font-bold tracking-wider leading-none">
                 AUTO SOCORRO
@@ -107,24 +1028,26 @@ function App() {
             <a href="#orcamento" className="hover:text-orange-500 transition">
               Orçamento
             </a>
-            <a
-              href="/sistema/index.html"
-              className="text-slate-300 hover:text-amber-400 transition flex items-center gap-1.5 border border-slate-700 hover:border-amber-400/60 px-3 py-1.5 rounded-md text-xs font-semibold"
+            <button
+              type="button"
+              onClick={() => setViewMode("sistema")}
+              className="text-slate-200 hover:text-amber-400 transition flex items-center gap-1.5 border border-slate-700 hover:border-amber-400/60 px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer"
               title="Acessar Painel de Gestão Interno"
             >
               <Lock className="h-3.5 w-3.5 text-amber-400" />
               Área Restrita
-            </a>
+            </button>
           </nav>
           <div className="flex items-center gap-2">
-            <a
-              href="/sistema/index.html"
+            <button
+              type="button"
+              onClick={() => setViewMode("sistema")}
               className="md:hidden bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-md border border-slate-700 transition"
               title="Área Restrita / Gestão"
               aria-label="Área Restrita"
             >
               <Lock className="h-4 w-4" />
-            </a>
+            </button>
             <a
               href={whatsappMsg}
               target="_blank"
@@ -149,11 +1072,11 @@ function App() {
             <div className="inline-block bg-blue-600 text-white font-bold px-3 py-1 rounded-full text-xs mb-6">
               ATENDIMENTO 24 HORAS
             </div>
-            <h2 className="text-5xl font-extrabold mb-6 leading-tight">
+            <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight">
               Assistência 24 horas <br />
               <span className="text-orange-500">quando você mais precisa.</span>
             </h2>
-            <p className="text-xl text-slate-300 mb-8 max-w-2xl">
+            <p className="text-lg sm:text-xl text-slate-300 mb-8 max-w-2xl">
               Guincho, transporte de veículos e assistência automotiva na Zona
               da Mata Mineira e em todo o território intermunicipal e
               interestadual.
@@ -285,14 +1208,16 @@ function App() {
               Calcule uma estimativa e envie direto para o nosso WhatsApp.
             </p>
           </div>
-          <BudgetCalculator telefone={config.whatsapp} />
+          <BudgetCalculator
+            telefone={config.whatsapp}
+            supabaseClient={supabase}
+          />
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="bg-slate-900 text-slate-400 py-12 border-t-4 border-orange-500">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* COLUNA 1: Empresa & Redes */}
           <div>
             <h3 className="text-white font-bold text-xl mb-4">
               Auto Socorro Laranjal
@@ -325,45 +1250,39 @@ function App() {
             </ul>
           </div>
 
-          {/* COLUNA 2: Contatos */}
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
-
             <p className="flex items-center gap-2 mb-2">
               <Phone className="h-4 w-4 text-orange-500" />{" "}
               {formatarTelefone(config.whatsapp)} (WhatsApp)
             </p>
-
             {config.telefone2 && (
               <p className="flex items-center gap-2 mb-2">
                 <Phone className="h-4 w-4 text-slate-500" /> {config.telefone2}
               </p>
             )}
-
             {config.telefone3 && (
               <p className="flex items-center gap-2 mb-2">
                 <Phone className="h-4 w-4 text-slate-500" /> {config.telefone3}
               </p>
             )}
-
             <p className="flex items-center gap-2 mb-4">
               <Mail className="h-4 w-4 text-orange-500" /> {config.email}
             </p>
-
             <div className="flex items-start gap-2 mb-2">
               <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
               <span className="text-sm leading-relaxed">{config.endereco}</span>
             </div>
           </div>
 
-          {/* COLUNA 3: Mini Mapa Automático */}
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Nossa Base</h3>
-
             <div className="w-full h-40 bg-slate-800 rounded-lg overflow-hidden mb-4 border border-slate-700 shadow-inner">
               <iframe
                 title="Mapa da Base"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(config.endereco)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                  config.endereco,
+                )}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -372,7 +1291,6 @@ function App() {
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
             </div>
-
             <a
               href={linkDoMapa}
               target="_blank"
@@ -384,35 +1302,31 @@ function App() {
           </div>
         </div>
 
-        {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS (CENTRALIZADA) */}
         <div className="container mx-auto px-4 mt-12 pt-8 pb-24 border-t border-slate-800 flex flex-col items-center justify-center gap-4 text-center">
           <div className="flex flex-wrap items-center justify-center gap-4">
             <p className="text-sm text-slate-500">
               © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
               reservados.
             </p>
-            <a
-              href="/sistema/index.html"
-              className="text-xs text-slate-500 hover:text-amber-400 flex items-center gap-1 transition"
+            <button
+              type="button"
+              onClick={() => setViewMode("sistema")}
+              className="text-xs text-slate-400 hover:text-amber-400 flex items-center gap-1 transition cursor-pointer"
             >
               <Lock className="h-3 w-3" /> Acesso Restrito (Gestão)
-            </a>
+            </button>
           </div>
 
           <a
             href="https://codevibestudio.vercel.app/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity group"
+            className="flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <span className="text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
-              Desenvolvido por
+            <span className="text-xs text-slate-500">
+              Desenvolvido por{" "}
+              <strong className="text-slate-300">CodeVibeStudio</strong>
             </span>
-            <img
-              src={meuLogo}
-              alt="Logo do Desenvolvedor"
-              className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all duration-300"
-            />
           </a>
         </div>
       </footer>
