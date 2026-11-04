@@ -8,6 +8,7 @@ import {
   Wrench,
   ChevronRight,
   Mail,
+  Lock,
 } from "lucide-react";
 import { siteConfig } from "./config/site";
 import { BudgetCalculator } from "./components/BudgetCalculator";
@@ -93,7 +94,7 @@ function App() {
               </span>
             </div>
           </div>
-          <nav className="hidden md:flex gap-6 font-medium text-sm">
+          <nav className="hidden md:flex items-center gap-6 font-medium text-sm">
             <a href="#inicio" className="hover:text-orange-500 transition">
               Início
             </a>
@@ -106,16 +107,34 @@ function App() {
             <a href="#orcamento" className="hover:text-orange-500 transition">
               Orçamento
             </a>
+            <a
+              href="/sistema/index.html"
+              className="text-slate-300 hover:text-amber-400 transition flex items-center gap-1.5 border border-slate-700 hover:border-amber-400/60 px-3 py-1.5 rounded-md text-xs font-semibold"
+              title="Acessar Painel de Gestão Interno"
+            >
+              <Lock className="h-3.5 w-3.5 text-amber-400" />
+              Área Restrita
+            </a>
           </nav>
-          <a
-            href={whatsappMsg}
-            target="_blank"
-            rel="noreferrer"
-            className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-md font-bold flex items-center gap-2 transition"
-          >
-            <Phone className="h-4 w-4" />
-            ACIONAR 24H
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href="/sistema/index.html"
+              className="md:hidden bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-md border border-slate-700 transition"
+              title="Área Restrita / Gestão"
+              aria-label="Área Restrita"
+            >
+              <Lock className="h-4 w-4" />
+            </a>
+            <a
+              href={whatsappMsg}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-md font-bold flex items-center gap-2 transition"
+            >
+              <Phone className="h-4 w-4" />
+              ACIONAR 24H
+            </a>
+          </div>
         </div>
       </header>
 
@@ -367,10 +386,18 @@ function App() {
 
         {/* NOVA BARRA INFERIOR: COPYRIGHT E CRÉDITOS (CENTRALIZADA) */}
         <div className="container mx-auto px-4 mt-12 pt-8 pb-24 border-t border-slate-800 flex flex-col items-center justify-center gap-4 text-center">
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
-            reservados.
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} {siteConfig.name} - Todos os direitos
+              reservados.
+            </p>
+            <a
+              href="/sistema/index.html"
+              className="text-xs text-slate-500 hover:text-amber-400 flex items-center gap-1 transition"
+            >
+              <Lock className="h-3 w-3" /> Acesso Restrito (Gestão)
+            </a>
+          </div>
 
           <a
             href="https://codevibestudio.vercel.app/"
