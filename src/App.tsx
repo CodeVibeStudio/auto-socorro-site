@@ -44,20 +44,64 @@ function BudgetCalculator({
   const [kmTotal, setKmTotal] = useState<number>(40);
   const [enviado, setEnviado] = useState(false);
 
+  // Estados dinâmicos puxados do Supabase
+  const [pisoMinimo, setPisoMinimo] = useState<number>(280);
+  const [taxaVendaKm, setTaxaVendaKm] = useState<number>(3.2);
+
+  useEffect(() => {
+    async function fetchFinanceConfig() {
+      if (!supabaseClient) return;
+      try {
+        const { data } = await supabaseClient
+          .from("configuracoes_financeiras")
+          .select("*")
+          .limit(1);
+        if (data && data.length > 0) {
+          const cfg = data[0];
+          if (cfg.piso_minimo) setPisoMinimo(cfg.piso_minimo);
+
+          // Calcula o preço ideal de venda do KM baseado nos custos, margem alvo e impostos reais
+          if (cfg.custo_km && cfg.margem_lucro) {
+            const impostos =
+              (cfg.imposto_das || 7.47) + (cfg.taxa_escritorio || 5.0);
+            // Custo multiplicado por ~2 para cobrir ida e volta
+            const custoBaseVenda = cfg.custo_km * 2;
+            // Fórmula de Markup: Preço = Custo * (1 + Margem) / (1 - Impostos)
+            const precoSugerido =
+              (custoBaseVenda * (1 + cfg.margem_lucro / 100)) /
+              (1 - impostos / 100);
+            setTaxaVendaKm(Number(precoSugerido.toFixed(2)));
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao buscar configurações financeiras:", err);
+      }
+    }
+    fetchFinanceConfig();
+  }, [supabaseClient]);
+
   const tabela = {
-    leve: { saida: 160, kmExcedente: 3.2, label: "Leve / Passeio / Moto" },
+    leve: {
+      saida: 160,
+      kmExcedente: taxaVendaKm,
+      label: "Leve / Passeio / Moto",
+    },
     utilitario: {
       saida: 250,
-      kmExcedente: 3.5,
+      kmExcedente: taxaVendaKm * 1.15, // Escala proporcional de +15% para utilitários
       label: "Utilitário / SUV / Van",
     },
-    pesado: { saida: 500, kmExcedente: 5.5, label: "Pesado / Caminhão" },
+    pesado: {
+      saida: 500,
+      kmExcedente: taxaVendaKm * 1.8, // Escala proporcional de +80% para pesados
+      label: "Pesado / Caminhão",
+    },
   };
 
   const selecionado = tabela[categoria];
   const kmExc = Math.max(0, kmTotal - 40);
   const estimativa = Math.max(
-    280,
+    pisoMinimo,
     selecionado.saida + kmExc * selecionado.kmExcedente,
   );
 
@@ -208,7 +252,9 @@ function BudgetCalculator({
         <div className="bg-slate-900 text-white rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <span className="text-xs text-slate-400 block">
-              Valor Estimado do Serviço (Piso Mínimo R$ 280,00)
+              Valor Estimado do Serviço (Piso Mínimo R${" "}
+              {pisoMinimo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              )
             </span>
             <span className="text-2xl font-extrabold text-amber-400">
               {estimativa.toLocaleString("pt-BR", {
