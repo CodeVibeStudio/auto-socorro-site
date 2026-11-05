@@ -50,7 +50,8 @@
         #toastBanner,
         #authOverlay,
         #modalQuickAdd,
-        #modalSupabase {
+        #modalSupabase,
+        #modalAddPartner {
           display: none !important;
         }
         body {
@@ -126,7 +127,6 @@
               class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
             />
           </div>
-
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label
@@ -156,8 +156,8 @@
                 type="button"
                 class="absolute right-2 px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-[11px] font-semibold flex items-center gap-1 transition select-none"
               >
-                <span id="eyeIconLogin">👁️</span>
-                <span id="eyeTextLogin">Mostrar</span>
+                <span id="eyeIconLogin">👁️</span
+                ><span id="eyeTextLogin">Mostrar</span>
               </button>
             </div>
             <p class="text-[11px] text-slate-400 mt-1">
@@ -165,7 +165,6 @@
               senha corretamente.
             </p>
           </div>
-
           <div
             class="flex items-center justify-between text-xs text-slate-400 pt-0.5"
           >
@@ -186,7 +185,6 @@
               ⚙️ Configurar Supabase
             </button>
           </div>
-
           <button
             id="btnSubmitLogin"
             type="submit"
@@ -209,7 +207,6 @@
               redefinição de senha diretamente para a sua caixa de entrada.
             </p>
           </div>
-
           <div>
             <label
               for="forgotEmail"
@@ -224,7 +221,6 @@
               class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
             />
           </div>
-
           <div class="flex items-center gap-2 pt-1">
             <button
               id="btnBackToLogin"
@@ -255,7 +251,6 @@
               <strong>Mostrar</strong> para confirmar a digitação.
             </p>
           </div>
-
           <div>
             <label
               for="newResetPassword"
@@ -276,12 +271,11 @@
                 type="button"
                 class="absolute right-2 px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-[11px] font-semibold flex items-center gap-1 transition select-none"
               >
-                <span id="eyeIconReset">👁️</span>
-                <span id="eyeTextReset">Mostrar</span>
+                <span id="eyeIconReset">👁️</span
+                ><span id="eyeTextReset">Mostrar</span>
               </button>
             </div>
           </div>
-
           <div class="flex items-center gap-2 pt-1">
             <button
               id="btnCancelResetPassword"
@@ -299,7 +293,6 @@
           </div>
         </form>
 
-        <!-- Footer Link -->
         <div
           class="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400"
         >
@@ -336,7 +329,7 @@
               <span
                 id="connectionBadge"
                 class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30"
-                >Modo Local (8.054 registros)</span
+                >Modo Local</span
               >
             </div>
             <p class="text-xs text-slate-400">
@@ -347,7 +340,6 @@
             </p>
           </div>
         </div>
-
         <div class="flex items-center gap-2 flex-wrap">
           <button
             id="btnOpenSupabaseModal"
@@ -391,35 +383,35 @@
             data-tab="reboque"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
           >
-            🚛 Reboque Fábio (<span id="count-reboque">1.929</span>)
+            🚛 Reboque Fábio (<span id="count-reboque">0</span>)
           </button>
           <button
             type="button"
             data-tab="colaboradores"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
           >
-            🤝 Colaboradores (<span id="count-colaboradores">1.388</span>)
+            🤝 Colaboradores (<span id="count-colaboradores">0</span>)
           </button>
           <button
             type="button"
             data-tab="mateus"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
           >
-            🔧 Mateus (<span id="count-mateus">91</span>)
+            🔧 Mateus (<span id="count-mateus">0</span>)
           </button>
           <button
             type="button"
             data-tab="creditos"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
           >
-            🧾 Créditos e NFs (<span id="count-creditos">1.852</span>)
+            🧾 Créditos e NFs (<span id="count-creditos">0</span>)
           </button>
           <button
             type="button"
             data-tab="despesas"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60"
           >
-            💸 Despesas (<span id="count-despesas">2.794</span>)
+            💸 Despesas (<span id="count-despesas">0</span>)
           </button>
           <button
             type="button"
@@ -487,7 +479,6 @@
           </div>
         </div>
 
-        <!-- KPI CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
@@ -495,8 +486,7 @@
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500"
                 >FATURAMENTO ATIVO (NFs)</span
-              >
-              <span
+              ><span
                 class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700"
                 id="kpiFatBadge"
                 >2026</span
@@ -512,15 +502,13 @@
               A receber em aberto: R$ 24.193,24
             </p>
           </div>
-
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500"
-                >FROTA PRÓPRIA (REBOQUE FÁBIO)</span
-              >
-              <span
+                >FROTA PRÓPRIA (REBOQUE)</span
+              ><span
                 class="text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700"
                 id="kpiRebBadge"
                 >259 OS</span
@@ -536,15 +524,13 @@
               53.194 km rodados • Custo R$ 1,06/km
             </p>
           </div>
-
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500"
                 >COLABORADORES + MATEUS</span
-              >
-              <span
+              ><span
                 class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700"
                 id="kpiColabBadge"
                 >189 OS</span
@@ -560,15 +546,13 @@
               Repasse parceiros: R$ 78.664,14
             </p>
           </div>
-
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
           >
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500"
                 >DESPESAS TOTAIS</span
-              >
-              <span
+              ><span
                 class="text-xs font-bold px-2 py-0.5 rounded bg-rose-50 text-rose-700"
                 id="kpiDespBadge"
                 >Controle</span
@@ -586,7 +570,6 @@
           </div>
         </div>
 
-        <!-- CHARTS ROW -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
@@ -601,7 +584,6 @@
               <canvas id="chartEvolucao"></canvas>
             </div>
           </div>
-
           <div
             class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm"
           >
@@ -618,7 +600,7 @@
         </div>
       </section>
 
-      <!-- VIEW PARCEIROS (CALCULADORA DE CUSTOS PISO 280) -->
+      <!-- VIEW PARCEIROS -->
       <section id="view-parceiros" class="hidden space-y-4">
         <div
           class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
@@ -648,7 +630,6 @@
               />
             </div>
           </div>
-
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
             <div class="p-4 rounded-xl bg-sky-50 border border-sky-200">
               <label class="text-xs font-bold text-sky-900 block mb-1"
@@ -723,7 +704,6 @@
           </div>
         </div>
 
-        <!-- NEW SECTION: DIRETÓRIO DE PARCEIROS E CONTATOS -->
         <div
           class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
         >
@@ -748,7 +728,6 @@
             </button>
           </div>
 
-          <!-- FILTERS FOR DIRECTORY -->
           <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <input
               id="filterPartnerBusca"
@@ -756,7 +735,6 @@
               placeholder="Buscar nome ou empresa..."
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
             />
-
             <select
               id="filterPartnerCategoria"
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white"
@@ -771,14 +749,12 @@
               <option value="Corretor">Corretor / Seguros</option>
               <option value="Outros">Outros</option>
             </select>
-
             <input
               id="filterPartnerCidade"
               type="text"
               placeholder="Filtrar por cidade..."
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
             />
-
             <select
               id="filterPartnerUF"
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white"
@@ -790,12 +766,10 @@
               <option value="ES">Espírito Santo (ES)</option>
               <option value="BA">Bahia (BA)</option>
             </select>
-
             <select
               id="filterPartnerRating"
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-amber-600"
             >
-              >
               <option value="0">Qualquer Avaliação</option>
               <option value="5">⭐⭐⭐⭐⭐ (5)</option>
               <option value="4">⭐⭐⭐⭐+ (Acima de 4)</option>
@@ -803,7 +777,6 @@
             </select>
           </div>
 
-          <!-- DIRECTORY TABLE -->
           <div
             class="overflow-x-auto custom-scroll max-h-[50vh] border border-slate-200 rounded-xl"
           >
@@ -823,17 +796,14 @@
               <tbody
                 id="partnerTableBody"
                 class="divide-y divide-slate-200 text-xs"
-              >
-                <!-- Renderizado via JavaScript -->
-              </tbody>
+              ></tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- VIEW 2: OPERATIONAL TABLES (REBOQUE, COLABORADORES, MATEUS, CREDITOS, DESPESAS) -->
+      <!-- VIEW TABLE -->
       <section id="view-table" class="hidden space-y-4">
-        <!-- TOP ACTION BAR -->
         <div
           class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3"
         >
@@ -856,37 +826,64 @@
               cálculo instantâneo de KM, DAS e Lucro.
             </p>
           </div>
-
           <div class="flex items-center gap-2 flex-wrap">
-            <input id="searchInput" type="text" placeholder="Buscar..." class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600 w-48" />
-            
-            <div class="flex items-center gap-2 bg-slate-50 p-1 rounded-lg border border-slate-200">
-              <span class="text-[10px] font-bold text-slate-500 uppercase px-1">Período:</span>
-              <input id="dateStartFilter" type="date" class="px-2 py-1 text-xs rounded-md border border-slate-300 bg-white cursor-pointer" />
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Buscar..."
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600 w-48"
+            />
+            <div
+              class="flex items-center gap-2 bg-slate-50 p-1 rounded-lg border border-slate-200"
+            >
+              <span class="text-[10px] font-bold text-slate-500 uppercase px-1"
+                >Período:</span
+              >
+              <input
+                id="dateStartFilter"
+                type="date"
+                class="px-2 py-1 text-xs rounded-md border border-slate-300 bg-white cursor-pointer"
+              />
               <span class="text-[10px] text-slate-400">até</span>
-              <input id="dateEndFilter" type="date" class="px-2 py-1 text-xs rounded-md border border-slate-300 bg-white cursor-pointer" />
+              <input
+                id="dateEndFilter"
+                type="date"
+                class="px-2 py-1 text-xs rounded-md border border-slate-300 bg-white cursor-pointer"
+              />
             </div>
-
-            <select id="statusFilter" class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium">
+            <select
+              id="statusFilter"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium"
+            >
               <option value="all">Todos os Status</option>
               <option value="Pago">Somente Pagos</option>
               <option value="Pendente">Pendente / A Receber / A Pagar</option>
               <option value="Cancelada">Cancelada</option>
             </select>
-            
-            <button id="btnPrintTable" type="button" class="px-3 py-2 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white shadow transition flex items-center gap-1">🖨️ Imprimir</button>
-            <button id="btnAddRowTab" type="button" class="px-3 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1">＋ INSERIR</button>
+            <button
+              id="btnPrintTable"
+              type="button"
+              class="px-3 py-2 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white shadow transition flex items-center gap-1"
+            >
+              🖨️ Imprimir
+            </button>
+            <button
+              id="btnAddRowTab"
+              type="button"
+              class="px-3 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1"
+            >
+              ＋ INSERIR
+            </button>
           </div>
+        </div>
 
-        <!-- DYNAMIC SUMMARY STRIP -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div
             class="bg-white rounded-xl p-3.5 border border-slate-200 flex items-center justify-between"
           >
             <span id="sumLabel1" class="text-xs font-semibold text-slate-500"
               >Registros Exibidos</span
-            >
-            <span id="sumVal1" class="text-sm font-extrabold text-slate-900"
+            ><span id="sumVal1" class="text-sm font-extrabold text-slate-900"
               >0</span
             >
           </div>
@@ -895,8 +892,7 @@
           >
             <span id="sumLabel2" class="text-xs font-semibold text-slate-500"
               >Valor Bruto / Receita</span
-            >
-            <span id="sumVal2" class="text-sm font-extrabold text-emerald-700"
+            ><span id="sumVal2" class="text-sm font-extrabold text-emerald-700"
               >R$ 0,00</span
             >
           </div>
@@ -905,14 +901,12 @@
           >
             <span id="sumLabel3" class="text-xs font-semibold text-slate-500"
               >Lucro Líquido Calculado</span
-            >
-            <span id="sumVal3" class="text-sm font-extrabold text-blue-700"
+            ><span id="sumVal3" class="text-sm font-extrabold text-blue-700"
               >R$ 0,00</span
             >
           </div>
         </div>
 
-        <!-- TABLE CONTAINER -->
         <div
           class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
         >
@@ -931,10 +925,9 @@
         </div>
       </section>
 
-      <!-- VIEW 3: SITE INTEGRATION -->
+      <!-- VIEW 3: SITE -->
       <section id="view-site" class="hidden space-y-5">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <!-- LEFT: SIMULATOR OF PUBLIC WIDGET ON WWW.AUTOSOCORROLARANJAL.COM.BR -->
           <div
             class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4"
           >
@@ -952,19 +945,6 @@
                 >Tabela: solicitacoes_site</span
               >
             </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Teste abaixo como o cliente solicita um guincho na sua página
-              <a
-                href="https://www.autosocorrolaranjal.com.br/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 underline font-semibold"
-                >autosocorrolaranjal.com.br</a
-              >. Ao enviar, o pedido cai direto no seu banco Supabase e já pode
-              ser convertido em Ordem de Serviço na aba Reboque Fábio com 1
-              clique.
-            </p>
-
             <form
               id="publicSiteForm"
               class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200"
@@ -972,9 +952,8 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1"
-                    >Nome do Cliente / Segurado *</label
-                  >
-                  <input
+                    >Nome do Cliente *</label
+                  ><input
                     id="siteNome"
                     type="text"
                     required
@@ -985,8 +964,7 @@
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1"
                     >WhatsApp *</label
-                  >
-                  <input
+                  ><input
                     id="siteWhatsapp"
                     type="text"
                     required
@@ -999,11 +977,10 @@
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1"
                     >Veículo / Placa</label
-                  >
-                  <input
+                  ><input
                     id="siteVeiculo"
                     type="text"
-                    value="Fiat Strada Freedom - QXZ-4B19"
+                    value="Fiat Strada Freedom"
                     class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white"
                   />
                 </div>
@@ -1033,9 +1010,8 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1"
-                    >Local de Origem (BR / Cidade) *</label
-                  >
-                  <input
+                    >Local de Origem *</label
+                  ><input
                     id="siteOrigem"
                     type="text"
                     required
@@ -1046,8 +1022,7 @@
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1"
                     >Destino Desejado</label
-                  >
-                  <input
+                  ><input
                     id="siteDestino"
                     type="text"
                     value="Oficina Centro - Muriaé/MG"
@@ -1059,19 +1034,17 @@
                 type="submit"
                 class="w-full py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow transition"
               >
-                🚀 Simular Pedido de Socorro no Site
+                🚀 Simular Pedido
               </button>
             </form>
           </div>
-
-          <!-- RIGHT: INCOMING QUEUE + EMBED CODE -->
           <div
             class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-4"
           >
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <h3 class="text-base font-bold text-slate-900">
-                  Fila de Chamados Recebidos pelo Site
+                  Fila de Chamados
                 </h3>
                 <span class="text-xs text-slate-500">Tempo real</span>
               </div>
@@ -1080,17 +1053,15 @@
                 class="space-y-2.5 max-h-60 overflow-y-auto custom-scroll pr-1"
               ></div>
             </div>
-
             <div class="pt-3 border-t border-slate-200 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-800"
-                  >Código do Botão para colar em
-                  www.autosocorrolaranjal.com.br</span
+                  >Código do Botão</span
                 >
                 <button
                   id="btnCopyEmbedCode"
                   type="button"
-                  class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold"
+                  class="px-2.5 py-1 rounded bg-slate-800 text-white text-xs font-semibold"
                 >
                   Copiar HTML
                 </button>
@@ -1099,11 +1070,7 @@
                 id="embedCodeBlock"
                 class="bg-slate-900 text-emerald-300 p-3 rounded-lg text-[11px] overflow-x-auto custom-scroll"
               >
-&lt;!-- Botão Área Restrita + Acionamento para autosocorrolaranjal.com.br --&gt;
-&lt;a href="https://sistema.autosocorrolaranjal.com.br" target="_blank"
-   style="background:#f59e0b;color:#0f172a;padding:10px 18px;border-radius:8px;font-weight:700;text-decoration:none;font-family:sans-serif;"&gt;
-  🔒 Painel de Gestão (Área Restrita)
-&lt;/a&gt;</pre
+&lt;!-- Botão para site --&gt;</pre
               >
             </div>
           </div>
@@ -1111,7 +1078,7 @@
       </section>
     </main>
 
-    <!-- MODAL 1: QUICK ADD NEW ROW AT TOP -->
+    <!-- MODAL QUICK ADD -->
     <div
       id="modalQuickAdd"
       class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -1124,10 +1091,10 @@
         >
           <div>
             <span class="text-xs font-bold uppercase text-emerald-600"
-              >Inserção Automática no Topo</span
+              >Formulário Rápido</span
             >
             <h3 id="modalAddTitle" class="text-base font-bold text-slate-900">
-              Novo Lançamento — Reboque Fábio
+              Novo Lançamento
             </h3>
           </div>
           <button
@@ -1138,7 +1105,6 @@
             ✕
           </button>
         </div>
-
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1"
@@ -1148,54 +1114,40 @@
               id="modalTargetTab"
               class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-slate-50 font-semibold"
             >
-              <option value="reboque">
-                1. Reboque Fábio (public.reboque_fabio)
-              </option>
-              <option value="colaboradores">
-                2. Colaboradores (public.servicos_colaboradores)
-              </option>
-              <option value="mateus">3. Mateus (public.servicos_mateus)</option>
-              <option value="creditos">
-                4. Créditos e NFs (public.creditos_faturamento)
-              </option>
-              <option value="despesas">
-                5. Despesas Gerais (public.despesas_gerais)
-              </option>
+              <option value="reboque">1. Reboque Fábio</option>
+              <option value="colaboradores">2. Colaboradores</option>
+              <option value="mateus">3. Mateus</option>
+              <option value="creditos">4. Créditos e NFs</option>
+              <option value="despesas">5. Despesas Gerais</option>
             </select>
           </div>
-
           <form id="formQuickAdd" class="space-y-3">
             <input type="hidden" id="edit_row_id" value="" />
             <div
               id="dynamicFormFields"
               class="grid grid-cols-1 sm:grid-cols-2 gap-3"
             ></div>
-
-            <!-- LIVE FORMULA PREVIEW -->
             <div
               class="bg-slate-900 text-white p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2"
             >
               <div>
                 <span
                   class="text-[11px] uppercase tracking-wider text-slate-400 block"
-                  >Cálculo Automático (Fórmula Nativa)</span
-                >
-                <span id="liveFormulaExplain" class="text-xs text-slate-300"
-                  >Lucro = Valor Total - (KM × R$ 1,06 + Pedágio + DAS)</span
+                  >Cálculo Automático</span
+                ><span id="liveFormulaExplain" class="text-xs text-slate-300"
+                  >Resumo</span
                 >
               </div>
               <div class="text-right">
                 <span class="text-[11px] text-amber-400 block font-semibold"
                   >Resultado Calculado</span
-                >
-                <span
+                ><span
                   id="liveFormulaResult"
                   class="text-base font-extrabold text-emerald-400"
                   >R$ 0,00</span
                 >
               </div>
             </div>
-
             <div class="flex items-center justify-end gap-2 pt-2">
               <button
                 id="btnCancelQuickAdd"
@@ -1208,7 +1160,7 @@
                 type="submit"
                 class="px-5 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow"
               >
-                ✔ Salvar na 1ª Linha do Topo
+                ✔ Salvar Lançamento
               </button>
             </div>
           </form>
@@ -1216,7 +1168,7 @@
       </div>
     </div>
 
-    <!-- MODAL 1.5: ADICIONAR / EDITAR PARCEIRO -->
+    <!-- MODAL PARTNER -->
     <div
       id="modalAddPartner"
       class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -1246,38 +1198,34 @@
             ✕
           </button>
         </div>
-
         <form id="formAddPartner" class="space-y-3">
           <input type="hidden" id="p_id" value="" />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
                 >Nome do Contato *</label
-              >
-              <input
+              ><input
                 id="p_nome"
                 type="text"
                 required
-                placeholder="Ex: João da Silva"
+                placeholder="Ex: João"
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
               />
             </div>
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
                 >Empresa / Oficina</label
-              >
-              <input
+              ><input
                 id="p_empresa"
                 type="text"
-                placeholder="Ex: Auto Elétrica São João"
+                placeholder="Opcional"
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
               />
             </div>
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
-                >Categoria / Atividade *</label
-              >
-              <select
+                >Categoria *</label
+              ><select
                 id="p_cat"
                 required
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
@@ -1298,13 +1246,11 @@
             </div>
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
-                >Telefone / WhatsApp *</label
-              >
-              <input
+                >Telefone *</label
+              ><input
                 id="p_tel"
                 type="text"
                 required
-                placeholder="Ex: (32) 99999-9999"
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
               />
             </div>
@@ -1312,22 +1258,19 @@
               <div class="w-1/3">
                 <label class="block text-xs font-semibold mb-1 text-slate-700"
                   >DDD</label
-                >
-                <input
+                ><input
                   id="p_ddd"
                   type="number"
-                  placeholder="Ex: 32"
                   class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
                 />
               </div>
               <div class="w-2/3">
                 <label class="block text-xs font-semibold mb-1 text-slate-700"
                   >Estado (UF)</label
-                >
-                <input
+                ><input
                   id="p_estado"
                   type="text"
-                  placeholder="Vazio = puxa do DDD"
+                  placeholder="Auto"
                   class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 uppercase"
                   maxlength="2"
                 />
@@ -1336,20 +1279,17 @@
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
                 >Cidade</label
-              >
-              <input
+              ><input
                 id="p_cidade"
                 type="text"
-                placeholder="Ex: Muriaé"
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
               />
             </div>
           </div>
           <div>
             <label class="block text-xs font-semibold mb-1 text-slate-700"
-              >Avaliação da Experiência</label
-            >
-            <select
+              >Avaliação</label
+            ><select
               id="p_aval"
               class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 font-semibold text-amber-600"
             >
@@ -1362,16 +1302,13 @@
           </div>
           <div>
             <label class="block text-xs font-semibold mb-1 text-slate-700"
-              >Observações (Opcional)</label
-            >
-            <input
+              >Observações</label
+            ><input
               id="p_obs"
               type="text"
-              placeholder="Ex: Atende 24h, prefere PIX..."
               class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
             />
           </div>
-
           <div
             class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 mt-3"
           >
@@ -1393,7 +1330,7 @@
       </div>
     </div>
 
-    <!-- MODAL 2: CONNECT SUPABASE -->
+    <!-- MODAL SUPABASE -->
     <div
       id="modalSupabase"
       class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -1409,7 +1346,7 @@
               >Integração em Tempo Real</span
             >
             <h3 class="text-base font-bold text-slate-900">
-              Conectar ao seu Projeto Supabase
+              Conectar Supabase
             </h3>
           </div>
           <button
@@ -1420,46 +1357,36 @@
             ✕
           </button>
         </div>
-
         <p class="text-xs text-slate-600 leading-relaxed">
-          No painel do seu Supabase, acesse
-          <strong>Project Settings → API</strong> e cole abaixo a
-          <strong>Project URL</strong> e a chave <strong>anon / public</strong>.
-          O sistema passará a ler e gravar diretamente nas tabelas que você
-          acabou de criar!
+          Acesse Project Settings → API e cole a Project URL e a chave
+          anon/public.
         </p>
-
         <form id="formSupabaseConfig" class="space-y-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1"
-              >Supabase Project URL</label
-            >
-            <input
+              >URL</label
+            ><input
               id="inputSupabaseUrl"
               type="url"
-              placeholder="https://seu-projeto.supabase.co"
               class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
             />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1"
-              >Supabase Anon Public Key</label
-            >
-            <input
+              >Anon Key</label
+            ><input
               id="inputSupabaseKey"
               type="text"
-              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 font-mono"
             />
           </div>
-
           <div class="flex items-center justify-between pt-2">
             <button
               id="btnDisconnectSupabase"
               type="button"
               class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50"
             >
-              Usar Modo Demonstração Local
+              Modo Local
             </button>
             <div class="flex items-center gap-2">
               <button
@@ -1473,7 +1400,7 @@
                 type="submit"
                 class="px-4 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow"
               >
-                ⚡ Conectar e Sincronizar
+                ⚡ Conectar
               </button>
             </div>
           </div>
@@ -1483,1126 +1410,12 @@
 
     <script>
       const INITIAL_DATA = {
-        reboque: [
-          {
-            data_servico: "2026-10-27",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126502663",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Dona Eusebia/JF",
-            km_rodado: 502.0,
-            pedagio: 142.0,
-            outros_custos: 151.7,
-            valor_servico: 2030.04,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: 224/2026 | Saída 40km: R$ 250.00 | R$/km: 3.42 | Patins: R$ 200.00",
-            despesa_estimada: 825.82,
-            lucro_estimado: 1204.22,
-            nf_vinculada: "224/2026",
-          },
-          {
-            data_servico: "2026-10-23",
-            seguradora: "Europ",
-            sinistro_os: "03197905/01",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Miracema/Miracema",
-            km_rodado: 83.0,
-            pedagio: 0.0,
-            outros_custos: 22.15,
-            valor_servico: 296.44,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pago",
-            observacoes: "NF: 222/2026 | Saída 40km: R$ 158.41 | R$/km: 3.21",
-            despesa_estimada: 110.13,
-            lucro_estimado: 186.31,
-            nf_vinculada: "222/2026",
-          },
-          {
-            data_servico: "2026-10-23",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126498706",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Camanducaia (cassalho)",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 89.68,
-            valor_servico: 1200.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 1200.00",
-            despesa_estimada: 132.08,
-            lucro_estimado: 1067.92,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-23",
-            seguradora: "AWP",
-            sinistro_os: "53483246",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "base/Itaocara",
-            km_rodado: 158.0,
-            pedagio: 0.0,
-            outros_custos: 45.41,
-            valor_servico: 607.6,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 230.00 | R$/km: 3.20",
-            despesa_estimada: 212.89,
-            lucro_estimado: 394.71,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-22",
-            seguradora: "AWP",
-            sinistro_os: "53483246",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Miracema/base",
-            km_rodado: 84.0,
-            pedagio: 0.0,
-            outros_custos: 27.71,
-            valor_servico: 370.8,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 230.00 | R$/km: 3.20",
-            despesa_estimada: 116.75,
-            lucro_estimado: 254.05,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-22",
-            seguradora: "AWP",
-            sinistro_os: "53483246",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Itaocara(veiculo em Miracema)",
-            km_rodado: 157.0,
-            pedagio: 0.0,
-            outros_custos: 45.17,
-            valor_servico: 604.4,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 230.00 | R$/km: 3.20",
-            despesa_estimada: 211.59,
-            lucro_estimado: 392.81,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-22",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126496517",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Tapira/Araxa MG (Marcelo)",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 62.77,
-            valor_servico: 840.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 840.00",
-            despesa_estimada: 105.17,
-            lucro_estimado: 734.83,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-19",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126489153",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Sãoo Jose da Barra/Passos",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 57.54,
-            valor_servico: 770.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: 217/2026 | Saída 40km: R$ 770.00",
-            despesa_estimada: 99.94,
-            lucro_estimado: 670.06,
-            nf_vinculada: "217/2026",
-          },
-          {
-            data_servico: "2026-10-19",
-            seguradora: "AWP",
-            sinistro_os: "53442283",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "base/Campos",
-            km_rodado: 402.0,
-            pedagio: 51.2,
-            outros_custos: 103.75,
-            valor_servico: 1388.4,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 230.00 | R$/km: 3.20",
-            despesa_estimada: 581.07,
-            lucro_estimado: 807.33,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-18",
-            seguradora: "AWP",
-            sinistro_os: "53442283",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Itaocara/base",
-            km_rodado: 160.0,
-            pedagio: 0.0,
-            outros_custos: 45.88,
-            valor_servico: 614.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes:
-              "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 230.00 | R$/km: 3.20",
-            despesa_estimada: 215.48,
-            lucro_estimado: 398.52,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-14",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126480968",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Santana do RiachoMG/BH (Tiago Lagoa Santa)",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 47.08,
-            valor_servico: 630.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: 214/2026 | Saída 40km: R$ 630.00",
-            despesa_estimada: 89.48,
-            lucro_estimado: 540.52,
-            nf_vinculada: "214/2026",
-          },
-          {
-            data_servico: "2026-10-14",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126480968",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Santana do RiachoMG/BH (Tiago Lagoa Santa)",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 119.57,
-            valor_servico: 1600.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: PENDENTE NF / PAGTO | Saída 40km: R$ 1600.00",
-            despesa_estimada: 161.97,
-            lucro_estimado: 1438.03,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-08",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126472194",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Camanducaia/Itau SP Reboque",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 150.65,
-            valor_servico: 2016.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: 210/2026 | Saída 40km: R$ 2016.00",
-            despesa_estimada: 193.05,
-            lucro_estimado: 1822.95,
-            nf_vinculada: "210/2026",
-          },
-          {
-            data_servico: "2026-10-08",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126472194",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "Camanducaia/Itau SP Táxi",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            outros_custos: 83.7,
-            valor_servico: 1120.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: 211/2026 | Saída 40km: R$ 1120.00",
-            despesa_estimada: 126.1,
-            lucro_estimado: 993.9,
-            nf_vinculada: "211/2026",
-          },
-          {
-            data_servico: "2026-10-07",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126470702",
-            veiculo: "Reboque Fábio",
-            placa: "",
-            origem_destino: "SOS JF",
-            km_rodado: 301.0,
-            pedagio: 0.0,
-            outros_custos: 39.01,
-            valor_servico: 522.0,
-            custo_km_aplicado: 1.06,
-            status_pagamento: "Pendente",
-            observacoes: "NF: 209/2026 | R$/km: 2.00",
-            despesa_estimada: 358.07,
-            lucro_estimado: 163.93,
-            nf_vinculada: "209/2026",
-          },
-        ],
-        colaboradores: [
-          {
-            data_servico: "2026-10-17",
-            colaborador: "Luis Cataguases",
-            seguradora: "AWP",
-            sinistro_os: "53435915",
-            veiculo: "Chaveiro",
-            placa: "Chaveiro Cata",
-            valor_recebido: 420.0,
-            valor_pago_colaborador: 120.0,
-            outros_custos: 52.39,
-            status_acerto: "Pendente",
-            observacoes:
-              "PIX Luis dia 19/10/26 no valor de 120,00 | NF: PENDENTE NF / PAGTO",
-            lucro_liquido: 247.61,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-16",
-            colaborador: "Narlei",
-            seguradora: "AWP",
-            sinistro_os: "53428208",
-            veiculo: "Chaveiro",
-            placa: "Chaveiro Leopoldina",
-            valor_recebido: 320.0,
-            valor_pago_colaborador: 80.0,
-            outros_custos: 39.91,
-            status_acerto: "Pendente",
-            observacoes:
-              "PIX Narlei dia 16/10/26 no valor de 80,00 | NF: PENDENTE NF / PAGTO",
-            lucro_liquido: 200.09,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-08",
-            colaborador: "Geovani",
-            seguradora: "Fácil Assist",
-            sinistro_os: "19933615",
-            veiculo: "SOS",
-            placa: "SOS Muriaé",
-            valor_recebido: 198.8,
-            valor_pago_colaborador: 80.0,
-            outros_custos: 24.8,
-            status_acerto: "Pago",
-            observacoes: "PIX Geovani dia 08/10/26 | NF: NF Lote / Quitada",
-            lucro_liquido: 94.0,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-29",
-            colaborador: "Eduardo Leop.",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126455298",
-            veiculo: "Táxi",
-            placa: "Argirita/Mirai",
-            valor_recebido: 446.2,
-            valor_pago_colaborador: 198.9,
-            outros_custos: 55.65,
-            status_acerto: "Pendente",
-            observacoes: "NF: PENDENTE NF / PAGTO",
-            lucro_liquido: 191.65,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-09-23",
-            colaborador: "Eduardo Leop.",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126443495",
-            veiculo: "Táxi",
-            placa: "Bom Jesus da Cahoeira/Japeri RJ",
-            valor_recebido: 1532.8,
-            valor_pago_colaborador: 1165.59,
-            outros_custos: 191.18,
-            status_acerto: "Pago",
-            observacoes: "NF: NF Lote / Quitada",
-            lucro_liquido: 176.03,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-21",
-            colaborador: "Henrique Astolfo Dutra",
-            seguradora: "AWP",
-            sinistro_os: "53206272",
-            veiculo: "Chaveiro",
-            placa: "Dona Euzebia caminhao",
-            valor_recebido: 600.0,
-            valor_pago_colaborador: 300.0,
-            outros_custos: 74.84,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Henrique dia 19/09/26 no valor de 300,00 | NF: 199/2026",
-            lucro_liquido: 225.16,
-            nf_vinculada: "199/2026",
-          },
-          {
-            data_servico: "2026-09-09",
-            colaborador: "Lucas Muriaé",
-            seguradora: "YELUM",
-            sinistro_os: "19856593",
-            veiculo: "Chaveiro",
-            placa: "Muriaé",
-            valor_recebido: 360.0,
-            valor_pago_colaborador: 150.0,
-            outros_custos: 44.9,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Lucas dia 09/09/26 no valor de 150,00 | NF: NF Lote / Quitada",
-            lucro_liquido: 165.1,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-08",
-            colaborador: "Nelio Itaperuna",
-            seguradora: "YELUM",
-            sinistro_os: "19848672",
-            veiculo: "Chaveiro",
-            placa: "Chaveiro Itaperuna",
-            valor_recebido: 593.1,
-            valor_pago_colaborador: 100.0,
-            outros_custos: 73.98,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Nelio dia 08/09/26 no valor de 100,00 | NF: NF Lote / Quitada",
-            lucro_liquido: 419.12,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-08-29",
-            colaborador: "Chileno Chaveiro",
-            seguradora: "AWP",
-            sinistro_os: "53030939",
-            veiculo: "Chaveiro",
-            placa: "Macuco",
-            valor_recebido: 823.7,
-            valor_pago_colaborador: 200.0,
-            outros_custos: 102.74,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Chileno dia 01/09/2026 no valor de 200,00 | NF: 190/2026",
-            lucro_liquido: 520.96,
-            nf_vinculada: "190/2026",
-          },
-          {
-            data_servico: "2026-08-22",
-            colaborador: "Eduardo Leop.",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126373649",
-            veiculo: "Táxi",
-            placa: "Cata/JF",
-            valor_recebido: 670.9,
-            valor_pago_colaborador: 488.4,
-            outros_custos: 83.68,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Eduardo dia 21/09/2026 no valor de 488,40 | NF: NF Lote / Quitada",
-            lucro_liquido: 98.82,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-08-20",
-            colaborador: "Narlei",
-            seguradora: "Fácil Assist",
-            sinistro_os: "19841731",
-            veiculo: "Chaveiro",
-            placa: "Leopoldina",
-            valor_recebido: 312.0,
-            valor_pago_colaborador: 70.0,
-            outros_custos: 38.92,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Narlei dia 20/08/26 no valor de 70,00 | NF: NF Lote / Quitada",
-            lucro_liquido: 203.08,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-08-19",
-            colaborador: "Lucas Campos",
-            seguradora: "AWP",
-            sinistro_os: "52948895",
-            veiculo: "Chaveiro",
-            placa: "Campos RJ",
-            valor_recebido: 960.0,
-            valor_pago_colaborador: 200.0,
-            outros_custos: 119.74,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Lucas dia 19/08/26 no valor de 200,00 | NF: NF Lote / Quitada",
-            lucro_liquido: 640.26,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-08-19",
-            colaborador: "Narlei",
-            seguradora: "AWP",
-            sinistro_os: "52949866",
-            veiculo: "Chaveiro",
-            placa: "Leopoldina",
-            valor_recebido: 334.0,
-            valor_pago_colaborador: 150.0,
-            outros_custos: 41.66,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Narlei dia 19/08/26 no valor de 150,00 | NF: NF Lote / Quitada",
-            lucro_liquido: 142.34,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-08-16",
-            colaborador: "Darlan Muriaé",
-            seguradora: "Europ",
-            sinistro_os: "02786381/01",
-            veiculo: "Chaveiro",
-            placa: "Chaveiro Muriaé",
-            valor_recebido: 347.0,
-            valor_pago_colaborador: 120.0,
-            outros_custos: 43.28,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Darland dia 17/08/26 no valor de 120,00 | NF: 176/2026",
-            lucro_liquido: 183.72,
-            nf_vinculada: "176/2026",
-          },
-          {
-            data_servico: "2026-08-01",
-            colaborador: "Darlan Muriaé",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126348446",
-            veiculo: "SOS",
-            placa: "SOS Muriaé",
-            valor_recebido: 142.0,
-            valor_pago_colaborador: 80.0,
-            outros_custos: 17.71,
-            status_acerto: "Pago",
-            observacoes:
-              "PIX Darlan dia 04/08/26 no valor de 80,00 | NF: 163/2026",
-            lucro_liquido: 44.29,
-            nf_vinculada: "163/2026",
-          },
-        ],
-        mateus: [
-          {
-            data_servico: "2026-10-29",
-            seguradora: "Movida",
-            sinistro_os: "2026142316",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/Leop",
-            km_rodado: 58.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 67.75,
-            valor_servico: 543.2,
-            percentual_comissao: 0.4282,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 232.6,
-            despesa_total: 300.35,
-            lucro_empresa: 242.85,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-28",
-            seguradora: "Movida",
-            sinistro_os: "2026141750",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/Leop",
-            km_rodado: 60.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 47.27,
-            valor_servico: 379.0,
-            percentual_comissao: 0.4906,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 185.94,
-            despesa_total: 233.21,
-            lucro_empresa: 145.79,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-27",
-            seguradora: "Porto Seguro",
-            sinistro_os: "6447510/26",
-            veiculo: "Reboque Mateus",
-            placa: "Leop/JF",
-            km_rodado: 247.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 199.64,
-            valor_servico: 1600.6,
-            percentual_comissao: 0.3966,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 634.8,
-            despesa_total: 834.44,
-            lucro_empresa: 766.16,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-26",
-            seguradora: "Movida",
-            sinistro_os: "2026140654",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 49.52,
-            valor_servico: 397.0,
-            percentual_comissao: 0.3475,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 137.96,
-            despesa_total: 187.48,
-            lucro_empresa: 209.52,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-17",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126487644",
-            veiculo: "Reboque Mateus",
-            placa: "SOS Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 47.02,
-            valor_servico: 377.0,
-            percentual_comissao: 0.2122,
-            observacoes: "Pago: Não | NF: 215/2026",
-            comissao_mateus: 80.0,
-            despesa_total: 127.02,
-            lucro_empresa: 249.98,
-            nf_vinculada: "215/2026",
-          },
-          {
-            data_servico: "2026-10-16",
-            seguradora: "AWP",
-            sinistro_os: "53435339",
-            veiculo: "Reboque Mateus",
-            placa: "Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 103.13,
-            valor_servico: 826.8,
-            percentual_comissao: 0.1668,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 137.91,
-            despesa_total: 241.04,
-            lucro_empresa: 585.76,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-14",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126481302",
-            veiculo: "Reboque Mateus",
-            placa: "Leop/Cata",
-            km_rodado: 52.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 0.0,
-            valor_servico: 0.0,
-            percentual_comissao: 0.3,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 0.0,
-            despesa_total: 0.0,
-            lucro_empresa: 0.0,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-10-10",
-            seguradora: "Porto Seguro",
-            sinistro_os: "6167885/26",
-            veiculo: "Reboque Mateus",
-            placa: "SOS Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 48.57,
-            valor_servico: 389.4,
-            percentual_comissao: 0.3543,
-            observacoes: "Pago: Sim | NF: NF Lote / Quitada",
-            comissao_mateus: 137.96,
-            despesa_total: 186.53,
-            lucro_empresa: 202.87,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-28",
-            seguradora: "Movida",
-            sinistro_os: "2026126465",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/Leop",
-            km_rodado: 58.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 59.07,
-            valor_servico: 473.6,
-            percentual_comissao: 0.4912,
-            observacoes: "Pago: Não | NF: PENDENTE NF / PAGTO",
-            comissao_mateus: 232.63,
-            despesa_total: 291.7,
-            lucro_empresa: 181.9,
-            nf_vinculada: "PENDENTE NF / PAGTO",
-          },
-          {
-            data_servico: "2026-09-23",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126444341",
-            veiculo: "Reboque Mateus",
-            placa: "Pirauba/São João Nepomuceno",
-            km_rodado: 209.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 217.34,
-            valor_servico: 1742.5,
-            percentual_comissao: 0.4047,
-            observacoes: "Pago: Sim | NF: 203/2026",
-            comissao_mateus: 705.19,
-            despesa_total: 922.53,
-            lucro_empresa: 819.97,
-            nf_vinculada: "203/2026",
-          },
-          {
-            data_servico: "2026-09-17",
-            seguradora: "AWP",
-            sinistro_os: "19880698",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 42.61,
-            valor_servico: 341.6,
-            percentual_comissao: 0.2342,
-            observacoes:
-              "Pago: Sim | PIX Mateus dia 07/10/26 no valor de 80,00 | NF: NF Lote / Quitada",
-            comissao_mateus: 80.0,
-            despesa_total: 122.61,
-            lucro_empresa: 218.99,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-08",
-            seguradora: "Brasil Assistência",
-            sinistro_os: "126416341",
-            veiculo: "Reboque Mateus",
-            placa: "Leop/Cata",
-            km_rodado: 48.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 66.11,
-            valor_servico: 530.0,
-            percentual_comissao: 0.294,
-            observacoes:
-              "Pago: Sim | PIX Mateus dia 07/10/26 no valor de 155,80 | NF: 195/2026",
-            comissao_mateus: 155.82,
-            despesa_total: 221.93,
-            lucro_empresa: 308.07,
-            nf_vinculada: "195/2026",
-          },
-          {
-            data_servico: "2026-09-08",
-            seguradora: "AWP",
-            sinistro_os: "53095869",
-            veiculo: "Reboque Mateus",
-            placa: "base/Cata",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 49.09,
-            valor_servico: 393.6,
-            percentual_comissao: 0.343,
-            observacoes:
-              "Pago: Sim | PIX Mateus dia 07/10/26 no valor de 135,00 | NF: NF Lote / Quitada",
-            comissao_mateus: 135.0,
-            despesa_total: 184.09,
-            lucro_empresa: 209.51,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-06",
-            seguradora: "AWP",
-            sinistro_os: "53095869",
-            veiculo: "Reboque Mateus",
-            placa: "Cata/base",
-            km_rodado: 40.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 48.3,
-            valor_servico: 387.2,
-            percentual_comissao: 0.3487,
-            observacoes:
-              "Pago: Sim | PIX Mateus dia 07/10/26 no valor de 135,00 | NF: NF Lote / Quitada",
-            comissao_mateus: 135.02,
-            despesa_total: 183.32,
-            lucro_empresa: 203.88,
-            nf_vinculada: "NF Lote / Quitada",
-          },
-          {
-            data_servico: "2026-09-05",
-            seguradora: "Europ",
-            sinistro_os: "02913089/03",
-            veiculo: "Reboque Mateus",
-            placa: "Dona Eusebia/Astolfo Dutra",
-            km_rodado: 41.0,
-            pedagio: 0.0,
-            combustivel_manutencao: 75.92,
-            valor_servico: 608.68,
-            percentual_comissao: 0.3113,
-            observacoes:
-              "Pago: Sim | PIX Mateus dia 21/09/26 no valor de R$ 189,50 | NF: 193/2026",
-            comissao_mateus: 189.48,
-            despesa_total: 265.4,
-            lucro_empresa: 343.28,
-            nf_vinculada: "193/2026",
-          },
-        ],
-        creditos: [
-          {
-            data_credito: "2026-10-28",
-            seguradora: "Brasil Assistência",
-            numero_nf: "224/2026",
-            valor_bruto: 2030.04,
-            imposto_retido: 151.7,
-            observacoes: "Situação: A Receber | Pedágio: R$ 142.00",
-            valor_liquido: 1878.34,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-25",
-            seguradora: "AWP",
-            numero_nf: "223/2026",
-            valor_bruto: 1582.8,
-            imposto_retido: 118.28,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 1464.52,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-24",
-            seguradora: "Europ",
-            numero_nf: "222/2026",
-            valor_bruto: 296.44,
-            imposto_retido: 22.15,
-            observacoes: "Situação: Pago",
-            valor_liquido: 274.29,
-            situacao: "Pago",
-          },
-          {
-            data_credito: "2026-10-24",
-            seguradora: "Brasil Assistência",
-            numero_nf: "221/2026",
-            valor_bruto: 2520.0,
-            imposto_retido: 188.32,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 2331.68,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-23",
-            seguradora: "Porto Seguro",
-            numero_nf: "220/2026",
-            valor_bruto: 831.47,
-            imposto_retido: 62.14,
-            observacoes: "Situação: Pago",
-            valor_liquido: 769.33,
-            situacao: "Pago",
-          },
-          {
-            data_credito: "2026-10-21",
-            seguradora: "AWP",
-            numero_nf: "218/2026",
-            valor_bruto: 2829.2,
-            imposto_retido: 211.42,
-            observacoes: "Situação: A Receber | Pedágio: R$ 51.20",
-            valor_liquido: 2617.78,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-20",
-            seguradora: "Brasil Assistência",
-            numero_nf: "217/2026",
-            valor_bruto: 770.0,
-            imposto_retido: 57.54,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 712.46,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-19",
-            seguradora: "Brasil Assistência",
-            numero_nf: "216/2026",
-            valor_bruto: 740.0,
-            imposto_retido: 55.3,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 684.7,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-19",
-            seguradora: "Brasil Assistência",
-            numero_nf: "215/2026",
-            valor_bruto: 377.0,
-            imposto_retido: 28.17,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 348.83,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-15",
-            seguradora: "Brasil Assistência",
-            numero_nf: "214/2026",
-            valor_bruto: 630.0,
-            imposto_retido: 47.08,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 582.92,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-15",
-            seguradora: "Brasil Assistência",
-            numero_nf: "213/2026",
-            valor_bruto: 1967.7,
-            imposto_retido: 147.04,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 1820.66,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-13",
-            seguradora: "Brasil Assistência",
-            numero_nf: "212/2026",
-            valor_bruto: 280.0,
-            imposto_retido: 20.92,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 259.08,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-10",
-            seguradora: "Brasil Assistência",
-            numero_nf: "211/2026",
-            valor_bruto: 1120.0,
-            imposto_retido: 83.7,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 1036.3,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-10",
-            seguradora: "Brasil Assistência",
-            numero_nf: "210/2026",
-            valor_bruto: 2016.0,
-            imposto_retido: 150.65,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 1865.35,
-            situacao: "A Receber",
-          },
-          {
-            data_credito: "2026-10-09",
-            seguradora: "Brasil Assistência",
-            numero_nf: "209/2026",
-            valor_bruto: 522.0,
-            imposto_retido: 39.01,
-            observacoes: "Situação: A Receber",
-            valor_liquido: 482.99,
-            situacao: "A Receber",
-          },
-        ],
-        despesas: [
-          {
-            data_despesa: "2026-10-27",
-            categoria: "1. Combustível / Abastecimento",
-            descricao: "Abastecimento",
-            fornecedor: "Auto Socorro Laranjal (Matriz)",
-            valor: 251.35,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse",
-          },
-          {
-            data_despesa: "2026-10-27",
-            categoria: "1. Combustível / Abastecimento",
-            descricao: "Abastecimento",
-            fornecedor: "Auto Socorro Laranjal (Matriz)",
-            valor: 827.08,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse",
-          },
-          {
-            data_despesa: "2026-10-23",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Cassalho Camanducaia",
-            fornecedor: "MEI Fábio",
-            valor: 1200.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Fabio",
-          },
-          {
-            data_despesa: "2026-10-22",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Arthur",
-            fornecedor: "MEI Lettiere",
-            valor: 650.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-22",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Marcelo Araxa",
-            fornecedor: "MEI Lettiere",
-            valor: 550.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-19",
-            categoria: "1. Combustível / Abastecimento",
-            descricao: "Abastecimento",
-            fornecedor: "Auto Socorro Laranjal (Matriz)",
-            valor: 500.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse",
-          },
-          {
-            data_despesa: "2026-10-19",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Xuxu Passos MG",
-            fornecedor: "MEI Lettiere",
-            valor: 450.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-19",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Arthur",
-            fornecedor: "MEI Lettiere",
-            valor: 250.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-14",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Tiago Lagoa Santa",
-            fornecedor: "MEI Fábio",
-            valor: 1550.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Fabio MEI",
-          },
-          {
-            data_despesa: "2026-10-12",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Clebão SOS Cananeia SP",
-            fornecedor: "MEI Fábio",
-            valor: 50.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Fabio MEI",
-          },
-          {
-            data_despesa: "2026-10-09",
-            categoria: "2. Manutenção / Pneus / Frota",
-            descricao: "Carlos Baterias Independencia JF",
-            fornecedor: "MEI Lettiere",
-            valor: 80.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-08",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Casalho Camanducaia",
-            fornecedor: "MEI Lettiere",
-            valor: 1440.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-08",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Dalton Taxi Camanduacaia",
-            fornecedor: "MEI Lettiere",
-            valor: 780.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-06",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Vanderley Bom Repouso",
-            fornecedor: "MEI Lettiere",
-            valor: 600.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Mei Lettiere",
-          },
-          {
-            data_despesa: "2026-10-03",
-            categoria: "4. Repasse a Parceiros / Terceiros",
-            descricao: "Tarcisio Padua",
-            fornecedor: "MEI Lettiere",
-            valor: 250.0,
-            forma_pagamento: "Pago",
-            observacoes: "1. Operacional / Frota / Repasse | Me Lettiere",
-          },
-        ],
-        parceiros_contatos: [
-          {
-            nome: "Auto Elétrica Chico Conse",
-            categoria: "Auto Elétrica / Bateria",
-            telefone: "(31) 3762-1521",
-            ddd: "31",
-            estado: "MG",
-            cidade: "Conselheiro Lafaiete",
-            empresa: "",
-            avaliacao: 5,
-          },
-          {
-            nome: "Marquinho do Viana",
-            categoria: "Auto Elétrica / Bateria",
-            telefone: "(32) 99955-3062",
-            ddd: "32",
-            estado: "MG",
-            cidade: "",
-            empresa: "Viana Elétrica",
-            avaliacao: 4,
-          },
-          {
-            nome: "Maurício Eletricista",
-            categoria: "Auto Elétrica / Bateria",
-            telefone: "(32) 99927-0448",
-            ddd: "32",
-            estado: "MG",
-            cidade: "São João da Sapucaia",
-            empresa: "",
-            avaliacao: 5,
-          },
-          {
-            nome: "Puquinha Auto Elétrica",
-            categoria: "Auto Elétrica / Bateria",
-            telefone: "(22) 99242-8273",
-            ddd: "22",
-            estado: "RJ",
-            cidade: "",
-            empresa: "Auto Elétrica Puquinha",
-            avaliacao: 3,
-          },
-          {
-            nome: "2 Irmãos Ca",
-            categoria: "Táxi / Taxista",
-            telefone: "(32) 99942-1726",
-            ddd: "32",
-            estado: "MG",
-            cidade: "",
-            empresa: "2 Irmãos Corridas",
-            avaliacao: 4,
-          },
-        ],
+        reboque: [],
+        colaboradores: [],
+        mateus: [],
+        creditos: [],
+        despesas: [],
+        parceiros_contatos: [],
       };
 
       const state = {
@@ -2611,52 +1424,17 @@
         statusFilter: "all",
         supabaseClient: null,
         isConnected: false,
-        parceiros_contatos: INITIAL_DATA.parceiros_contatos || [],
-        reboque: INITIAL_DATA.reboque || [],
-        colaboradores: INITIAL_DATA.colaboradores || [],
-        mateus: INITIAL_DATA.mateus || [],
-        creditos: INITIAL_DATA.creditos || [],
-        despesas: INITIAL_DATA.despesas || [],
-        siteQueue: [
-          {
-            id: 101,
-            nome_cliente: "Marcos Vinícius Rocha",
-            telefone_whatsapp: "(32) 99941-2210",
-            veiculo_modelo: "VW Gol 1.6 - HJT-9012",
-            local_origem: "BR-116 Km 755 - Leopoldina/MG",
-            local_destino: "Laranjal/MG",
-            tipo_ocorrencia: "Pane Mecânica / Reboque",
-            status_atendimento: "Novo",
-            criado_em: "2026-11-04 08:45",
-          },
-          {
-            id: 102,
-            nome_cliente: "Transportadora Vale Verde",
-            telefone_whatsapp: "(32) 98811-0933",
-            veiculo_modelo: "Mercedes Sprinter - PQA-3C88",
-            local_origem: "Cataguases/MG",
-            local_destino: "Juiz de Fora/MG",
-            tipo_ocorrencia: "Sinistro / Colisão",
-            status_atendimento: "Em Atendimento",
-            criado_em: "2026-11-03 17:20",
-          },
-          {
-            id: 103,
-            nome_cliente: "Fernanda Oliveira",
-            telefone_whatsapp: "(32) 99104-7781",
-            veiculo_modelo: "Chevrolet Onix - RTY-1A45",
-            local_origem: "Centro - Laranjal/MG",
-            local_destino: "Oficina Local",
-            tipo_ocorrencia: "Recarga de Bateria / SOS",
-            status_atendimento: "Concluído",
-            criado_em: "2026-11-03 11:10",
-          },
-        ],
+        parceiros_contatos: [],
+        reboque: [],
+        colaboradores: [],
+        mateus: [],
+        creditos: [],
+        despesas: [],
+        siteQueue: [],
       };
 
       function formatBRL(val) {
-        const n = Number(val) || 0;
-        return n.toLocaleString("pt-BR", {
+        return (Number(val) || 0).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         });
@@ -2664,18 +1442,17 @@
 
       function showToast(msg) {
         const banner = document.getElementById("toastBanner");
-        const text = document.getElementById("toastMessage");
-        text.textContent = msg;
+        document.getElementById("toastMessage").textContent = msg;
         banner.classList.remove("hidden");
         if (window._toastTimer) clearTimeout(window._toastTimer);
-        window._toastTimer = setTimeout(() => {
-          banner.classList.add("hidden");
-        }, 3800);
+        window._toastTimer = setTimeout(
+          () => banner.classList.add("hidden"),
+          3800,
+        );
       }
 
-      // CHARTS
-      let evolucaoChart = null;
-      let seguradorasChart = null;
+      let evolucaoChart = null,
+        seguradorasChart = null;
 
       function initCharts() {
         const ctx1 = document.getElementById("chartEvolucao");
@@ -2687,13 +1464,13 @@
               labels: ["2021", "2022", "2023", "2024", "2025", "2026"],
               datasets: [
                 {
-                  label: "Faturamento NFs (R$)",
+                  label: "Faturamento",
                   data: [198450, 234120, 268900, 312400, 279800, 286281],
                   backgroundColor: "#10b981",
                   borderRadius: 6,
                 },
                 {
-                  label: "Despesas Totais (R$)",
+                  label: "Despesas",
                   data: [142300, 168900, 195400, 273228, 100523, 93931],
                   backgroundColor: "#f43f5e",
                   borderRadius: 6,
@@ -2705,18 +1482,11 @@
               maintainAspectRatio: false,
               plugins: { legend: { position: "bottom" } },
               scales: {
-                y: {
-                  ticks: {
-                    callback: function (value) {
-                      return "R$ " + value / 1000 + "k";
-                    },
-                  },
-                },
+                y: { ticks: { callback: (v) => "R$ " + v / 1000 + "k" } },
               },
             },
           });
         }
-
         const ctx2 = document.getElementById("chartSeguradoras");
         if (ctx2) {
           if (seguradorasChart) seguradorasChart.destroy();
@@ -2729,7 +1499,7 @@
                 "Porto Seguro",
                 "Movida",
                 "Europ / Fácil Assist",
-                "Particulares / Outros",
+                "Particulares",
               ],
               datasets: [
                 {
@@ -2756,15 +1526,13 @@
 
       function updateDashboardPeriod() {
         const period = document.getElementById("dashPeriodFilter").value;
-
-        // 1. Filtra os dados reais carregados do Supabase pelo ano escolhido
-        const filterByYear = (arr, dateField) => {
-          if (period === "all") return arr || [];
-          return (arr || []).filter((item) => {
-            const dateStr = item[dateField];
-            return dateStr && dateStr.substring(0, 4) === period;
-          });
-        };
+        const filterByYear = (arr, dateField) =>
+          period === "all"
+            ? arr || []
+            : (arr || []).filter(
+                (item) =>
+                  item[dateField] && item[dateField].substring(0, 4) === period,
+              );
 
         const fCred = filterByYear(state.creditos, "data_credito");
         const fReb = filterByYear(state.reboque, "data_servico");
@@ -2772,7 +1540,6 @@
         const fMat = filterByYear(state.mateus, "data_servico");
         const fDesp = filterByYear(state.despesas, "data_despesa");
 
-        // 2. Calcula as somatórias exatas direto do Banco de Dados
         const fatTotal = fCred.reduce(
           (acc, curr) => acc + (Number(curr.valor_bruto) || 0),
           0,
@@ -2780,7 +1547,6 @@
         const fatAberto = fCred
           .filter((c) => c.situacao !== "Pago")
           .reduce((acc, curr) => acc + (Number(curr.valor_bruto) || 0), 0);
-
         const rebTotal = fReb.reduce(
           (acc, curr) => acc + (Number(curr.valor_servico) || 0),
           0,
@@ -2789,7 +1555,6 @@
           (acc, curr) => acc + (Number(curr.km_rodado) || 0),
           0,
         );
-
         const colabCount = fColab.length + fMat.length;
         const colabTotal =
           fColab.reduce((acc, c) => acc + (Number(c.valor_recebido) || 0), 0) +
@@ -2800,7 +1565,6 @@
             0,
           ) +
           fMat.reduce((acc, m) => acc + (Number(m.comissao_mateus) || 0), 0);
-
         const despTotal = fDesp.reduce(
           (acc, curr) => acc + (Number(curr.valor) || 0),
           0,
@@ -2809,7 +1573,6 @@
           .filter((d) => d.forma_pagamento !== "Pago")
           .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
 
-        // 3. Atualiza os Cartões na Tela dinamicamente
         document.getElementById("kpiFatBadge").textContent =
           period === "all" ? "2018–2026" : period;
         document.getElementById("kpiRebBadge").textContent =
@@ -2818,7 +1581,6 @@
           colabCount + " OS";
         document.getElementById("kpiDespBadge").textContent =
           period === "all" ? fDesp.length + " lanç." : period;
-
         document.getElementById("kpiFaturamento").textContent =
           formatBRL(fatTotal);
         document.getElementById("kpiReboque").textContent = formatBRL(rebTotal);
@@ -2826,67 +1588,55 @@
           formatBRL(colabTotal);
         document.getElementById("kpiDespesas").textContent =
           formatBRL(despTotal);
-
         document.getElementById("kpiFaturamentoSub").textContent =
           period === "all"
-            ? fCred.length + " Notas Fiscais emitidas"
+            ? fCred.length + " NFs"
             : "A receber em aberto: " + formatBRL(fatAberto);
         document.getElementById("kpiReboqueSub").textContent =
-          rebKm.toLocaleString("pt-BR") + " km rodados na frota própria";
+          rebKm.toLocaleString("pt-BR") + " km rodados";
         document.getElementById("kpiColaboradoresSub").textContent =
           "Repasse parceiros: " + formatBRL(colabRepasse);
         document.getElementById("kpiDespesasSub").textContent =
           period === "all"
-            ? "Histórico completo unificado"
+            ? "Histórico completo"
             : "Contas a pagar: " + formatBRL(despAPagar);
       }
 
-      // SWITCH TABS
       function switchTab(tabName) {
         state.activeTab = tabName;
         document.querySelectorAll(".nav-tab").forEach((btn) => {
-          if (btn.dataset.tab === tabName) {
-            btn.className =
-              "nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-amber-500 text-slate-950 shadow-sm";
-          } else {
-            btn.className =
-              "nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60";
-          }
+          btn.className =
+            btn.dataset.tab === tabName
+              ? "nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-amber-500 text-slate-950 shadow-sm"
+              : "nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-slate-300 hover:bg-slate-700/60";
         });
-
-        const vDash = document.getElementById("view-dashboard");
-        const vTable = document.getElementById("view-table");
-        const vSite = document.getElementById("view-site");
-
-        vDash.classList.add("hidden");
-        vTable.classList.add("hidden");
-        vSite.classList.add("hidden");
+        document.getElementById("view-dashboard").classList.add("hidden");
+        document.getElementById("view-table").classList.add("hidden");
+        document.getElementById("view-site").classList.add("hidden");
         document.getElementById("view-parceiros").classList.add("hidden");
 
         if (tabName === "dashboard") {
-          vDash.classList.remove("hidden");
+          document.getElementById("view-dashboard").classList.remove("hidden");
         } else if (tabName === "site") {
-          vSite.classList.remove("hidden");
+          document.getElementById("view-site").classList.remove("hidden");
           renderSiteQueue();
         } else if (tabName === "parceiros") {
           document.getElementById("view-parceiros").classList.remove("hidden");
+          renderPartnersDirectory();
         } else {
-          vTable.classList.remove("hidden");
+          document.getElementById("view-table").classList.remove("hidden");
           renderActiveTable();
         }
       }
 
-      // CALCULADORA DE PARCEIROS LOGIC
       function atualizarCalculadoraParceiros() {
         const valColab =
           Number(document.getElementById("calcBaseColab").value) || 0;
         const impAdicional =
           Number(document.getElementById("calcImpostoAdicional").value) || 0;
-
-        const dasAtualPct = 7.4729;
-        const escritorioPct = 5.0;
-        const lucroMinPct = 30.0;
-
+        const dasAtualPct = 7.4729,
+          escritorioPct = 5.0,
+          lucroMinPct = 30.0;
         const baseColab = Math.max(200, valColab);
         const regraAntiga = Math.max(280, baseColab * 1.4);
         const cobrarSemReforma = Math.max(
@@ -2894,14 +1644,12 @@
           (baseColab * (1 + lucroMinPct / 100)) /
             (1 - (dasAtualPct + escritorioPct) / 100),
         );
-
         const aliqProjetadaTotal = dasAtualPct + impAdicional;
         const cobrarComImposto = Math.max(
           280,
           (baseColab * (1 + lucroMinPct / 100)) /
             (1 - (aliqProjetadaTotal + escritorioPct) / 100),
         );
-
         const impostosReais = cobrarComImposto * (aliqProjetadaTotal / 100);
         const custoEscritorioReais = cobrarComImposto * (escritorioPct / 100);
         const lucroLiquidoParceiro =
@@ -2920,14 +1668,22 @@
           formatBRL(lucroLiquidoParceiro);
       }
 
-      document
-        .getElementById("calcBaseColab")
-        .addEventListener("input", atualizarCalculadoraParceiros);
-      document
-        .getElementById("calcImpostoAdicional")
-        .addEventListener("input", atualizarCalculadoraParceiros);
+      function inferirEstadoPorDDD(dddVal) {
+        if (!dddVal) return "";
+        const d = parseInt(dddVal);
+        if (d >= 11 && d <= 19) return "SP";
+        if (d >= 21 && d <= 24) return "RJ";
+        if (d >= 27 && d <= 28) return "ES";
+        if (d >= 31 && d <= 38) return "MG";
+        if (d >= 41 && d <= 46) return "PR";
+        if (d >= 47 && d <= 49) return "SC";
+        if (d >= 51 && d <= 55) return "RS";
+        if (d === 61) return "DF";
+        if (d >= 62 && d <= 64) return "GO";
+        if (d >= 71 && d <= 77) return "BA";
+        return "";
+      }
 
-      // --- LOGIC PARA DIRETÓRIO DE PARCEIROS ---
       function renderPartnersDirectory() {
         const query = document
           .getElementById("filterPartnerBusca")
@@ -2950,10 +1706,8 @@
             (!p.empresa || !p.empresa.toLowerCase().includes(query))
           )
             return false;
-
           if (cat !== "all") {
             const catDb = (p.categoria || "").toLowerCase();
-            // Ajuste especial para Táxi / Taxista lidar com strings bagunçadas do CSV
             if (
               cat === "Táxi" &&
               !catDb.includes("taxi") &&
@@ -2963,7 +1717,6 @@
             if (cat !== "Táxi" && !catDb.includes(cat.toLowerCase()))
               return false;
           }
-
           if (cidade && (!p.cidade || !p.cidade.toLowerCase().includes(cidade)))
             return false;
           if (uf !== "all" && p.estado !== uf) return false;
@@ -2982,8 +1735,6 @@
             const stars =
               "⭐".repeat(p.avaliacao || 1) +
               "☆".repeat(5 - (p.avaliacao || 1));
-
-            // Formatando a Localização: Ex: "Laranjal - MG" ou só "MG" se a cidade estiver vazia
             let loc = "";
             if (p.cidade && p.estado) {
               loc = `${p.cidade} - ${p.estado}`;
@@ -2994,14 +1745,13 @@
             } else {
               loc = "-";
             }
-
             const cleanPhone = String(p.telefone).replace(/\D/g, "");
 
             return `<tr class="hover:bg-slate-50">
              <td class="py-2.5 px-3 font-bold text-slate-900">${p.nome} <br><span class="text-[10px] font-normal text-slate-500 uppercase">${p.empresa || "-"}</span></td>
              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-blue-700">${p.categoria}</span></td>
              <td class="py-2.5 px-3 font-mono font-semibold text-slate-800">${p.telefone}</td>
-             <td class="py-2.5 px-3 text-slate-600 font-medium">${loc.trim() === "" ? "-" : loc}</td>
+             <td class="py-2.5 px-3 text-slate-600 font-medium">${loc}</td>
              <td class="py-2.5 px-3 text-center text-amber-400 text-[11px] tracking-widest" title="Nota: ${p.avaliacao}/5">${stars}</td>
              <td class="py-2.5 px-3 text-center flex items-center justify-center gap-1.5">
                 <a href="https://wa.me/55${cleanPhone}" target="_blank" class="text-[10px] font-bold bg-green-100 text-green-800 border border-green-300 px-2 py-1 rounded hover:bg-green-200 shadow-sm" title="Chamar no WhatsApp">💬 WA</a>
@@ -3012,38 +1762,44 @@
           .join("");
       }
 
-      // Detectar estado pelo DDD
-      function inferirEstadoPorDDD(dddVal) {
-        if (!dddVal) return "";
-        const d = parseInt(dddVal);
-        if (d >= 11 && d <= 19) return "SP";
-        if (d >= 21 && d <= 24) return "RJ";
-        if (d >= 27 && d <= 28) return "ES";
-        if (d >= 31 && d <= 38) return "MG";
-        if (d >= 41 && d <= 46) return "PR";
-        if (d >= 47 && d <= 49) return "SC";
-        if (d >= 51 && d <= 55) return "RS";
-        if (d >= 61 && d <= 61) return "DF";
-        if (d >= 62 && d <= 64) return "GO";
-        if (d >= 71 && d <= 77) return "BA";
-        return "";
-      }
-
       function renderActiveTable() {
         const tab = state.activeTab;
         const q = state.searchQuery.toLowerCase().trim();
         const stFilter = state.statusFilter;
-        
-        // Novos Filtros de Data
-        const dtStart = document.getElementById("dateStartFilter") ? document.getElementById("dateStartFilter").value : "";
-        const dtEnd = document.getElementById("dateEndFilter") ? document.getElementById("dateEndFilter").value : "";
+
+        const dtStart = document.getElementById("dateStartFilter")
+          ? document.getElementById("dateStartFilter").value
+          : "";
+        const dtEnd = document.getElementById("dateEndFilter")
+          ? document.getElementById("dateEndFilter").value
+          : "";
 
         const meta = {
-          reboque: { title: "Aba 1: Reboque Fábio", badge: "public.reboque_fabio", desc: "Clique no status para alterar. Use o botão Editar para ajustar KMs e Valores." },
-          colaboradores: { title: "Aba 2: Colaboradores", badge: "public.servicos_colaboradores", desc: "Clique no status para alterar. Use o botão Editar para corrigir parceiros." },
-          mateus: { title: "Aba 3: Parceiro Mateus", badge: "public.servicos_mateus", desc: "Controle de repasses do Mateus." },
-          creditos: { title: "Aba 4: Créditos e Notas Fiscais", badge: "public.creditos_faturamento", desc: "Clique direto na Situação (Amarela) para mudar para Pago (Azul) ou Cancelada (Vermelho)." },
-          despesas: { title: "Aba 5: Despesas Operacionais", badge: "public.despesas_gerais", desc: "Clique no status para marcar conta como Paga." },
+          reboque: {
+            title: "Aba 1: Reboque Fábio",
+            badge: "public.reboque_fabio",
+            desc: "Clique no status para alterar. Use o botão Editar para ajustar KMs e Valores.",
+          },
+          colaboradores: {
+            title: "Aba 2: Colaboradores",
+            badge: "public.servicos_colaboradores",
+            desc: "Clique no status para alterar. Use o botão Editar para corrigir parceiros.",
+          },
+          mateus: {
+            title: "Aba 3: Parceiro Mateus",
+            badge: "public.servicos_mateus",
+            desc: "Controle de repasses do Mateus.",
+          },
+          creditos: {
+            title: "Aba 4: Créditos e Notas Fiscais",
+            badge: "public.creditos_faturamento",
+            desc: "Clique direto na Situação para mudar o Status (Pago/A Receber/Cancelada).",
+          },
+          despesas: {
+            title: "Aba 5: Despesas Operacionais",
+            badge: "public.despesas_gerais",
+            desc: "Clique no status para marcar conta como Paga.",
+          },
         }[tab];
 
         if (!meta) return;
@@ -3053,200 +1809,139 @@
 
         const head = document.getElementById("tableHead");
         const body = document.getElementById("tableBody");
-        
+
         const rows = (state[tab] || []).filter((item) => {
           const textBlob = JSON.stringify(item).toLowerCase();
           if (q && !textBlob.includes(q)) return false;
-          
-          let dateField = item.data_servico || item.data_credito || item.data_despesa;
+
+          let dateField =
+            item.data_servico || item.data_credito || item.data_despesa;
           if (dtStart && dateField < dtStart) return false;
           if (dtEnd && dateField > dtEnd) return false;
 
-          let itemStatus = item.status_pagamento || item.status_acerto || item.situacao || item.forma_pagamento || "Pago";
+          let itemStatus =
+            item.status_pagamento ||
+            item.status_acerto ||
+            item.situacao ||
+            item.forma_pagamento ||
+            "Pago";
           if (stFilter !== "all") {
             if (stFilter === "Pago" && itemStatus !== "Pago") return false;
-            if (stFilter === "Cancelada" && itemStatus.toLowerCase() !== "cancelada") return false;
-            if (stFilter === "Pendente" && (itemStatus === "Pago" || itemStatus.toLowerCase() === "cancelada")) return false;
+            if (
+              stFilter === "Cancelada" &&
+              itemStatus.toLowerCase() !== "cancelada"
+            )
+              return false;
+            if (
+              stFilter === "Pendente" &&
+              (itemStatus === "Pago" ||
+                itemStatus.toLowerCase() === "cancelada")
+            )
+              return false;
           }
           return true;
         });
 
-        let sumBruto = 0;
-        let sumLucro = 0;
+        let sumBruto = 0,
+          sumLucro = 0;
 
         if (tab === "reboque") {
           head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Rota</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Status (Click)</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
-              sumBruto += Number(r.valor_servico) || 0; sumLucro += Number(r.lucro_estimado) || 0;
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor_servico) || 0;
+              sumLucro += Number(r.lucro_estimado) || 0;
               const sit = r.status_pagamento || "Pendente";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono text-slate-600">${r.sinistro_os||"-"}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-slate-600">${r.origem_destino||"-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_estimado)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
-            }).join("");
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono text-slate-600">${r.sinistro_os || "-"}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-slate-600">${r.origem_destino || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_estimado)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+            })
+            .join("");
         } else if (tab === "colaboradores") {
           head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Colaborador</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Pago Colab.</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
-              sumBruto += Number(r.valor_recebido) || 0; sumLucro += Number(r.lucro_liquido) || 0;
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor_recebido) || 0;
+              sumLucro += Number(r.lucro_liquido) || 0;
               const sit = r.status_acerto || "Pendente";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer";
               return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.colaborador}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_recebido)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.valor_pago_colaborador)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
-            }).join("");
+            })
+            .join("");
         } else if (tab === "mateus") {
           head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS / Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
-              sumBruto += Number(r.valor_servico) || 0; sumLucro += Number(r.lucro_empresa) || 0;
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.sinistro_os||""} - ${r.seguradora}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
-            }).join("");
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor_servico) || 0;
+              sumLucro += Number(r.lucro_empresa) || 0;
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.sinistro_os || ""} - ${r.seguradora}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+            })
+            .join("");
         } else if (tab === "creditos") {
           head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Nº NF</th><th class="py-3 px-3 text-right">Bruto NF</th><th class="py-3 px-3 text-right bg-emerald-950/60">Líquido (Auto)</th><th class="py-3 px-3 text-center">Situação (Click)</th><th class="py-3 px-3">Extra</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
-              sumBruto += Number(r.valor_bruto) || 0; sumLucro += Number(r.valor_liquido) || 0;
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor_bruto) || 0;
+              sumLucro += Number(r.valor_liquido) || 0;
               let sit = r.situacao || "A Receber";
-              let sitBadge = sit === "Pago" ? "bg-blue-100 text-blue-800" : (sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-yellow-100 text-yellow-800");
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_credito}</td><td class="py-2.5 px-3 font-bold">${r.seguradora}</td><td class="py-2.5 px-3 font-mono">${r.numero_nf || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-75 transition border ${sitBadge}">${sit}</span></td><td class="py-2.5 px-3 text-slate-500 text-[11px] truncate max-w-[100px]">${r.observacoes || "-"}</td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
-            }).join("");
+              let sitBadge =
+                sit === "Pago"
+                  ? "bg-blue-100 text-blue-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-yellow-100 text-yellow-800";
+              let obsClean = r.observacoes || "-";
+              if (obsClean.startsWith("Situação: "))
+                obsClean = obsClean.split(" | ")[1] || "-";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_credito}</td><td class="py-2.5 px-3 font-bold">${r.seguradora}</td><td class="py-2.5 px-3 font-mono">${r.numero_nf || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-75 transition border ${sitBadge}">${sit}</span></td><td class="py-2.5 px-3 text-slate-500 text-[11px] truncate max-w-[100px]">${obsClean}</td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+            })
+            .join("");
         } else if (tab === "despesas") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Categoria</th><th class="py-3 px-3">Descrição / Pagador</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
-              sumBruto += Number(r.valor) || 0; sumLucro += Number(r.valor) || 0;
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Categoria</th><th class="py-3 px-3">Descrição / Pagador</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status (Click)</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor) || 0;
+              sumLucro += Number(r.valor) || 0;
               const sit = r.forma_pagamento || "Pago";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_despesa}</td><td class="py-2.5 px-3 font-semibold">${r.categoria}</td><td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor||""}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
-            }).join("");
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_despesa}</td><td class="py-2.5 px-3 font-semibold">${r.categoria}</td><td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor || ""}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+            })
+            .join("");
         }
 
-        document.getElementById("sumVal1").textContent = rows.length + " registros";
+        document.getElementById("sumVal1").textContent =
+          rows.length + " registros";
         document.getElementById("sumVal2").textContent = formatBRL(sumBruto);
         document.getElementById("sumVal3").textContent = formatBRL(sumLucro);
       }
 
-      // RENDER SITE QUEUE
-      function renderSiteQueue() {
-        const container = document.getElementById("siteQueueList");
-        document.getElementById("count-site").textContent =
-          state.siteQueue.length;
-        container.innerHTML = state.siteQueue
-          .map(
-            (item) => `
-        <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-xs text-slate-900">${item.nome_cliente}</span>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">${item.tipo_ocorrencia}</span>
-            </div>
-            <p class="text-xs text-slate-600 mt-0.5">${item.veiculo_modelo || ""} • <strong>Origem:</strong> ${item.local_origem} → ${item.local_destino || "A definir"}</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">WhatsApp: ${item.telefone_whatsapp} • ${item.criado_em}</p>
-          </div>
-          <button type="button" data-convert-id="${item.id}" class="btn-convert-os px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm">
-            ＋ Gerar OS no Topo
-          </button>
-        </div>
-      `,
-          )
-          .join("");
-
-        document.querySelectorAll(".btn-convert-os").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const id = Number(btn.getAttribute("data-convert-id"));
-            const found = state.siteQueue.find((x) => x.id === id);
-            if (!found) return;
-            const today = new Date().toISOString().slice(0, 10);
-            const newReb = {
-              data_servico: today,
-              sinistro_os: "SITE-" + found.id,
-              seguradora: "Particular / Site",
-              origem_destino:
-                found.local_origem + " -> " + (found.local_destino || "Base"),
-              km_rodado: 45,
-              pedagio: 0,
-              outros_custos: 18.5,
-              valor_servico: 280,
-              custo_km_aplicado: 1.06,
-              despesa_estimada: 66.2,
-              lucro_estimado: 213.8,
-              status_pagamento: "Pendente",
-              observacoes:
-                "Cliente Site: " +
-                found.nome_cliente +
-                " (" +
-                found.telefone_whatsapp +
-                ")",
-            };
-            state.reboque.unshift(newReb);
-            found.status_atendimento = "Convertido em OS";
-            showToast(
-              "Chamado do site convertido em OS na 1ª linha da aba Reboque Fábio!",
-            );
-            switchTab("reboque");
-          });
-        });
-      }
-
-      // QUICK ADD MODAL DYNAMIC FORM
       function buildQuickAddFields(tab) {
         const today = new Date().toISOString().slice(0, 10);
         const container = document.getElementById("dynamicFormFields");
-        const title = document.getElementById("modalAddTitle");
-
         if (tab === "reboque") {
-          title.textContent = "Nova Linha no Topo — Reboque Fábio";
-          container.innerHTML = `
-          <div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Nº Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 126509981" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Destino / Rota *</label><input id="f_rota" type="text" placeholder="Ex: Laranjal / Juiz de Fora" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" placeholder="Ex: 120" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" placeholder="Ex: 18.40" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 640.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Assistência Paga?</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Não (A Receber)</option><option value="Pago">Sim (Pago)</option></select></div>
-        `;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 126509981" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota *</label><input id="f_rota" type="text" placeholder="Ex: Laranjal / Juiz de Fora" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Não (A Receber)</option><option value="Pago">Sim (Pago)</option></select></div>`;
         } else if (tab === "colaboradores") {
-          title.textContent = "Nova Linha no Topo — Colaboradores";
-          container.innerHTML = `
-          <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" placeholder="Ex: Luis Cataguases" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" placeholder="Ex: SOS / Reboque" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: AWP" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" placeholder="Ex: Cataguases / Miraí" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 450.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" placeholder="Ex: 180.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Status Acerto</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select></div>
-        `;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select></div>`;
         } else if (tab === "mateus") {
-          title.textContent = "Nova Linha no Topo — Parceiro Mateus";
-          container.innerHTML = `
-          <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 2026149001" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Movida" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" placeholder="Ex: Cataguases / Leopoldina" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" placeholder="Ex: 65" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 520.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Repasse Mateus (R$)</label><input id="f_pago_colab" type="number" step="0.01" placeholder="Ex: 220.00" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-        `;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">OS *</label><input id="f_os" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seg. (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Repasse (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         } else if (tab === "creditos") {
-          title.textContent = "Nova Linha no Topo — Créditos e Notas Fiscais";
-          container.innerHTML = `
-          <div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Seguradora / Fonte *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Número da NF *</label><input id="f_nf" type="text" placeholder="Ex: 225/2026" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor Bruto NF (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 3450.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>
-          <div><label class="block text-xs font-semibold mb-1">Observações / Extra</label><input id="f_obs_extra" type="text" placeholder="Ex: Retenção de pedágio..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-        `;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         } else if (tab === "despesas") {
-          title.textContent = "Nova Linha no Topo — Despesas Gerais";
-          container.innerHTML = `
-          <div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Categoria Gerencial *</label><input id="f_cat" type="text" placeholder="Ex: 1. Combustível / Abastecimento" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Descrição / Favorecido *</label><input id="f_desc" type="text" placeholder="Ex: Abastecimento Diesel S10" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" placeholder="Ex: Auto Socorro Laranjal (Matriz)" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 480.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pago">Pago</option><option value="A Pagar">A Pagar</option></select></div>
-        `;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><input id="f_cat" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pago">Pago</option><option value="A Pagar">A Pagar</option></select></div>`;
         }
-
-        document.querySelectorAll(".calc-input").forEach((inp) => {
-          inp.addEventListener("input", updateLiveFormulaPreview);
-        });
+        document
+          .querySelectorAll(".calc-input")
+          .forEach((inp) =>
+            inp.addEventListener("input", updateLiveFormulaPreview),
+          );
         updateLiveFormulaPreview();
       }
 
@@ -3258,49 +1953,354 @@
         const pagoColab = Number(
           document.getElementById("f_pago_colab")?.value || 0,
         );
-
         const explainEl = document.getElementById("liveFormulaExplain");
         const resultEl = document.getElementById("liveFormulaResult");
 
         if (tab === "reboque") {
           const das = +(val * 0.0747).toFixed(2);
           const desp = +(km * 1.06 + ped + das).toFixed(2);
-          const lucro = +(val - desp).toFixed(2);
-          explainEl.textContent = `Despesa (KM×1,06 + Pedágio + DAS 7,47%): ${formatBRL(desp)}`;
-          resultEl.textContent = `Lucro: ${formatBRL(lucro)}`;
-        } else if (tab === "colaboradores") {
+          explainEl.textContent = `Despesa (KM×1,06 + Pedágio + DAS): ${formatBRL(desp)}`;
+          resultEl.textContent = `Lucro: ${formatBRL(+(val - desp).toFixed(2))}`;
+        } else if (tab === "colaboradores" || tab === "mateus") {
           const das = +(val * 0.1247).toFixed(2);
-          const lucro = +(val - pagoColab - das).toFixed(2);
-          explainEl.textContent = `DAS + Escritório estimado: ${formatBRL(das)}`;
-          resultEl.textContent = `Lucro Líquido: ${formatBRL(lucro)}`;
-        } else if (tab === "mateus") {
-          const das = +(val * 0.1247).toFixed(2);
-          const lucro = +(val - pagoColab - das).toFixed(2);
-          explainEl.textContent = `Repasse Mateus (${formatBRL(pagoColab)}) + DAS (${formatBRL(das)})`;
-          resultEl.textContent = `Lucro Empresa: ${formatBRL(lucro)}`;
+          explainEl.textContent = `Repasse (${formatBRL(pagoColab)}) + DAS (${formatBRL(das)})`;
+          resultEl.textContent = `Lucro: ${formatBRL(+(val - pagoColab - das).toFixed(2))}`;
         } else if (tab === "creditos") {
           const imp = +(val * 0.0747).toFixed(2);
-          const liq = +(val - imp).toFixed(2);
-          explainEl.textContent = `Impostos apurados (7,47%): ${formatBRL(imp)}`;
-          resultEl.textContent = `Líquido NF: ${formatBRL(liq)}`;
+          explainEl.textContent = `Impostos (7,47%): ${formatBRL(imp)}`;
+          resultEl.textContent = `Líquido: ${formatBRL(+(val - imp).toFixed(2))}`;
         } else {
-          explainEl.textContent = `Lançamento direto no fluxo de caixa`;
+          explainEl.textContent = `Lançamento direto`;
           resultEl.textContent = formatBRL(val);
         }
       }
 
-      // INITIALIZE EVENTS
       window.addEventListener("DOMContentLoaded", () => {
         initCharts();
-
         document
           .getElementById("dashPeriodFilter")
           .addEventListener("change", updateDashboardPeriod);
+        document
+          .getElementById("calcBaseColab")
+          .addEventListener("input", atualizarCalculadoraParceiros);
+        document
+          .getElementById("calcImpostoAdicional")
+          .addEventListener("input", atualizarCalculadoraParceiros);
 
-        // Abaixo, note o fechamento }); que estava faltando
-        document.querySelectorAll(".nav-tab").forEach((btn) => {
-          btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+        document
+          .querySelectorAll(".nav-tab")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => switchTab(btn.dataset.tab)),
+          );
+
+        // EVENTOS GERAIS ABA TABELAS E IMPRESSÃO
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", (e) => {
+            state.searchQuery = e.target.value;
+            renderActiveTable();
+          });
+        ["dateStartFilter", "dateEndFilter", "statusFilter"].forEach((id) => {
+          if (document.getElementById(id))
+            document
+              .getElementById(id)
+              .addEventListener("change", renderActiveTable);
         });
+        document
+          .getElementById("btnPrintTable")
+          .addEventListener("click", () => window.print());
+
+        document
+          .getElementById("btnAddRowTab")
+          .addEventListener("click", () => {
+            document.getElementById("edit_row_id").value = "";
+            document.getElementById("modalAddTitle").textContent =
+              "Novo Lançamento";
+            document.getElementById("modalTargetTab").value = state.activeTab;
+            buildQuickAddFields(state.activeTab);
+            document.getElementById("modalQuickAdd").classList.remove("hidden");
+          });
+
+        document
+          .getElementById("btnCloseQuickAdd")
+          .addEventListener("click", () =>
+            document.getElementById("modalQuickAdd").classList.add("hidden"),
+          );
+        document
+          .getElementById("btnCancelQuickAdd")
+          .addEventListener("click", () =>
+            document.getElementById("modalQuickAdd").classList.add("hidden"),
+          );
+        document
+          .getElementById("modalTargetTab")
+          .addEventListener("change", (e) =>
+            buildQuickAddFields(e.target.value),
+          );
+
+        // TABELA: CLIQUE STATUS E EDITAR
+        document
+          .getElementById("tableBody")
+          .addEventListener("click", async (e) => {
+            const badge = e.target.closest(".inline-status-toggle");
+            if (badge) {
+              const id = badge.getAttribute("data-id");
+              const row = state[state.activeTab].find(
+                (r) => String(r.id) === String(id),
+              );
+              if (!row) return;
+
+              let tblName, fldName, newVal;
+              if (state.activeTab === "creditos") {
+                tblName = "creditos_faturamento";
+                fldName = "situacao";
+                const curr = row.situacao || "A Receber";
+                newVal =
+                  curr === "A Receber"
+                    ? "Pago"
+                    : curr === "Pago"
+                      ? "Cancelada"
+                      : "A Receber";
+              } else if (state.activeTab === "reboque") {
+                tblName = "reboque_fabio";
+                fldName = "status_pagamento";
+                newVal = row.status_pagamento === "Pago" ? "Pendente" : "Pago";
+              } else if (state.activeTab === "colaboradores") {
+                tblName = "servicos_colaboradores";
+                fldName = "status_acerto";
+                newVal = row.status_acerto === "Pago" ? "Pendente" : "Pago";
+              } else if (state.activeTab === "despesas") {
+                tblName = "despesas_gerais";
+                fldName = "forma_pagamento";
+                newVal = row.forma_pagamento === "Pago" ? "A Pagar" : "Pago";
+              }
+              if (state.supabaseClient && tblName) {
+                const py = {};
+                py[fldName] = newVal;
+                await state.supabaseClient
+                  .from(tblName)
+                  .update(py)
+                  .eq("id", id);
+              }
+              row[fldName] = newVal;
+              renderActiveTable();
+              showToast("Status atualizado!");
+              return;
+            }
+
+            const btnEdit = e.target.closest(".btn-edit-op");
+            if (btnEdit) {
+              const id = btnEdit.getAttribute("data-id");
+              const row = state[state.activeTab].find(
+                (r) => String(r.id) === String(id),
+              );
+              if (!row) return;
+
+              document.getElementById("edit_row_id").value = id;
+              document.getElementById("modalTargetTab").value = state.activeTab;
+              buildQuickAddFields(state.activeTab);
+              document.getElementById("modalAddTitle").textContent =
+                "✏️ Editar Lançamento";
+
+              setTimeout(() => {
+                if (state.activeTab === "reboque") {
+                  document.getElementById("f_data").value = row.data_servico;
+                  document.getElementById("f_os").value = row.sinistro_os;
+                  document.getElementById("f_seg").value = row.seguradora;
+                  document.getElementById("f_rota").value = row.origem_destino;
+                  document.getElementById("f_km").value = row.km_rodado;
+                  document.getElementById("f_pedagio").value = row.pedagio;
+                  document.getElementById("f_valor").value = row.valor_servico;
+                  document.getElementById("f_status").value =
+                    row.status_pagamento || "Pendente";
+                } else if (state.activeTab === "colaboradores") {
+                  document.getElementById("f_data").value = row.data_servico;
+                  document.getElementById("f_colab").value = row.colaborador;
+                  document.getElementById("f_tipo").value = row.veiculo;
+                  document.getElementById("f_seg").value = row.seguradora;
+                  document.getElementById("f_rota").value = row.placa;
+                  document.getElementById("f_valor").value = row.valor_recebido;
+                  document.getElementById("f_pago_colab").value =
+                    row.valor_pago_colaborador;
+                  document.getElementById("f_status").value =
+                    row.status_acerto || "Pendente";
+                } else if (state.activeTab === "mateus") {
+                  document.getElementById("f_data").value = row.data_servico;
+                  document.getElementById("f_os").value = row.sinistro_os;
+                  document.getElementById("f_seg").value = row.seguradora;
+                  document.getElementById("f_rota").value = row.placa;
+                  document.getElementById("f_km").value = row.km_rodado;
+                  document.getElementById("f_valor").value = row.valor_servico;
+                  document.getElementById("f_pago_colab").value =
+                    row.comissao_mateus;
+                } else if (state.activeTab === "creditos") {
+                  document.getElementById("f_data").value = row.data_credito;
+                  document.getElementById("f_seg").value = row.seguradora;
+                  document.getElementById("f_nf").value = row.numero_nf;
+                  document.getElementById("f_valor").value = row.valor_bruto;
+                  document.getElementById("f_status").value =
+                    row.situacao || "A Receber";
+                  document.getElementById("f_obs_extra").value =
+                    row.observacoes || "";
+                } else if (state.activeTab === "despesas") {
+                  document.getElementById("f_data").value = row.data_despesa;
+                  document.getElementById("f_cat").value = row.categoria;
+                  document.getElementById("f_desc").value = row.descricao;
+                  document.getElementById("f_forn").value = row.fornecedor;
+                  document.getElementById("f_valor").value = row.valor;
+                  document.getElementById("f_status").value =
+                    row.forma_pagamento || "Pago";
+                }
+                updateLiveFormulaPreview();
+              }, 50);
+              document
+                .getElementById("modalQuickAdd")
+                .classList.remove("hidden");
+            }
+          });
+
+        document
+          .getElementById("formQuickAdd")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const tab = document.getElementById("modalTargetTab").value;
+            const editId = document.getElementById("edit_row_id").value;
+            const dataStr = document.getElementById("f_data")?.value;
+            const val = Number(document.getElementById("f_valor")?.value || 0);
+
+            let payload = {},
+              tbl = "",
+              calcLucro = 0,
+              memoryPayload = {};
+            if (tab === "reboque") {
+              tbl = "reboque_fabio";
+              const km = Number(document.getElementById("f_km")?.value || 0),
+                ped = Number(document.getElementById("f_pedagio")?.value || 0),
+                das = +(val * 0.0747).toFixed(2),
+                desp = +(km * 1.06 + ped + das).toFixed(2);
+              calcLucro = +(val - desp).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                seguradora: document.getElementById("f_seg").value,
+                sinistro_os: document.getElementById("f_os").value,
+                origem_destino: document.getElementById("f_rota").value,
+                km_rodado: km,
+                pedagio: ped,
+                outros_custos: das,
+                valor_servico: val,
+                status_pagamento: document.getElementById("f_status").value,
+              };
+              memoryPayload = {
+                ...payload,
+                despesa_estimada: desp,
+                lucro_estimado: calcLucro,
+              };
+            } else if (tab === "colaboradores") {
+              tbl = "servicos_colaboradores";
+              const pagoCol = Number(
+                  document.getElementById("f_pago_colab")?.value || 0,
+                ),
+                das = +(val * 0.1247).toFixed(2);
+              calcLucro = +(val - pagoCol - das).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                colaborador: document.getElementById("f_colab").value,
+                veiculo: document.getElementById("f_tipo").value,
+                seguradora: document.getElementById("f_seg").value,
+                placa: document.getElementById("f_rota").value,
+                valor_recebido: val,
+                valor_pago_colaborador: pagoCol,
+                status_acerto: document.getElementById("f_status").value,
+              };
+              memoryPayload = { ...payload, lucro_liquido: calcLucro };
+            } else if (tab === "mateus") {
+              tbl = "servicos_mateus";
+              const km = Number(document.getElementById("f_km")?.value || 0),
+                repasse = Number(
+                  document.getElementById("f_pago_colab")?.value || 0,
+                ),
+                das = +(val * 0.1247).toFixed(2);
+              calcLucro = +(val - repasse - das).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                sinistro_os: document.getElementById("f_os").value,
+                seguradora: document.getElementById("f_seg").value,
+                placa: document.getElementById("f_rota").value,
+                km_rodado: km,
+                valor_servico: val,
+                combustivel_manutencao: das,
+              };
+              memoryPayload = {
+                ...payload,
+                comissao_mateus: repasse,
+                lucro_empresa: calcLucro,
+              };
+            } else if (tab === "creditos") {
+              tbl = "creditos_faturamento";
+              const imp = +(val * 0.0747).toFixed(2);
+              payload = {
+                data_credito: dataStr,
+                seguradora: document.getElementById("f_seg").value,
+                numero_nf: document.getElementById("f_nf").value,
+                valor_bruto: val,
+                imposto_retido: imp,
+                situacao: document.getElementById("f_status").value,
+                observacoes: document.getElementById("f_obs_extra")?.value,
+              };
+              memoryPayload = {
+                ...payload,
+                valor_liquido: +(val - imp).toFixed(2),
+              };
+            } else if (tab === "despesas") {
+              tbl = "despesas_gerais";
+              payload = {
+                data_despesa: dataStr,
+                categoria: document.getElementById("f_cat").value,
+                descricao: document.getElementById("f_desc").value,
+                fornecedor: document.getElementById("f_forn").value,
+                valor: val,
+                forma_pagamento: document.getElementById("f_status").value,
+              };
+              memoryPayload = { ...payload };
+            }
+
+            if (state.supabaseClient) {
+              if (editId) {
+                await state.supabaseClient
+                  .from(tbl)
+                  .update(payload)
+                  .eq("id", editId);
+                const idx = state[tab].findIndex(
+                  (x) => String(x.id) === String(editId),
+                );
+                if (idx > -1)
+                  state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+                showToast("✔ Atualizado com sucesso!");
+              } else {
+                const { data } = await state.supabaseClient
+                  .from(tbl)
+                  .insert([payload])
+                  .select();
+                const newR =
+                  data && data.length > 0
+                    ? data[0]
+                    : { ...memoryPayload, id: Date.now() };
+                state[tab].unshift(newR);
+                showToast("✔ Novo registro inserido!");
+              }
+            } else {
+              if (editId) {
+                const idx = state[tab].findIndex(
+                  (x) => String(x.id) === String(editId),
+                );
+                if (idx > -1)
+                  state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+              } else {
+                state[tab].unshift({ ...memoryPayload, id: Date.now() });
+              }
+            }
+            document.getElementById("modalQuickAdd").classList.add("hidden");
+            renderActiveTable();
+          });
 
         // =======================================================
         // EVENTOS ABA PARCEIROS
@@ -3319,17 +2319,7 @@
             .getElementById(id)
             .addEventListener("change", renderPartnersDirectory);
         });
-        [
-          "filterPartnerCategoria",
-          "filterPartnerUF",
-          "filterPartnerRating",
-        ].forEach((id) => {
-          document
-            .getElementById(id)
-            .addEventListener("change", renderPartnersDirectory);
-        });
 
-        // MODAL NOVO PARCEIRO / EDITAR PARCEIRO
         document
           .getElementById("btnOpenAddPartner")
           .addEventListener("click", () => {
@@ -3344,7 +2334,6 @@
               .getElementById("modalAddPartner")
               .classList.remove("hidden");
           });
-
         document
           .getElementById("btnClosePartnerModal")
           .addEventListener("click", () =>
@@ -3356,20 +2345,16 @@
             document.getElementById("modalAddPartner").classList.add("hidden"),
           );
 
-        // Captura cliques no botão Editar dentro da tabela (Event Delegation)
         document
           .getElementById("partnerTableBody")
           .addEventListener("click", (e) => {
             const btn = e.target.closest(".btn-edit-partner");
             if (!btn) return;
-
             const id = btn.getAttribute("data-edit-id");
             const partner = state.parceiros_contatos.find(
               (p) => String(p.id) === String(id),
             );
             if (!partner) return;
-
-            // Preenche os campos com os dados existentes
             document.getElementById("p_id").value = partner.id;
             document.getElementById("p_nome").value = partner.nome || "";
             document.getElementById("p_empresa").value = partner.empresa || "";
@@ -3381,8 +2366,6 @@
             document.getElementById("p_cidade").value = partner.cidade || "";
             document.getElementById("p_aval").value = partner.avaliacao || "5";
             document.getElementById("p_obs").value = partner.observacoes || "";
-
-            // Muda o estilo visual do modal para "Edição"
             document.getElementById("modalPartnerTitle").textContent =
               "✏️ Editar Contato Existente";
             document.querySelector(
@@ -3404,7 +2387,7 @@
               .value.toUpperCase();
             if (!estInp && dddInp) {
               estInp = inferirEstadoPorDDD(dddInp);
-            } // Lógica Inteligente
+            }
 
             const payload = {
               nome: document.getElementById("p_nome").value,
@@ -3420,7 +2403,6 @@
 
             if (state.supabaseClient) {
               if (editId) {
-                // ATUALIZAR (UPDATE)
                 await state.supabaseClient
                   .from("parceiros_contatos")
                   .update(payload)
@@ -3433,9 +2415,8 @@
                     ...state.parceiros_contatos[idx],
                     ...payload,
                   };
-                showToast("✔ Contato atualizado com sucesso no Supabase!");
+                showToast("✔ Contato atualizado!");
               } else {
-                // CADASTRAR NOVO (INSERT)
                 const { data } = await state.supabaseClient
                   .from("parceiros_contatos")
                   .insert([payload])
@@ -3445,10 +2426,9 @@
                     ? data[0]
                     : { ...payload, id: Date.now() };
                 state.parceiros_contatos.unshift(newRow);
-                showToast("✔ Novo contato cadastrado no diretório!");
+                showToast("✔ Novo contato cadastrado!");
               }
             } else {
-              // Modo demonstração (sem banco conectado)
               if (editId) {
                 const idx = state.parceiros_contatos.findIndex(
                   (p) => String(p.id) === String(editId),
@@ -3465,379 +2445,8 @@
                 });
               }
             }
-
             renderPartnersDirectory();
             document.getElementById("modalAddPartner").classList.add("hidden");
-          });
-        // =======================================================
-
-        document
-          .getElementById("searchInput")
-          .addEventListener("input", (e) => {
-            state.searchQuery = e.target.value;
-            renderActiveTable();
-          });
-
-        document
-          .getElementById("searchInput")
-          .addEventListener("input", (e) => {
-            state.searchQuery = e.target.value;
-            renderActiveTable();
-          });
-
-        document
-          .getElementById("statusFilter")
-          .addEventListener("change", (e) => {
-            state.statusFilter = e.target.value;
-            renderActiveTable();
-          });
-
-        document.getElementById("yearFilter").addEventListener("change", () => {
-          renderActiveTable();
-        });
-
-        function openQuickAdd(defaultTab) {
-          const target = [
-            "reboque",
-            "colaboradores",
-            "mateus",
-            "creditos",
-            "despesas",
-          ].includes(defaultTab)
-            ? defaultTab
-            : "reboque";
-          document.getElementById("modalTargetTab").value = target;
-          buildQuickAddFields(target);
-          document.getElementById("modalQuickAdd").classList.remove("hidden");
-        }
-
-        document.getElementById("btnAddRowTab").addEventListener("click", () => {
-            document.getElementById("edit_row_id").value = "";
-            document.getElementById("modalAddTitle").textContent = "Novo Lançamento";
-            openQuickAdd(state.activeTab);
-        });
-        document.getElementById("btnCloseQuickAdd").addEventListener("click", () => document.getElementById("modalQuickAdd").classList.add("hidden"));
-        document.getElementById("btnCancelQuickAdd").addEventListener("click", () => document.getElementById("modalQuickAdd").classList.add("hidden"));
-        document.getElementById("modalTargetTab").addEventListener("change", (e) => buildQuickAddFields(e.target.value));
-
-        // EVENTOS GLOBAIS DE TABELA: STATUS CLICÁVEL & BOTÃO EDITAR
-        document.getElementById("tableBody").addEventListener("click", async (e) => {
-            // 1. Alternador de Status Rápido
-            const badge = e.target.closest('.inline-status-toggle');
-            if (badge) {
-                const id = badge.getAttribute("data-id");
-                const tab = state.activeTab;
-                const row = state[tab].find(r => String(r.id) === String(id));
-                if(!row) return;
-
-                let tblName, fldName, newVal;
-                if(tab === "creditos") {
-                    tblName = "creditos_faturamento"; fldName = "situacao";
-                    const curr = row.situacao || "A Receber";
-                    if(curr === "A Receber") newVal = "Pago";
-                    else if(curr === "Pago") newVal = "Cancelada";
-                    else newVal = "A Receber";
-                } else if(tab === "reboque") {
-                    tblName = "reboque_fabio"; fldName = "status_pagamento";
-                    newVal = row.status_pagamento === "Pago" ? "Pendente" : "Pago";
-                } else if(tab === "colaboradores") {
-                    tblName = "servicos_colaboradores"; fldName = "status_acerto";
-                    newVal = row.status_acerto === "Pago" ? "Pendente" : "Pago";
-                } else if(tab === "despesas") {
-                    tblName = "despesas_gerais"; fldName = "forma_pagamento";
-                    newVal = row.forma_pagamento === "Pago" ? "A Pagar" : "Pago";
-                }
-
-                if(state.supabaseClient && tblName) {
-                    const py = {}; py[fldName] = newVal;
-                    await state.supabaseClient.from(tblName).update(py).eq("id", id);
-                }
-                row[fldName] = newVal;
-                renderActiveTable();
-                showToast("Status atualizado!");
-                return;
-            }
-
-            // 2. Botão Editar (Abre o Modal e Preenche)
-            const btnEdit = e.target.closest('.btn-edit-op');
-            if(btnEdit) {
-                const id = btnEdit.getAttribute("data-id");
-                const tab = state.activeTab;
-                const row = state[tab].find(r => String(r.id) === String(id));
-                if(!row) return;
-
-                document.getElementById("edit_row_id").value = id;
-                document.getElementById("modalTargetTab").value = tab;
-                buildQuickAddFields(tab);
-                document.getElementById("modalAddTitle").textContent = "✏️ Editar Lançamento";
-
-                setTimeout(() => {
-                    if (tab === "reboque") {
-                        document.getElementById("f_data").value = row.data_servico;
-                        document.getElementById("f_os").value = row.sinistro_os;
-                        document.getElementById("f_seg").value = row.seguradora;
-                        document.getElementById("f_rota").value = row.origem_destino;
-                        document.getElementById("f_km").value = row.km_rodado;
-                        document.getElementById("f_pedagio").value = row.pedagio;
-                        document.getElementById("f_valor").value = row.valor_servico;
-                        document.getElementById("f_status").value = row.status_pagamento || "Pendente";
-                    } else if (tab === "colaboradores") {
-                        document.getElementById("f_data").value = row.data_servico;
-                        document.getElementById("f_colab").value = row.colaborador;
-                        document.getElementById("f_tipo").value = row.veiculo;
-                        document.getElementById("f_seg").value = row.seguradora;
-                        document.getElementById("f_rota").value = row.placa;
-                        document.getElementById("f_valor").value = row.valor_recebido;
-                        document.getElementById("f_pago_colab").value = row.valor_pago_colaborador;
-                        document.getElementById("f_status").value = row.status_acerto || "Pendente";
-                    } else if (tab === "mateus") {
-                        document.getElementById("f_data").value = row.data_servico;
-                        document.getElementById("f_os").value = row.sinistro_os;
-                        document.getElementById("f_seg").value = row.seguradora;
-                        document.getElementById("f_rota").value = row.placa;
-                        document.getElementById("f_km").value = row.km_rodado;
-                        document.getElementById("f_valor").value = row.valor_servico;
-                        document.getElementById("f_pago_colab").value = row.comissao_mateus;
-                    } else if (tab === "creditos") {
-                        document.getElementById("f_data").value = row.data_credito;
-                        document.getElementById("f_seg").value = row.seguradora;
-                        document.getElementById("f_nf").value = row.numero_nf;
-                        document.getElementById("f_valor").value = row.valor_bruto;
-                        document.getElementById("f_status").value = row.situacao || "A Receber";
-                        document.getElementById("f_obs_extra").value = row.observacoes || "";
-                    } else if (tab === "despesas") {
-                        document.getElementById("f_data").value = row.data_despesa;
-                        document.getElementById("f_cat").value = row.categoria;
-                        document.getElementById("f_desc").value = row.descricao;
-                        document.getElementById("f_forn").value = row.fornecedor;
-                        document.getElementById("f_valor").value = row.valor;
-                        document.getElementById("f_status").value = row.forma_pagamento || "Pago";
-                    }
-                    updateLiveFormulaPreview();
-                }, 50);
-
-                document.getElementById("modalQuickAdd").classList.remove("hidden");
-            }
-        });
-
-        // 3. Salvar (Insert) ou Atualizar (Update)
-        document.getElementById("formQuickAdd").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const tab = document.getElementById("modalTargetTab").value;
-            const editId = document.getElementById("edit_row_id").value;
-            const dataStr = document.getElementById("f_data")?.value;
-            const val = Number(document.getElementById("f_valor")?.value || 0);
-
-            let payload = {}, tbl = "", calcLucro = 0, memoryPayload = {};
-
-            if (tab === "reboque") {
-              tbl = "reboque_fabio";
-              const km = Number(document.getElementById("f_km")?.value || 0);
-              const ped = Number(document.getElementById("f_pedagio")?.value || 0);
-              const das = +(val * 0.0747).toFixed(2);
-              const desp = +(km * 1.06 + ped + das).toFixed(2);
-              calcLucro = +(val - desp).toFixed(2);
-              payload = { data_servico: dataStr, seguradora: document.getElementById("f_seg").value, sinistro_os: document.getElementById("f_os").value, origem_destino: document.getElementById("f_rota").value, km_rodado: km, pedagio: ped, outros_custos: das, valor_servico: val, status_pagamento: document.getElementById("f_status").value };
-              memoryPayload = { ...payload, despesa_estimada: desp, lucro_estimado: calcLucro };
-            } else if (tab === "colaboradores") {
-              tbl = "servicos_colaboradores";
-              const pagoCol = Number(document.getElementById("f_pago_colab")?.value || 0);
-              const das = +(val * 0.1247).toFixed(2);
-              calcLucro = +(val - pagoCol - das).toFixed(2);
-              payload = { data_servico: dataStr, colaborador: document.getElementById("f_colab").value, veiculo: document.getElementById("f_tipo").value, seguradora: document.getElementById("f_seg").value, placa: document.getElementById("f_rota").value, valor_recebido: val, valor_pago_colaborador: pagoCol, status_acerto: document.getElementById("f_status").value };
-              memoryPayload = { ...payload, lucro_liquido: calcLucro };
-            } else if (tab === "mateus") {
-              tbl = "servicos_mateus";
-              const km = Number(document.getElementById("f_km")?.value || 0);
-              const repasse = Number(document.getElementById("f_pago_colab")?.value || 0);
-              const das = +(val * 0.1247).toFixed(2);
-              calcLucro = +(val - repasse - das).toFixed(2);
-              payload = { data_servico: dataStr, sinistro_os: document.getElementById("f_os").value, seguradora: document.getElementById("f_seg").value, placa: document.getElementById("f_rota").value, km_rodado: km, valor_servico: val, combustivel_manutencao: das };
-              memoryPayload = { ...payload, comissao_mateus: repasse, lucro_empresa: calcLucro };
-            } else if (tab === "creditos") {
-              tbl = "creditos_faturamento";
-              const imp = +(val * 0.0747).toFixed(2);
-              payload = { data_credito: dataStr, seguradora: document.getElementById("f_seg").value, numero_nf: document.getElementById("f_nf").value, valor_bruto: val, imposto_retido: imp, situacao: document.getElementById("f_status").value, observacoes: document.getElementById("f_obs_extra")?.value };
-              memoryPayload = { ...payload, valor_liquido: +(val - imp).toFixed(2) };
-            } else if (tab === "despesas") {
-              tbl = "despesas_gerais";
-              payload = { data_despesa: dataStr, categoria: document.getElementById("f_cat").value, descricao: document.getElementById("f_desc").value, fornecedor: document.getElementById("f_forn").value, valor: val, forma_pagamento: document.getElementById("f_status").value };
-              memoryPayload = { ...payload };
-            }
-
-            if (state.supabaseClient) {
-                if (editId) {
-                    await state.supabaseClient.from(tbl).update(payload).eq("id", editId);
-                    const idx = state[tab].findIndex(x => String(x.id) === String(editId));
-                    if(idx > -1) state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-                    showToast("✔ Atualizado com sucesso!");
-                } else {
-                    const { data } = await state.supabaseClient.from(tbl).insert([payload]).select();
-                    const newR = data && data.length > 0 ? data[0] : { ...memoryPayload, id: Date.now() };
-                    state[tab].unshift(newR);
-                    showToast("✔ Novo registro inserido!");
-                }
-            } else {
-                if(editId) {
-                    const idx = state[tab].findIndex(x => String(x.id) === String(editId));
-                    if(idx > -1) state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-                } else {
-                    state[tab].unshift({ ...memoryPayload, id: Date.now() });
-                }
-            }
-
-            document.getElementById("modalQuickAdd").classList.add("hidden");
-            renderActiveTable();
-        });
-
-        // Eventos dos Novos Filtros e Botão Imprimir
-        ["dateStartFilter", "dateEndFilter", "statusFilter"].forEach(id => {
-            if(document.getElementById(id)) document.getElementById(id).addEventListener("change", renderActiveTable);
-        });
-        document.getElementById("btnPrintTable").addEventListener("click", () => window.print());
-            e.preventDefault();
-            const tab = document.getElementById("modalTargetTab").value;
-            const dataStr =
-              document.getElementById("f_data")?.value || "2026-11-04";
-            const val = Number(document.getElementById("f_valor")?.value || 0);
-
-            if (tab === "reboque") {
-              const km = Number(document.getElementById("f_km")?.value || 0);
-              const ped = Number(
-                document.getElementById("f_pedagio")?.value || 0,
-              );
-              const das = +(val * 0.0747).toFixed(2);
-              const desp = +(km * 1.06 + ped + das).toFixed(2);
-              const lucro = +(val - desp).toFixed(2);
-              const payload = {
-                data_servico: dataStr,
-                seguradora: document.getElementById("f_seg").value,
-                sinistro_os: document.getElementById("f_os").value,
-                veiculo: "Reboque Fábio",
-                placa: "",
-                origem_destino: document.getElementById("f_rota").value,
-                km_rodado: km,
-                pedagio: ped,
-                outros_custos: das,
-                valor_servico: val,
-                custo_km_aplicado: 1.06,
-                status_pagamento: document.getElementById("f_status").value,
-                observacoes: "Lançado via Painel Web",
-              };
-              if (state.supabaseClient) {
-                await state.supabaseClient
-                  .from("reboque_fabio")
-                  .insert([payload]);
-              }
-              state.reboque.unshift({
-                ...payload,
-                despesa_estimada: desp,
-                lucro_estimado: lucro,
-              });
-            } else if (tab === "colaboradores") {
-              const pagoCol = Number(
-                document.getElementById("f_pago_colab")?.value || 0,
-              );
-              const das = +(val * 0.1247).toFixed(2);
-              const lucro = +(val - pagoCol - das).toFixed(2);
-              const payload = {
-                data_servico: dataStr,
-                colaborador: document.getElementById("f_colab").value,
-                seguradora: document.getElementById("f_seg").value,
-                sinistro_os: "",
-                veiculo: document.getElementById("f_tipo").value,
-                placa: document.getElementById("f_rota").value,
-                valor_recebido: val,
-                valor_pago_colaborador: pagoCol,
-                outros_custos: das,
-                status_acerto: document.getElementById("f_status").value,
-                observacoes: "Lançado via Painel Web",
-              };
-              if (state.supabaseClient) {
-                await state.supabaseClient
-                  .from("servicos_colaboradores")
-                  .insert([payload]);
-              }
-              state.colaboradores.unshift({ ...payload, lucro_liquido: lucro });
-            } else if (tab === "mateus") {
-              const km = Number(document.getElementById("f_km")?.value || 0);
-              const repasse = Number(
-                document.getElementById("f_pago_colab")?.value || 0,
-              );
-              const das = +(val * 0.1247).toFixed(2);
-              const pct = val > 0 ? +(repasse / val).toFixed(4) : 0.3;
-              const payload = {
-                data_servico: dataStr,
-                seguradora: document.getElementById("f_seg").value,
-                sinistro_os: document.getElementById("f_os").value,
-                veiculo: "Reboque Mateus",
-                placa: document.getElementById("f_rota").value,
-                km_rodado: km,
-                pedagio: 0,
-                combustivel_manutencao: das,
-                valor_servico: val,
-                percentual_comissao: pct,
-                observacoes: "Lançado via Painel Web",
-              };
-              if (state.supabaseClient) {
-                await state.supabaseClient
-                  .from("servicos_mateus")
-                  .insert([payload]);
-              }
-              state.mateus.unshift({
-                ...payload,
-                comissao_mateus: repasse,
-                lucro_empresa: +(val - repasse - das).toFixed(2),
-              });
-            } else if (tab === "creditos") {
-              const imp = +(val * 0.0747).toFixed(2);
-              const st = document.getElementById("f_status").value;
-              const obsExt = document.getElementById("f_obs_extra")
-                ? document.getElementById("f_obs_extra").value
-                : "";
-              const payload = {
-                data_credito: dataStr,
-                seguradora: document.getElementById("f_seg").value,
-                numero_nf: document.getElementById("f_nf").value,
-                valor_bruto: val,
-                imposto_retido: imp,
-                situacao: st,
-                observacoes: obsExt,
-              };
-              if (state.supabaseClient) {
-                await state.supabaseClient
-                  .from("creditos_faturamento")
-                  .insert([payload]);
-              }
-              state.creditos.unshift({
-                ...payload,
-                valor_liquido: +(val - imp).toFixed(2),
-                situacao: st,
-              });
-            } else if (tab === "despesas") {
-              const st = document.getElementById("f_status").value;
-              const payload = {
-                data_despesa: dataStr,
-                categoria: document.getElementById("f_cat").value,
-                descricao: document.getElementById("f_desc").value,
-                fornecedor: document.getElementById("f_forn").value,
-                valor: val,
-                forma_pagamento: st,
-                observacoes: "Lançado via Painel Web",
-              };
-              if (state.supabaseClient) {
-                await state.supabaseClient
-                  .from("despesas_gerais")
-                  .insert([payload]);
-              }
-              state.despesas.unshift(payload);
-            }
-
-            document.getElementById("modalQuickAdd").classList.add("hidden");
-            switchTab(tab);
-            showToast(
-              "Nova linha inserida no topo com fórmulas calculadas automaticamente!",
-            );
           });
 
         // PUBLIC SITE FORM SIMULATION
@@ -3857,25 +2466,24 @@
               criado_em: "Agora mesmo",
             };
             if (state.supabaseClient) {
-              await state.supabaseClient.from("solicitacoes_site").insert([
-                {
-                  nome_cliente: item.nome_cliente,
-                  telefone_whatsapp: item.telefone_whatsapp,
-                  veiculo_modelo: item.veiculo_modelo,
-                  local_origem: item.local_origem,
-                  local_destino: item.local_destino,
-                  tipo_ocorrencia: item.tipo_ocorrencia,
-                },
-              ]);
+              await state.supabaseClient
+                .from("solicitacoes_site")
+                .insert([
+                  {
+                    nome_cliente: item.nome_cliente,
+                    telefone_whatsapp: item.telefone_whatsapp,
+                    veiculo_modelo: item.veiculo_modelo,
+                    local_origem: item.local_origem,
+                    local_destino: item.local_destino,
+                    tipo_ocorrencia: item.tipo_ocorrencia,
+                  },
+                ]);
             }
             state.siteQueue.unshift(item);
             renderSiteQueue();
-            showToast(
-              'Solicitação recebida em solicitacoes_site! Clique em "+ Gerar OS no Topo" para lançar no Reboque.',
-            );
+            showToast("Solicitação recebida em solicitacoes_site!");
           });
 
-        // COPY EMBED HTML
         document
           .getElementById("btnCopyEmbedCode")
           .addEventListener("click", () => {
@@ -3887,46 +2495,39 @@
               ta.select();
               document.execCommand("copy");
               document.body.removeChild(ta);
-              showToast(
-                "Código HTML copiado para colar no seu site autosocorrolaranjal.com.br!",
-              );
-            } catch (err) {
-              showToast("Código selecionado!");
-            }
+              showToast("Código HTML copiado!");
+            } catch (err) {}
           });
 
-        // SUPABASE CONNECTION MODAL
+        // SUPABASE MODALS & AUTH LOGIC
         document
           .getElementById("btnOpenSupabaseModal")
-          .addEventListener("click", () => {
-            document.getElementById("modalSupabase").classList.remove("hidden");
-          });
+          .addEventListener("click", () =>
+            document.getElementById("modalSupabase").classList.remove("hidden"),
+          );
         document
           .getElementById("btnCloseSupabaseModal")
-          .addEventListener("click", () => {
-            document.getElementById("modalSupabase").classList.add("hidden");
-          });
+          .addEventListener("click", () =>
+            document.getElementById("modalSupabase").classList.add("hidden"),
+          );
         document
           .getElementById("btnCancelSupabase")
-          .addEventListener("click", () => {
-            document.getElementById("modalSupabase").classList.add("hidden");
-          });
+          .addEventListener("click", () =>
+            document.getElementById("modalSupabase").classList.add("hidden"),
+          );
         document
           .getElementById("btnDisconnectSupabase")
           .addEventListener("click", () => {
             state.supabaseClient = null;
             state.isConnected = false;
             document.getElementById("connectionBadge").textContent =
-              "Modo Local (8.054 registros)";
+              "Modo Local";
             document.getElementById("btnConnectLabel").textContent =
               "Conectar Supabase";
             document.getElementById("modalSupabase").classList.add("hidden");
-            showToast("Alternado para o Modo Demonstração Local.");
+            showToast("Modo Demonstração Local ativo.");
           });
 
-        // ======================================================================
-        // AUTHENTICATION, PASSWORD REVEALER & FORGOT PASSWORD LOGIC
-        // ======================================================================
         const authOverlay = document.getElementById("authOverlay");
         const authAlertBox = document.getElementById("authAlertBox");
         const formLoginAuth = document.getElementById("formLoginAuth");
@@ -3949,39 +2550,33 @@
             "text-amber-300",
             "border-amber-500/40",
           );
-          if (type === "success") {
+          if (type === "success")
             authAlertBox.classList.add(
               "bg-emerald-950/80",
               "text-emerald-300",
               "border-emerald-500/40",
             );
-          } else if (type === "error") {
+          else if (type === "error")
             authAlertBox.classList.add(
               "bg-rose-950/80",
               "text-rose-300",
               "border-rose-500/40",
             );
-          } else {
+          else
             authAlertBox.classList.add(
               "bg-amber-950/80",
               "text-amber-300",
               "border-amber-500/40",
             );
-          }
           authAlertBox.textContent = message;
         }
 
-        function hideAuthAlert() {
-          authAlertBox.classList.add("hidden");
-        }
-
-        // 1. REVELADOR DE SENHA
         document
           .getElementById("btnTogglePassword")
           .addEventListener("click", () => {
-            const pwdInput = document.getElementById("loginPassword");
-            const eyeIcon = document.getElementById("eyeIconLogin");
-            const eyeText = document.getElementById("eyeTextLogin");
+            const pwdInput = document.getElementById("loginPassword"),
+              eyeIcon = document.getElementById("eyeIconLogin"),
+              eyeText = document.getElementById("eyeTextLogin");
             if (pwdInput.type === "password") {
               pwdInput.type = "text";
               eyeIcon.textContent = "🙈";
@@ -3997,9 +2592,9 @@
         document
           .getElementById("btnToggleResetPassword")
           .addEventListener("click", () => {
-            const pwdInput = document.getElementById("newResetPassword");
-            const eyeIcon = document.getElementById("eyeIconReset");
-            const eyeText = document.getElementById("eyeTextReset");
+            const pwdInput = document.getElementById("newResetPassword"),
+              eyeIcon = document.getElementById("eyeIconReset"),
+              eyeText = document.getElementById("eyeTextReset");
             if (pwdInput.type === "password") {
               pwdInput.type = "text";
               eyeIcon.textContent = "🙈";
@@ -4012,63 +2607,54 @@
             pwdInput.focus();
           });
 
-        // 2. ALTERNAR ENTRE LOGIN E ESQUECI MINHA SENHA
         document
           .getElementById("btnShowForgotBox")
           .addEventListener("click", () => {
-            hideAuthAlert();
+            authAlertBox.classList.add("hidden");
             const currentEmail = document
               .getElementById("loginEmail")
               .value.trim();
-            if (currentEmail) {
+            if (currentEmail)
               document.getElementById("forgotEmail").value = currentEmail;
-            }
             formLoginAuth.classList.add("hidden");
             formResetNewPassword.classList.add("hidden");
             formForgotPassword.classList.remove("hidden");
           });
-
         document
           .getElementById("btnBackToLogin")
           .addEventListener("click", () => {
-            hideAuthAlert();
+            authAlertBox.classList.add("hidden");
             formForgotPassword.classList.add("hidden");
             formResetNewPassword.classList.add("hidden");
             formLoginAuth.classList.remove("hidden");
           });
-
         document
           .getElementById("btnCancelResetPassword")
           .addEventListener("click", () => {
-            hideAuthAlert();
+            authAlertBox.classList.add("hidden");
             formResetNewPassword.classList.add("hidden");
             formForgotPassword.classList.add("hidden");
             formLoginAuth.classList.remove("hidden");
           });
-
         document
           .getElementById("btnOpenSupabaseFromLogin")
-          .addEventListener("click", () => {
-            document.getElementById("modalSupabase").classList.remove("hidden");
-          });
+          .addEventListener("click", () =>
+            document.getElementById("modalSupabase").classList.remove("hidden"),
+          );
 
-        // ======================================================================
-        // FUNÇÃO GLOBAL DE PAGINAÇÃO (BURLA O LIMITE DE 1000 LINHAS DO SUPABASE)
-        // ======================================================================
         async function baixarHistoricoCompleto() {
           async function fetchAll(tabela, colunaOrdem) {
-            let todosOsDados = [];
-            let inicio = 0;
+            let todosOsDados = [],
+              inicio = 0;
             while (true) {
               const { data, err } = await state.supabaseClient
                 .from(tabela)
                 .select("*")
                 .order(colunaOrdem, { ascending: false })
                 .range(inicio, inicio + 999);
-
               if (err || !data) break;
               todosOsDados = todosOsDados.concat(data);
-              if (data.length < 1000) break; // Se vier menos de 1000, acabaram os dados
+              if (data.length < 1000) break;
               inicio += 1000;
             }
             return todosOsDados;
@@ -4080,7 +2666,7 @@
             fetchAll("servicos_mateus", "data_servico"),
             fetchAll("creditos_faturamento", "data_credito"),
             fetchAll("despesas_gerais", "data_despesa"),
-            fetchAll("parceiros_contatos", "id"), // 🚀 Puxa o diretório de contatos do Supabase!
+            fetchAll("parceiros_contatos", "id"),
           ]);
 
           state.reboque = reb;
@@ -4088,11 +2674,7 @@
           state.mateus = mat;
           state.creditos = cred;
           state.despesas = desp;
-
-          // Se encontrou dados no Supabase, substitui os dados de exemplo da memória
-          if (parc && parc.length > 0) {
-            state.parceiros_contatos = parc;
-          }
+          if (parc && parc.length > 0) state.parceiros_contatos = parc;
 
           document.getElementById("count-reboque").textContent =
             state.reboque.length;
@@ -4109,22 +2691,17 @@
             state.activeTab !== "dashboard" &&
             state.activeTab !== "site" &&
             state.activeTab !== "parceiros"
-          ) {
+          )
             renderActiveTable();
-          }
         }
 
-        // 3. LOGIN SUBMIT (COM DOWNLOAD TOTAL DE DADOS)
         formLoginAuth.addEventListener("submit", async (e) => {
           e.preventDefault();
-          hideAuthAlert();
-          const email = document.getElementById("loginEmail").value.trim();
-          const password = document.getElementById("loginPassword").value;
-
-          if (!email || !password) {
-            showAuthAlert("Preencha o e-mail e a senha.", "error");
-            return;
-          }
+          authAlertBox.classList.add("hidden");
+          const email = document.getElementById("loginEmail").value.trim(),
+            password = document.getElementById("loginPassword").value;
+          if (!email || !password)
+            return showAuthAlert("Preencha o e-mail e a senha.", "error");
 
           if (state.supabaseClient && state.supabaseClient.auth) {
             try {
@@ -4133,44 +2710,36 @@
                   email,
                   password,
                 });
-              if (error) {
-                showAuthAlert(
+              if (error)
+                return showAuthAlert(
                   "Falha na autenticação: " + error.message,
                   "error",
                 );
-                return;
-              }
-
               document.getElementById("loggedUserLabel").textContent =
                 "Sair / Bloquear";
               authOverlay.classList.add("hidden");
-
-              showToast(
-                "Acesso liberado! Baixando histórico completo (8.054 registros)...",
-              );
+              showToast("Acesso liberado! Baixando histórico completo...");
               await baixarHistoricoCompleto();
               showToast("Todos os dados foram sincronizados com sucesso!");
               return;
             } catch (err) {
-              showAuthAlert("Erro de conexão ao banco de dados.", "error");
-              return;
+              return showAuthAlert(
+                "Erro de conexão ao banco de dados.",
+                "error",
+              );
             }
           }
-
-          // Modo local (sem Supabase configurado)
           document.getElementById("loggedUserLabel").textContent =
             "Sair / Bloquear";
           authOverlay.classList.add("hidden");
           showToast("Modo de Demonstração Local ativo!");
         });
 
-        // 4. ENVIAR E-MAIL DE RECUPERAÇÃO ("ESQUECI MINHA SENHA")
         formForgotPassword.addEventListener("submit", async (e) => {
           e.preventDefault();
-          hideAuthAlert();
+          authAlertBox.classList.add("hidden");
           const email = document.getElementById("forgotEmail").value.trim();
           if (!email) return showAuthAlert("Informe o seu e-mail.", "error");
-
           if (state.supabaseClient && state.supabaseClient.auth) {
             try {
               const redirectUrl =
@@ -4181,24 +2750,18 @@
                 });
               if (error)
                 return showAuthAlert("Erro: " + error.message, "error");
-
-              showAuthAlert(
-                "✔ Link de recuperação enviado para " + email + "!",
-                "success",
-              );
+              showAuthAlert("✔ Link enviado para " + email + "!", "success");
             } catch (err) {
-              showAuthAlert("Erro ao solicitar recuperação.", "error");
+              showAuthAlert("Erro ao solicitar.", "error");
             }
           }
         });
 
-        // 5. SALVAR NOVA SENHA APÓS CLICAR NO LINK DE RECUPERAÇÃO
         formResetNewPassword.addEventListener("submit", async (e) => {
           e.preventDefault();
           const newPassword = document.getElementById("newResetPassword").value;
           if (!newPassword || newPassword.length < 6)
             return showAuthAlert("Mínimo de 6 caracteres.", "error");
-
           if (state.supabaseClient && state.supabaseClient.auth) {
             const { error } = await state.supabaseClient.auth.updateUser({
               password: newPassword,
@@ -4209,14 +2772,12 @@
                 "error",
               );
           }
-
           document.getElementById("loginPassword").value = newPassword;
           formResetNewPassword.classList.add("hidden");
           formLoginAuth.classList.remove("hidden");
           showAuthAlert("✔ Senha redefinida com sucesso!", "success");
         });
 
-        // 6. BOTÃO SAIR / BLOQUEAR PAINEL NO TOPO
         document
           .getElementById("btnLogout")
           .addEventListener("click", async () => {
@@ -4225,31 +2786,26 @@
                 await state.supabaseClient.auth.signOut();
               } catch (e) {}
             }
-            hideAuthAlert();
+            authAlertBox.classList.add("hidden");
             formForgotPassword.classList.add("hidden");
             formResetNewPassword.classList.add("hidden");
             formLoginAuth.classList.remove("hidden");
             authOverlay.classList.remove("hidden");
-            showToast("Sessão encerrada com segurança.");
+            showToast("Sessão encerrada.");
           });
 
-        // 7. CONECTAR SUPABASE PELO MODAL
         document
           .getElementById("formSupabaseConfig")
           .addEventListener("submit", async (e) => {
             e.preventDefault();
             const url = document
-              .getElementById("inputSupabaseUrl")
-              .value.trim();
-            const key = document
-              .getElementById("inputSupabaseKey")
-              .value.trim();
+                .getElementById("inputSupabaseUrl")
+                .value.trim(),
+              key = document.getElementById("inputSupabaseKey").value.trim();
             if (!url || !key) return;
-
             try {
               if (window.supabase && window.supabase.createClient) {
                 state.supabaseClient = window.supabase.createClient(url, key);
-
                 if (
                   state.supabaseClient.auth &&
                   state.supabaseClient.auth.onAuthStateChange
@@ -4261,13 +2817,12 @@
                       formForgotPassword.classList.add("hidden");
                       formResetNewPassword.classList.remove("hidden");
                       showAuthAlert(
-                        "Link validado! Digite sua nova senha abaixo.",
+                        "Link validado! Digite sua nova senha.",
                         "success",
                       );
                     }
                   });
                 }
-
                 state.isConnected = true;
                 document.getElementById("connectionBadge").textContent =
                   "🟢 Conectado ao Supabase";
@@ -4276,18 +2831,13 @@
                 document
                   .getElementById("modalSupabase")
                   .classList.add("hidden");
-                showToast(
-                  "Conectado! Agora faça o login para baixar as tabelas.",
-                );
+                showToast("Conectado! Faça o login.");
               }
             } catch (err) {
-              showToast("Verifique a URL e a chave Anon do Supabase.");
+              showToast("Verifique URL e Key.");
             }
           });
 
-        // =================================================================
-        // AUTO-CONEXÃO SUPABASE (NUNCA MAIS PRECISARÁ DIGITAR AS CHAVES)
-        // =================================================================
         const FIXO_SUPABASE_URL = "https://ilajjowksgwrkvidnaiz.supabase.co";
         const FIXO_SUPABASE_KEY =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsYWpqb3drc2d3cmt2aWRuYWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3NzMwMjIsImV4cCI6MjEwOTM0OTAyMn0.kITexL0aTd5O_QYQVry0FLtonFJtUFPm7rpFaWr8q4k";
@@ -4302,8 +2852,7 @@
             "🟢 Conectado ao Supabase";
           document
             .getElementById("btnOpenSupabaseModal")
-            .classList.add("hidden"); // Oculta o botão verde do topo
-
+            .classList.add("hidden");
           if (
             state.supabaseClient.auth &&
             state.supabaseClient.auth.onAuthStateChange
@@ -4314,15 +2863,11 @@
                 formLoginAuth.classList.add("hidden");
                 formForgotPassword.classList.add("hidden");
                 formResetNewPassword.classList.remove("hidden");
-                showAuthAlert(
-                  "Link de recuperação validado! Digite sua nova senha abaixo.",
-                  "success",
-                );
+                showAuthAlert("Link validado! Digite a nova senha.", "success");
               }
             });
           }
         }
-        // =================================================================
       });
     </script>
   </body>
