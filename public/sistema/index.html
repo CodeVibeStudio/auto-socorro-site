@@ -1874,12 +1874,19 @@
             })
             .join("");
         } else if (tab === "mateus") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS / Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS / Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
           body.innerHTML = rows
             .map((r) => {
               sumBruto += Number(r.valor_servico) || 0;
               sumLucro += Number(r.lucro_empresa) || 0;
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.sinistro_os || ""} - ${r.seguradora}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+              const sit = r.status_pagamento || "Pendente";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-yellow-100 text-yellow-800";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.sinistro_os || ""} - ${r.seguradora}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-75 transition border ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
             })
             .join("");
         } else if (tab === "creditos") {
@@ -1931,7 +1938,7 @@
         } else if (tab === "colaboradores") {
           container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select></div>`;
         } else if (tab === "mateus") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">OS *</label><input id="f_os" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seg. (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Repasse (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">OS *</label><input id="f_os" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seg. (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Repasse (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>`;
         } else if (tab === "creditos") {
           container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         } else if (tab === "despesas") {
@@ -2037,7 +2044,7 @@
             buildQuickAddFields(e.target.value),
           );
 
-        // TABELA: CLIQUE STATUS E EDITAR
+        // TABELA: CLIQUE STATUS (COM CONFIRMAÇÃO) E EDITAR
         document
           .getElementById("tableBody")
           .addEventListener("click", async (e) => {
@@ -2050,6 +2057,8 @@
               if (!row) return;
 
               let tblName, fldName, newVal;
+
+              // Determina o próximo status de acordo com a aba
               if (state.activeTab === "creditos") {
                 tblName = "creditos_faturamento";
                 fldName = "situacao";
@@ -2068,11 +2077,32 @@
                 tblName = "servicos_colaboradores";
                 fldName = "status_acerto";
                 newVal = row.status_acerto === "Pago" ? "Pendente" : "Pago";
+              } else if (state.activeTab === "mateus") {
+                tblName = "servicos_mateus";
+                fldName = "status_pagamento";
+                const curr = row.status_pagamento || "Pendente";
+                newVal =
+                  curr === "Pendente"
+                    ? "Pago"
+                    : curr === "Pago"
+                      ? "Cancelada"
+                      : "Pendente";
               } else if (state.activeTab === "despesas") {
                 tblName = "despesas_gerais";
                 fldName = "forma_pagamento";
                 newVal = row.forma_pagamento === "Pago" ? "A Pagar" : "Pago";
               }
+
+              // Janela de Confirmação de Segurança
+              const oldVal = row[fldName] || "Pendente";
+              if (
+                !window.confirm(
+                  `Você tem certeza que deseja alterar o status de "${oldVal}" para "${newVal}"?`,
+                )
+              ) {
+                return; // Se o usuário clicar em "Cancelar", não faz nada.
+              }
+
               if (state.supabaseClient && tblName) {
                 const py = {};
                 py[fldName] = newVal;
@@ -2083,7 +2113,7 @@
               }
               row[fldName] = newVal;
               renderActiveTable();
-              showToast("Status atualizado!");
+              showToast("✔ Status alterado com sucesso!");
               return;
             }
 
@@ -2132,6 +2162,8 @@
                   document.getElementById("f_valor").value = row.valor_servico;
                   document.getElementById("f_pago_colab").value =
                     row.comissao_mateus;
+                  document.getElementById("f_status").value =
+                    row.status_pagamento || "Pendente";
                 } else if (state.activeTab === "creditos") {
                   document.getElementById("f_data").value = row.data_credito;
                   document.getElementById("f_seg").value = row.seguradora;
@@ -2156,6 +2188,151 @@
                 .getElementById("modalQuickAdd")
                 .classList.remove("hidden");
             }
+          });
+
+        document
+          .getElementById("formQuickAdd")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const tab = document.getElementById("modalTargetTab").value;
+            const editId = document.getElementById("edit_row_id").value;
+            const dataStr = document.getElementById("f_data")?.value;
+            const val = Number(document.getElementById("f_valor")?.value || 0);
+
+            let payload = {},
+              tbl = "",
+              calcLucro = 0,
+              memoryPayload = {};
+            if (tab === "reboque") {
+              tbl = "reboque_fabio";
+              const km = Number(document.getElementById("f_km")?.value || 0),
+                ped = Number(document.getElementById("f_pedagio")?.value || 0),
+                das = +(val * 0.0747).toFixed(2),
+                desp = +(km * 1.06 + ped + das).toFixed(2);
+              calcLucro = +(val - desp).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                seguradora: document.getElementById("f_seg").value,
+                sinistro_os: document.getElementById("f_os").value,
+                origem_destino: document.getElementById("f_rota").value,
+                km_rodado: km,
+                pedagio: ped,
+                outros_custos: das,
+                valor_servico: val,
+                status_pagamento: document.getElementById("f_status").value,
+              };
+              memoryPayload = {
+                ...payload,
+                despesa_estimada: desp,
+                lucro_estimado: calcLucro,
+              };
+            } else if (tab === "colaboradores") {
+              tbl = "servicos_colaboradores";
+              const pagoCol = Number(
+                  document.getElementById("f_pago_colab")?.value || 0,
+                ),
+                das = +(val * 0.1247).toFixed(2);
+              calcLucro = +(val - pagoCol - das).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                colaborador: document.getElementById("f_colab").value,
+                veiculo: document.getElementById("f_tipo").value,
+                seguradora: document.getElementById("f_seg").value,
+                placa: document.getElementById("f_rota").value,
+                valor_recebido: val,
+                valor_pago_colaborador: pagoCol,
+                status_acerto: document.getElementById("f_status").value,
+              };
+              memoryPayload = { ...payload, lucro_liquido: calcLucro };
+            } else if (tab === "mateus") {
+              tbl = "servicos_mateus";
+              const km = Number(document.getElementById("f_km")?.value || 0),
+                repasse = Number(
+                  document.getElementById("f_pago_colab")?.value || 0,
+                ),
+                das = +(val * 0.1247).toFixed(2);
+              calcLucro = +(val - repasse - das).toFixed(2);
+              payload = {
+                data_servico: dataStr,
+                sinistro_os: document.getElementById("f_os").value,
+                seguradora: document.getElementById("f_seg").value,
+                placa: document.getElementById("f_rota").value,
+                km_rodado: km,
+                valor_servico: val,
+                combustivel_manutencao: das,
+                status_pagamento: document.getElementById("f_status").value,
+              };
+              memoryPayload = {
+                ...payload,
+                comissao_mateus: repasse,
+                lucro_empresa: calcLucro,
+              };
+            } else if (tab === "creditos") {
+              tbl = "creditos_faturamento";
+              const imp = +(val * 0.0747).toFixed(2);
+              payload = {
+                data_credito: dataStr,
+                seguradora: document.getElementById("f_seg").value,
+                numero_nf: document.getElementById("f_nf").value,
+                valor_bruto: val,
+                imposto_retido: imp,
+                situacao: document.getElementById("f_status").value,
+                observacoes: document.getElementById("f_obs_extra")?.value,
+              };
+              memoryPayload = {
+                ...payload,
+                valor_liquido: +(val - imp).toFixed(2),
+              };
+            } else if (tab === "despesas") {
+              tbl = "despesas_gerais";
+              payload = {
+                data_despesa: dataStr,
+                categoria: document.getElementById("f_cat").value,
+                descricao: document.getElementById("f_desc").value,
+                fornecedor: document.getElementById("f_forn").value,
+                valor: val,
+                forma_pagamento: document.getElementById("f_status").value,
+              };
+              memoryPayload = { ...payload };
+            }
+
+            if (state.supabaseClient) {
+              if (editId) {
+                await state.supabaseClient
+                  .from(tbl)
+                  .update(payload)
+                  .eq("id", editId);
+                const idx = state[tab].findIndex(
+                  (x) => String(x.id) === String(editId),
+                );
+                if (idx > -1)
+                  state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+                showToast("✔ Atualizado com sucesso!");
+              } else {
+                const { data } = await state.supabaseClient
+                  .from(tbl)
+                  .insert([payload])
+                  .select();
+                const newR =
+                  data && data.length > 0
+                    ? data[0]
+                    : { ...memoryPayload, id: Date.now() };
+                state[tab].unshift(newR);
+                showToast("✔ Novo registro inserido!");
+              }
+            } else {
+              if (editId) {
+                const idx = state[tab].findIndex(
+                  (x) => String(x.id) === String(editId),
+                );
+                if (idx > -1)
+                  state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+              } else {
+                state[tab].unshift({ ...memoryPayload, id: Date.now() });
+              }
+            }
+            document.getElementById("modalQuickAdd").classList.add("hidden");
+            renderActiveTable();
           });
 
         document
@@ -2466,18 +2643,16 @@
               criado_em: "Agora mesmo",
             };
             if (state.supabaseClient) {
-              await state.supabaseClient
-                .from("solicitacoes_site")
-                .insert([
-                  {
-                    nome_cliente: item.nome_cliente,
-                    telefone_whatsapp: item.telefone_whatsapp,
-                    veiculo_modelo: item.veiculo_modelo,
-                    local_origem: item.local_origem,
-                    local_destino: item.local_destino,
-                    tipo_ocorrencia: item.tipo_ocorrencia,
-                  },
-                ]);
+              await state.supabaseClient.from("solicitacoes_site").insert([
+                {
+                  nome_cliente: item.nome_cliente,
+                  telefone_whatsapp: item.telefone_whatsapp,
+                  veiculo_modelo: item.veiculo_modelo,
+                  local_origem: item.local_origem,
+                  local_destino: item.local_destino,
+                  tipo_ocorrencia: item.tipo_ocorrencia,
+                },
+              ]);
             }
             state.siteQueue.unshift(item);
             renderSiteQueue();
