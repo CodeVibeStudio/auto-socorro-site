@@ -722,6 +722,112 @@
             </div>
           </div>
         </div>
+
+        <!-- NEW SECTION: DIRETÓRIO DE PARCEIROS E CONTATOS -->
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4"
+          >
+            <div>
+              <h2 class="text-lg font-extrabold text-slate-900">
+                Diretório de Parceiros e Prestadores
+              </h2>
+              <p class="text-xs text-slate-500 mt-1">
+                Consulte contatos extraídos e cadastre novas oficinas, taxistas
+                e guinchos.
+              </p>
+            </div>
+            <button
+              id="btnOpenAddPartner"
+              type="button"
+              class="px-4 py-2 rounded-lg text-xs font-extrabold bg-blue-600 hover:bg-blue-500 text-white shadow transition flex items-center gap-1.5"
+            >
+              <span>＋</span> <span>NOVO CONTATO</span>
+            </button>
+          </div>
+
+          <!-- FILTERS FOR DIRECTORY -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <input
+              id="filterPartnerBusca"
+              type="text"
+              placeholder="Buscar nome ou empresa..."
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
+            />
+
+            <select
+              id="filterPartnerCategoria"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white"
+            >
+              <option value="all">Todas as Categorias</option>
+              <option value="Guincho">Guincho / Reboque</option>
+              <option value="Táxi">Táxi / Taxista</option>
+              <option value="Chaveiro">Chaveiro</option>
+              <option value="Pneu">Troca de Pneu / Borracharia</option>
+              <option value="Elétrica">Auto Elétrica / Bateria</option>
+              <option value="Mecânica">Mecânica</option>
+              <option value="Corretor">Corretor / Seguros</option>
+              <option value="Outros">Outros</option>
+            </select>
+
+            <select
+              id="filterPartnerUF"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white"
+            >
+              <option value="all">Todos os Estados</option>
+              <option value="MG">Minas Gerais (MG)</option>
+              <option value="RJ">Rio de Janeiro (RJ)</option>
+              <option value="SP">São Paulo (SP)</option>
+              <option value="ES">Espírito Santo (ES)</option>
+              <option value="BA">Bahia (BA)</option>
+            </select>
+
+            <input
+              id="filterPartnerDDD"
+              type="number"
+              placeholder="DDD (Ex: 32)"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
+            />
+
+            <select
+              id="filterPartnerRating"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-amber-600"
+            >
+              <option value="0">Qualquer Avaliação</option>
+              <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+              <option value="4">⭐⭐⭐⭐+ (Acima de 4)</option>
+              <option value="3">⭐⭐⭐+ (Acima de 3)</option>
+            </select>
+          </div>
+
+          <!-- DIRECTORY TABLE -->
+          <div
+            class="overflow-x-auto custom-scroll max-h-[50vh] border border-slate-200 rounded-xl"
+          >
+            <table class="w-full text-left border-collapse">
+              <thead
+                class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10"
+              >
+                <tr>
+                  <th class="py-3 px-3">Nome / Empresa</th>
+                  <th class="py-3 px-3">Categoria</th>
+                  <th class="py-3 px-3">Telefone</th>
+                  <th class="py-3 px-3">Localização</th>
+                  <th class="py-3 px-3 text-center">Avaliação</th>
+                  <th class="py-3 px-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody
+                id="partnerTableBody"
+                class="divide-y divide-slate-200 text-xs"
+              >
+                <!-- Renderizado via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- VIEW 2: OPERATIONAL TABLES (REBOQUE, COLABORADORES, MATEUS, CREDITOS, DESPESAS) -->
@@ -1124,6 +1230,179 @@
             </div>
           </form>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL 1.5: ADICIONAR NOVO PARCEIRO -->
+    <div
+      id="modalAddPartner"
+      class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-xl w-full p-5 shadow-2xl border border-slate-200 space-y-4"
+      >
+        <div
+          class="flex items-center justify-between border-b border-slate-200 pb-3"
+        >
+          <div>
+            <span class="text-xs font-bold uppercase text-blue-600"
+              >Banco de Contatos</span
+            >
+            <h3 class="text-base font-bold text-slate-900">
+              Cadastrar Novo Parceiro / Prestador
+            </h3>
+          </div>
+          <button
+            id="btnClosePartnerModal"
+            type="button"
+            class="text-slate-400 hover:text-slate-700 text-lg font-bold px-2"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form id="formAddPartner" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-slate-700"
+                >Nome do Contato *</label
+              >
+              <input
+                id="p_nome"
+                type="text"
+                required
+                placeholder="Ex: João da Silva"
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-slate-700"
+                >Empresa / Oficina</label
+              >
+              <input
+                id="p_empresa"
+                type="text"
+                placeholder="Ex: Auto Elétrica São João"
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-slate-700"
+                >Categoria / Atividade *</label
+              >
+              <select
+                id="p_cat"
+                required
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+              >
+                <option value="Guincho / Reboque">Guincho / Reboque</option>
+                <option value="Táxi / Taxista">Táxi / Taxista</option>
+                <option value="Chaveiro">Chaveiro</option>
+                <option value="Troca de Pneu / Borracharia">
+                  Troca de Pneu / Borracharia
+                </option>
+                <option value="Auto Elétrica / Bateria">
+                  Auto Elétrica / Bateria
+                </option>
+                <option value="Mecânica">Mecânica</option>
+                <option value="Corretor / Seguros">Corretor / Seguros</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-slate-700"
+                >Telefone / WhatsApp *</label
+              >
+              <input
+                id="p_tel"
+                type="text"
+                required
+                placeholder="Ex: (32) 99999-9999"
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+              />
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1/3">
+                <label class="block text-xs font-semibold mb-1 text-slate-700"
+                  >DDD</label
+                >
+                <input
+                  id="p_ddd"
+                  type="number"
+                  placeholder="Ex: 32"
+                  class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+                />
+              </div>
+              <div class="w-2/3">
+                <label class="block text-xs font-semibold mb-1 text-slate-700"
+                  >Estado (UF)</label
+                >
+                <input
+                  id="p_estado"
+                  type="text"
+                  placeholder="Vazio = puxa do DDD"
+                  class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 uppercase"
+                  maxlength="2"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-slate-700"
+                >Cidade</label
+              >
+              <input
+                id="p_cidade"
+                type="text"
+                placeholder="Ex: Muriaé"
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-700"
+              >Avaliação da Experiência</label
+            >
+            <select
+              id="p_aval"
+              class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 font-semibold text-amber-600"
+            >
+              <option value="5" selected>⭐⭐⭐⭐⭐ Excelente</option>
+              <option value="4">⭐⭐⭐⭐ Muito Bom</option>
+              <option value="3">⭐⭐⭐ Regular / Neutro</option>
+              <option value="2">⭐⭐ Ruim</option>
+              <option value="1">⭐ Péssimo</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-700"
+              >Observações (Opcional)</label
+            >
+            <input
+              id="p_obs"
+              type="text"
+              placeholder="Ex: Atende 24h, prefere PIX..."
+              class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
+            />
+          </div>
+
+          <div
+            class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 mt-3"
+          >
+            <button
+              id="btnCancelPartnerModal"
+              type="button"
+              class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="px-5 py-2 rounded-lg text-xs font-extrabold bg-blue-600 hover:bg-blue-500 text-white shadow"
+            >
+              ✔ Salvar Parceiro
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -2285,6 +2564,58 @@
             observacoes: "1. Operacional / Frota / Repasse | Me Lettiere",
           },
         ],
+        parceiros_contatos: [
+          {
+            nome: "Auto Elétrica Chico Conse",
+            categoria: "Auto Elétrica / Bateria",
+            telefone: "(31) 3762-1521",
+            ddd: "31",
+            estado: "MG",
+            cidade: "Conselheiro Lafaiete",
+            empresa: "",
+            avaliacao: 5,
+          },
+          {
+            nome: "Marquinho do Viana",
+            categoria: "Auto Elétrica / Bateria",
+            telefone: "(32) 99955-3062",
+            ddd: "32",
+            estado: "MG",
+            cidade: "",
+            empresa: "Viana Elétrica",
+            avaliacao: 4,
+          },
+          {
+            nome: "Maurício Eletricista",
+            categoria: "Auto Elétrica / Bateria",
+            telefone: "(32) 99927-0448",
+            ddd: "32",
+            estado: "MG",
+            cidade: "São João da Sapucaia",
+            empresa: "",
+            avaliacao: 5,
+          },
+          {
+            nome: "Puquinha Auto Elétrica",
+            categoria: "Auto Elétrica / Bateria",
+            telefone: "(22) 99242-8273",
+            ddd: "22",
+            estado: "RJ",
+            cidade: "",
+            empresa: "Auto Elétrica Puquinha",
+            avaliacao: 3,
+          },
+          {
+            nome: "2 Irmãos Ca",
+            categoria: "Táxi / Taxista",
+            telefone: "(32) 99942-1726",
+            ddd: "32",
+            estado: "MG",
+            cidade: "",
+            empresa: "2 Irmãos Corridas",
+            avaliacao: 4,
+          },
+        ],
       };
 
       const state = {
@@ -2293,6 +2624,7 @@
         statusFilter: "all",
         supabaseClient: null,
         isConnected: false,
+        parceiros_contatos: INITIAL_DATA.parceiros_contatos || [],
         reboque: INITIAL_DATA.reboque || [],
         colaboradores: INITIAL_DATA.colaboradores || [],
         mateus: INITIAL_DATA.mateus || [],
@@ -2607,6 +2939,78 @@
       document
         .getElementById("calcImpostoAdicional")
         .addEventListener("input", atualizarCalculadoraParceiros);
+
+      // --- LOGIC PARA DIRETÓRIO DE PARCEIROS ---
+      function renderPartnersDirectory() {
+        const query = document
+          .getElementById("filterPartnerBusca")
+          .value.toLowerCase()
+          .trim();
+        const cat = document.getElementById("filterPartnerCategoria").value;
+        const uf = document.getElementById("filterPartnerUF").value;
+        const ddd = document.getElementById("filterPartnerDDD").value.trim();
+        const rating = parseInt(
+          document.getElementById("filterPartnerRating").value,
+        );
+
+        const rows = state.parceiros_contatos.filter((p) => {
+          if (
+            query &&
+            !p.nome.toLowerCase().includes(query) &&
+            (!p.empresa || !p.empresa.toLowerCase().includes(query))
+          )
+            return false;
+          if (cat !== "all" && !p.categoria.includes(cat)) return false;
+          if (uf !== "all" && p.estado !== uf) return false;
+          if (ddd && String(p.ddd) !== ddd) return false;
+          if (rating > 0 && p.avaliacao < rating) return false;
+          return true;
+        });
+
+        const tbody = document.getElementById("partnerTableBody");
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-500 font-semibold">Nenhum parceiro encontrado com os filtros atuais.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((p) => {
+            const stars =
+              "⭐".repeat(p.avaliacao || 1) +
+              "☆".repeat(5 - (p.avaliacao || 1));
+            const loc = `${p.ddd ? "(" + p.ddd + ")" : ""} ${p.cidade || ""}${p.cidade && p.estado ? " - " : ""}${p.estado || ""}`;
+            const cleanPhone = String(p.telefone).replace(/\D/g, "");
+
+            return `<tr class="hover:bg-slate-50">
+             <td class="py-2.5 px-3 font-bold text-slate-900">${p.nome} <br><span class="text-[10px] font-normal text-slate-500 uppercase">${p.empresa || "-"}</span></td>
+             <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-blue-700">${p.categoria}</span></td>
+             <td class="py-2.5 px-3 font-mono font-semibold text-slate-800">${p.telefone}</td>
+             <td class="py-2.5 px-3 text-slate-600 font-medium">${loc.trim() === "" ? "-" : loc}</td>
+             <td class="py-2.5 px-3 text-center text-amber-400 text-[11px] tracking-widest" title="Nota: ${p.avaliacao}/5">${stars}</td>
+             <td class="py-2.5 px-3 text-center">
+                <a href="https://wa.me/55${cleanPhone}" target="_blank" class="text-[10px] font-bold bg-green-100 text-green-800 border border-green-300 px-2.5 py-1 rounded hover:bg-green-200 shadow-sm">WhatsApp</a>
+             </td>
+           </tr>`;
+          })
+          .join("");
+      }
+
+      // Detectar estado pelo DDD
+      function inferirEstadoPorDDD(dddVal) {
+        if (!dddVal) return "";
+        const d = parseInt(dddVal);
+        if (d >= 11 && d <= 19) return "SP";
+        if (d >= 21 && d <= 24) return "RJ";
+        if (d >= 27 && d <= 28) return "ES";
+        if (d >= 31 && d <= 38) return "MG";
+        if (d >= 41 && d <= 46) return "PR";
+        if (d >= 47 && d <= 49) return "SC";
+        if (d >= 51 && d <= 55) return "RS";
+        if (d >= 61 && d <= 61) return "DF";
+        if (d >= 62 && d <= 64) return "GO";
+        if (d >= 71 && d <= 77) return "BA";
+        return "";
+      }
 
       function renderActiveTable() {
         const tab = state.activeTab;
@@ -3014,9 +3418,97 @@
           .getElementById("dashPeriodFilter")
           .addEventListener("change", updateDashboardPeriod);
 
+        // Abaixo, note o fechamento }); que estava faltando
         document.querySelectorAll(".nav-tab").forEach((btn) => {
           btn.addEventListener("click", () => switchTab(btn.dataset.tab));
         });
+
+        // =======================================================
+        // EVENTOS ABA PARCEIROS
+        // =======================================================
+        ["filterPartnerBusca", "filterPartnerDDD"].forEach((id) => {
+          document
+            .getElementById(id)
+            .addEventListener("input", renderPartnersDirectory);
+        });
+        [
+          "filterPartnerCategoria",
+          "filterPartnerUF",
+          "filterPartnerRating",
+        ].forEach((id) => {
+          document
+            .getElementById(id)
+            .addEventListener("change", renderPartnersDirectory);
+        });
+
+        // MODAL NOVO PARCEIRO
+        document
+          .getElementById("btnOpenAddPartner")
+          .addEventListener("click", () => {
+            document.getElementById("formAddPartner").reset();
+            document
+              .getElementById("modalAddPartner")
+              .classList.remove("hidden");
+          });
+        document
+          .getElementById("btnClosePartnerModal")
+          .addEventListener("click", () =>
+            document.getElementById("modalAddPartner").classList.add("hidden"),
+          );
+        document
+          .getElementById("btnCancelPartnerModal")
+          .addEventListener("click", () =>
+            document.getElementById("modalAddPartner").classList.add("hidden"),
+          );
+
+        document
+          .getElementById("formAddPartner")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const dddInp = document.getElementById("p_ddd").value;
+            let estInp = document
+              .getElementById("p_estado")
+              .value.toUpperCase();
+            if (!estInp && dddInp) {
+              estInp = inferirEstadoPorDDD(dddInp);
+            } // Lógica Inteligente
+
+            const payload = {
+              nome: document.getElementById("p_nome").value,
+              empresa: document.getElementById("p_empresa").value,
+              categoria: document.getElementById("p_cat").value,
+              telefone: document.getElementById("p_tel").value,
+              ddd: dddInp,
+              estado: estInp,
+              cidade: document.getElementById("p_cidade").value,
+              avaliacao: parseInt(document.getElementById("p_aval").value),
+              observacoes: document.getElementById("p_obs").value,
+            };
+
+            // Grava direto na sua tabela Supabase
+            if (state.supabaseClient) {
+              await state.supabaseClient
+                .from("parceiros_contatos")
+                .insert([payload]);
+            }
+
+            state.parceiros_contatos.unshift(payload);
+            renderPartnersDirectory();
+            document.getElementById("modalAddPartner").classList.add("hidden");
+            showToast(
+              "✔ Contato salvo no diretório e com estado (" +
+                estInp +
+                ") calculado!",
+            );
+          });
+        // =======================================================
+
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", (e) => {
+            state.searchQuery = e.target.value;
+            renderActiveTable();
+          });
 
         document
           .getElementById("searchInput")
