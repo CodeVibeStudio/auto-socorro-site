@@ -357,16 +357,10 @@
             <span>⚡</span> <span id="btnConnectLabel">Conectar Supabase</span>
           </button>
           <button
-            id="btnOpenQuickAddTop"
-            type="button"
-            class="px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center gap-1.5 shadow"
-          >
-            <span>＋</span> <span>INSERIR NOVA LINHA (TOPO)</span>
-          </button>
-          <button
             id="btnLogout"
             type="button"
             class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white border border-slate-700 transition flex items-center gap-1.5"
+            title="Bloquear Painel / Sair"
           >
             <span>🔒</span> <span id="loggedUserLabel">Sair</span>
           </button>
@@ -2974,9 +2968,6 @@
         }
 
         document
-          .getElementById("btnOpenQuickAddTop")
-          .addEventListener("click", () => openQuickAdd(state.activeTab));
-        document
           .getElementById("btnAddRowTab")
           .addEventListener("click", () => openQuickAdd(state.activeTab));
         document
@@ -3436,7 +3427,7 @@
               }
 
               document.getElementById("loggedUserLabel").textContent =
-                "🔒 Sair / Bloquear";
+                "Sair / Bloquear";
               authOverlay.classList.add("hidden");
 
               showToast(
@@ -3453,7 +3444,7 @@
 
           // Modo local (sem Supabase configurado)
           document.getElementById("loggedUserLabel").textContent =
-            "🔒 Sair / Bloquear";
+            "Sair / Bloquear";
           authOverlay.classList.add("hidden");
           showToast("Modo de Demonstração Local ativo!");
         });
