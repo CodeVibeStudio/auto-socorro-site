@@ -3941,12 +3941,13 @@
             return todosOsDados;
           }
 
-          const [reb, col, mat, cred, desp] = await Promise.all([
+          const [reb, col, mat, cred, desp, parc] = await Promise.all([
             fetchAll("reboque_fabio", "data_servico"),
             fetchAll("servicos_colaboradores", "data_servico"),
             fetchAll("servicos_mateus", "data_servico"),
             fetchAll("creditos_faturamento", "data_credito"),
             fetchAll("despesas_gerais", "data_despesa"),
+            fetchAll("parceiros_contatos", "id"), // 🚀 Puxa o diretório de contatos do Supabase!
           ]);
 
           state.reboque = reb;
@@ -3954,6 +3955,11 @@
           state.mateus = mat;
           state.creditos = cred;
           state.despesas = desp;
+
+          // Se encontrou dados no Supabase, substitui os dados de exemplo da memória
+          if (parc && parc.length > 0) {
+            state.parceiros_contatos = parc;
+          }
 
           document.getElementById("count-reboque").textContent =
             state.reboque.length;
