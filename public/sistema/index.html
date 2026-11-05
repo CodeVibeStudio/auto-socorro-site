@@ -473,11 +473,16 @@
               id="dashPeriodFilter"
               class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-3 py-2 font-semibold cursor-pointer"
             >
-              <option value="2026">Exercício 2026</option>
+              <option value="all">Acumulado Geral (2018–2026)</option>
+              <option value="2026" selected>Exercício 2026 (Atual)</option>
               <option value="2025">Exercício 2025</option>
               <option value="2024">Exercício 2024</option>
               <option value="2023">Exercício 2023</option>
-              <option value="all">Acumulado Geral (2018–2026)</option>
+              <option value="2022">Exercício 2022</option>
+              <option value="2021">Exercício 2021</option>
+              <option value="2020">Exercício 2020</option>
+              <option value="2019">Exercício 2019</option>
+              <option value="2018">Exercício 2018</option>
             </select>
           </div>
         </div>
@@ -752,6 +757,21 @@
               placeholder="Buscar seguradora, OS, destino..."
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600 w-56"
             />
+            <select
+              id="yearFilter"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium"
+            >
+              <option value="all">Todos os Anos</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+            </select>
             <select
               id="statusFilter"
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium"
@@ -2417,46 +2437,89 @@
 
       function updateDashboardPeriod() {
         const period = document.getElementById("dashPeriodFilter").value;
-        if (period === "all") {
-          document.getElementById("kpiFatBadge").textContent = "2018–2026";
-          document.getElementById("kpiFaturamento").textContent =
-            "R$ 2.061.954,33";
-          document.getElementById("kpiFaturamentoSub").textContent =
-            "1.852 Notas Fiscais emitidas em 9 anos";
-          document.getElementById("kpiRebBadge").textContent = "1.929 OS";
-          document.getElementById("kpiReboque").textContent = "R$ 1.225.682,83";
-          document.getElementById("kpiReboqueSub").textContent =
-            "424.275,5 km rodados na frota própria";
-          document.getElementById("kpiColabBadge").textContent = "1.479 OS";
-          document.getElementById("kpiColaboradores").textContent =
-            "R$ 922.090,47";
-          document.getElementById("kpiColaboradoresSub").textContent =
-            "Pago aos parceiros: R$ 575.307,54";
-          document.getElementById("kpiDespBadge").textContent = "2.794 lanç.";
-          document.getElementById("kpiDespesas").textContent =
-            "R$ 1.381.065,63";
-          document.getElementById("kpiDespesasSub").textContent =
-            "Histórico completo unificado";
-        } else {
-          document.getElementById("kpiFatBadge").textContent = "2026";
-          document.getElementById("kpiFaturamento").textContent =
-            "R$ 286.281,07";
-          document.getElementById("kpiFaturamentoSub").textContent =
-            "A receber em aberto: R$ 24.193,24";
-          document.getElementById("kpiRebBadge").textContent = "259 OS";
-          document.getElementById("kpiReboque").textContent = "R$ 241.657,79";
-          document.getElementById("kpiReboqueSub").textContent =
-            "53.194 km rodados • Custo R$ 1,06/km";
-          document.getElementById("kpiColabBadge").textContent = "189 OS";
-          document.getElementById("kpiColaboradores").textContent =
-            "R$ 144.217,92";
-          document.getElementById("kpiColaboradoresSub").textContent =
-            "Repasse parceiros: R$ 78.664,14";
-          document.getElementById("kpiDespBadge").textContent = "2026";
-          document.getElementById("kpiDespesas").textContent = "R$ 93.930,72";
-          document.getElementById("kpiDespesasSub").textContent =
-            "Contas a pagar: R$ 47.150,34";
-        }
+
+        // 1. Filtra os dados reais carregados do Supabase pelo ano escolhido
+        const filterByYear = (arr, dateField) => {
+          if (period === "all") return arr || [];
+          return (arr || []).filter((item) => {
+            const dateStr = item[dateField];
+            return dateStr && dateStr.substring(0, 4) === period;
+          });
+        };
+
+        const fCred = filterByYear(state.creditos, "data_credito");
+        const fReb = filterByYear(state.reboque, "data_servico");
+        const fColab = filterByYear(state.colaboradores, "data_servico");
+        const fMat = filterByYear(state.mateus, "data_servico");
+        const fDesp = filterByYear(state.despesas, "data_despesa");
+
+        // 2. Calcula as somatórias exatas direto do Banco de Dados
+        const fatTotal = fCred.reduce(
+          (acc, curr) => acc + (Number(curr.valor_bruto) || 0),
+          0,
+        );
+        const fatAberto = fCred
+          .filter((c) => c.situacao !== "Pago")
+          .reduce((acc, curr) => acc + (Number(curr.valor_bruto) || 0), 0);
+
+        const rebTotal = fReb.reduce(
+          (acc, curr) => acc + (Number(curr.valor_servico) || 0),
+          0,
+        );
+        const rebKm = fReb.reduce(
+          (acc, curr) => acc + (Number(curr.km_rodado) || 0),
+          0,
+        );
+
+        const colabCount = fColab.length + fMat.length;
+        const colabTotal =
+          fColab.reduce((acc, c) => acc + (Number(c.valor_recebido) || 0), 0) +
+          fMat.reduce((acc, m) => acc + (Number(m.valor_servico) || 0), 0);
+        const colabRepasse =
+          fColab.reduce(
+            (acc, c) => acc + (Number(c.valor_pago_colaborador) || 0),
+            0,
+          ) +
+          fMat.reduce((acc, m) => acc + (Number(m.comissao_mateus) || 0), 0);
+
+        const despTotal = fDesp.reduce(
+          (acc, curr) => acc + (Number(curr.valor) || 0),
+          0,
+        );
+        const despAPagar = fDesp
+          .filter((d) => d.forma_pagamento !== "Pago")
+          .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+
+        // 3. Atualiza os Cartões na Tela dinamicamente
+        document.getElementById("kpiFatBadge").textContent =
+          period === "all" ? "2018–2026" : period;
+        document.getElementById("kpiRebBadge").textContent =
+          fReb.length + " OS";
+        document.getElementById("kpiColabBadge").textContent =
+          colabCount + " OS";
+        document.getElementById("kpiDespBadge").textContent =
+          period === "all" ? fDesp.length + " lanç." : period;
+
+        document.getElementById("kpiFaturamento").textContent =
+          formatBRL(fatTotal);
+        document.getElementById("kpiReboque").textContent = formatBRL(rebTotal);
+        document.getElementById("kpiColaboradores").textContent =
+          formatBRL(colabTotal);
+        document.getElementById("kpiDespesas").textContent =
+          formatBRL(despTotal);
+
+        document.getElementById("kpiFaturamentoSub").textContent =
+          period === "all"
+            ? fCred.length + " Notas Fiscais emitidas"
+            : "A receber em aberto: " + formatBRL(fatAberto);
+        document.getElementById("kpiReboqueSub").textContent =
+          rebKm.toLocaleString("pt-BR") + " km rodados na frota própria";
+        document.getElementById("kpiColaboradoresSub").textContent =
+          "Repasse parceiros: " + formatBRL(colabRepasse);
+        document.getElementById("kpiDespesasSub").textContent =
+          period === "all"
+            ? "Histórico completo unificado"
+            : "Contas a pagar: " + formatBRL(despAPagar);
       }
 
       // SWITCH TABS
@@ -2588,6 +2651,8 @@
         const rows = (state[tab] || []).filter((item) => {
           const textBlob = JSON.stringify(item).toLowerCase();
           if (q && !textBlob.includes(q)) return false;
+
+          // Filtro de Status
           if (stFilter !== "all") {
             const itemStatus =
               item.status_pagamento ||
@@ -2598,6 +2663,21 @@
             if (stFilter === "Pago" && itemStatus !== "Pago") return false;
             if (stFilter === "Pendente" && itemStatus === "Pago") return false;
           }
+
+          // Filtro de Ano
+          const yearElement = document.getElementById("yearFilter");
+          const yrFilter = yearElement ? yearElement.value : "all";
+
+          if (yrFilter !== "all") {
+            let dateField = item.data_servico; // Padrão: Reboque, Colab, Mateus
+            if (tab === "creditos") dateField = item.data_credito;
+            if (tab === "despesas") dateField = item.data_despesa;
+
+            if (!dateField || !dateField.startsWith(yrFilter)) {
+              return false;
+            }
+          }
+
           return true;
         });
 
@@ -2951,6 +3031,10 @@
             state.statusFilter = e.target.value;
             renderActiveTable();
           });
+
+        document.getElementById("yearFilter").addEventListener("change", () => {
+          renderActiveTable();
+        });
 
         function openQuickAdd(defaultTab) {
           const target = [
