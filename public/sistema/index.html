@@ -749,7 +749,7 @@
           </div>
 
           <!-- FILTERS FOR DIRECTORY -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <input
               id="filterPartnerBusca"
               type="text"
@@ -771,6 +771,13 @@
               <option value="Corretor">Corretor / Seguros</option>
               <option value="Outros">Outros</option>
             </select>
+
+            <input
+              id="filterPartnerCidade"
+              type="text"
+              placeholder="Filtrar por cidade..."
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
+            />
 
             <select
               id="filterPartnerUF"
@@ -2947,6 +2954,10 @@
           .value.toLowerCase()
           .trim();
         const cat = document.getElementById("filterPartnerCategoria").value;
+        const cidade = document
+          .getElementById("filterPartnerCidade")
+          .value.toLowerCase()
+          .trim();
         const uf = document.getElementById("filterPartnerUF").value;
         const ddd = document.getElementById("filterPartnerDDD").value.trim();
         const rating = parseInt(
@@ -2961,6 +2972,8 @@
           )
             return false;
           if (cat !== "all" && !p.categoria.includes(cat)) return false;
+          if (cidade && (!p.cidade || !p.cidade.toLowerCase().includes(cidade)))
+            return false;
           if (uf !== "all" && p.estado !== uf) return false;
           if (ddd && String(p.ddd) !== ddd) return false;
           if (rating > 0 && p.avaliacao < rating) return false;
@@ -3426,7 +3439,11 @@
         // =======================================================
         // EVENTOS ABA PARCEIROS
         // =======================================================
-        ["filterPartnerBusca", "filterPartnerDDD"].forEach((id) => {
+        [
+          "filterPartnerBusca",
+          "filterPartnerDDD",
+          "filterPartnerCidade",
+        ].forEach((id) => {
           document
             .getElementById(id)
             .addEventListener("input", renderPartnersDirectory);
