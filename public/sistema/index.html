@@ -749,7 +749,7 @@
           </div>
 
           <!-- FILTERS FOR DIRECTORY -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <input
               id="filterPartnerBusca"
               type="text"
@@ -791,17 +791,11 @@
               <option value="BA">Bahia (BA)</option>
             </select>
 
-            <input
-              id="filterPartnerDDD"
-              type="number"
-              placeholder="DDD (Ex: 32)"
-              class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-slate-600"
-            />
-
             <select
               id="filterPartnerRating"
               class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-amber-600"
             >
+              >
               <option value="0">Qualquer Avaliação</option>
               <option value="5">⭐⭐⭐⭐⭐ (5)</option>
               <option value="4">⭐⭐⭐⭐+ (Acima de 4)</option>
@@ -2963,7 +2957,6 @@
           .value.toLowerCase()
           .trim();
         const uf = document.getElementById("filterPartnerUF").value;
-        const ddd = document.getElementById("filterPartnerDDD").value.trim();
         const rating = parseInt(
           document.getElementById("filterPartnerRating").value,
         );
@@ -2975,11 +2968,23 @@
             (!p.empresa || !p.empresa.toLowerCase().includes(query))
           )
             return false;
-          if (cat !== "all" && !p.categoria.includes(cat)) return false;
+
+          if (cat !== "all") {
+            const catDb = (p.categoria || "").toLowerCase();
+            // Ajuste especial para Táxi / Taxista lidar com strings bagunçadas do CSV
+            if (
+              cat === "Táxi" &&
+              !catDb.includes("taxi") &&
+              !catDb.includes("táxi")
+            )
+              return false;
+            if (cat !== "Táxi" && !catDb.includes(cat.toLowerCase()))
+              return false;
+          }
+
           if (cidade && (!p.cidade || !p.cidade.toLowerCase().includes(cidade)))
             return false;
           if (uf !== "all" && p.estado !== uf) return false;
-          if (ddd && String(p.ddd) !== ddd) return false;
           if (rating > 0 && p.avaliacao < rating) return false;
           return true;
         });
@@ -2995,7 +3000,19 @@
             const stars =
               "⭐".repeat(p.avaliacao || 1) +
               "☆".repeat(5 - (p.avaliacao || 1));
-            const loc = `${p.ddd ? "(" + p.ddd + ")" : ""} ${p.cidade || ""}${p.cidade && p.estado ? " - " : ""}${p.estado || ""}`;
+
+            // Formatando a Localização: Ex: "Laranjal - MG" ou só "MG" se a cidade estiver vazia
+            let loc = "";
+            if (p.cidade && p.estado) {
+              loc = `${p.cidade} - ${p.estado}`;
+            } else if (p.cidade) {
+              loc = p.cidade;
+            } else if (p.estado) {
+              loc = p.estado;
+            } else {
+              loc = "-";
+            }
+
             const cleanPhone = String(p.telefone).replace(/\D/g, "");
 
             return `<tr class="hover:bg-slate-50">
@@ -3205,22 +3222,43 @@
           <th class="py-3 px-3">Seguradora / Fonte</th>
           <th class="py-3 px-3">Nº NF</th>
           <th class="py-3 px-3 text-right">Valor Bruto NF</th>
-          <th class="py-3 px-3 text-right">Impostos (ISS/DAS)</th>
           <th class="py-3 px-3 text-right bg-emerald-950/60">Valor Líquido (Auto)</th>
-          <th class="py-3 px-3">Observações / Situação</th>
+          <th class="py-3 px-3 text-center">Situação</th>
+          <th class="py-3 px-3">Observações</th>
         </tr>`;
           body.innerHTML = rows
             .map((r) => {
               sumBruto += Number(r.valor_bruto) || 0;
               sumLucro += Number(r.valor_liquido) || 0;
+
+              let sit =
+                r.situacao ||
+                (r.observacoes && r.observacoes.includes("Situação: Pago")
+                  ? "Pago"
+                  : "A Receber");
+
+              let sitBadge = "";
+              if (sit === "Pago")
+                sitBadge = "bg-blue-100 text-blue-800 border border-blue-300";
+              else if (sit === "Cancelada" || sit === "CANCELADA")
+                sitBadge = "bg-rose-100 text-rose-800 border border-rose-300";
+              else
+                sitBadge =
+                  "bg-yellow-100 text-yellow-800 border border-yellow-300";
+
+              // Limpa o prefixo "Situação: " das observacoes antigas
+              let obsClean = r.observacoes || "-";
+              if (obsClean.startsWith("Situação: "))
+                obsClean = obsClean.split(" | ")[1] || "-";
+
               return `<tr class="hover:bg-slate-50">
             <td class="py-2.5 px-3 font-medium whitespace-nowrap">${r.data_credito}</td>
             <td class="py-2.5 px-3 font-bold text-slate-900">${r.seguradora}</td>
-            <td class="py-2.5 px-3 font-mono font-semibold text-blue-700">${r.numero_nf || "-"}</td>
-            <td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td>
-            <td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.imposto_retido)}</td>
+            <td class="py-2.5 px-3 font-mono font-semibold text-slate-700">${r.numero_nf || "-"}</td>
+            <td class="py-2.5 px-3 text-right font-bold text-slate-900">${formatBRL(r.valor_bruto)}</td>
             <td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td>
-            <td class="py-2.5 px-3 text-slate-600">${r.observacoes || "-"}</td>
+            <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sitBadge}">${sit}</span></td>
+            <td class="py-2.5 px-3 text-slate-500 text-[11px] truncate max-w-[120px]" title="${obsClean}">${obsClean}</td>
           </tr>`;
             })
             .join("");
@@ -3369,7 +3407,8 @@
           <div><label class="block text-xs font-semibold mb-1">Seguradora / Fonte *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Número da NF *</label><input id="f_nf" type="text" placeholder="Ex: 225/2026" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
           <div><label class="block text-xs font-semibold mb-1">Valor Bruto NF (R$) *</label><input id="f_valor" type="number" step="0.01" placeholder="Ex: 3450.00" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
-          <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option></select></div>
+          <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>
+          <div><label class="block text-xs font-semibold mb-1">Observações / Extra</label><input id="f_obs_extra" type="text" placeholder="Ex: Retenção de pedágio..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
         `;
         } else if (tab === "despesas") {
           title.textContent = "Nova Linha no Topo — Despesas Gerais";
@@ -3444,14 +3483,19 @@
         // =======================================================
         // EVENTOS ABA PARCEIROS
         // =======================================================
-        [
-          "filterPartnerBusca",
-          "filterPartnerDDD",
-          "filterPartnerCidade",
-        ].forEach((id) => {
+        ["filterPartnerBusca", "filterPartnerCidade"].forEach((id) => {
           document
             .getElementById(id)
             .addEventListener("input", renderPartnersDirectory);
+        });
+        [
+          "filterPartnerCategoria",
+          "filterPartnerUF",
+          "filterPartnerRating",
+        ].forEach((id) => {
+          document
+            .getElementById(id)
+            .addEventListener("change", renderPartnersDirectory);
         });
         [
           "filterPartnerCategoria",
@@ -3765,13 +3809,17 @@
             } else if (tab === "creditos") {
               const imp = +(val * 0.0747).toFixed(2);
               const st = document.getElementById("f_status").value;
+              const obsExt = document.getElementById("f_obs_extra")
+                ? document.getElementById("f_obs_extra").value
+                : "";
               const payload = {
                 data_credito: dataStr,
                 seguradora: document.getElementById("f_seg").value,
                 numero_nf: document.getElementById("f_nf").value,
                 valor_bruto: val,
                 imposto_retido: imp,
-                observacoes: "Situação: " + st,
+                situacao: st,
+                observacoes: obsExt,
               };
               if (state.supabaseClient) {
                 await state.supabaseClient
