@@ -3569,6 +3569,45 @@
               showToast("Verifique a URL e a chave Anon do Supabase.");
             }
           });
+
+        // =================================================================
+        // AUTO-CONEXÃO SUPABASE (NUNCA MAIS PRECISARÁ DIGITAR AS CHAVES)
+        // =================================================================
+        const FIXO_SUPABASE_URL = "https://ilajjowksgwrkvidnaiz.supabase.co";
+        const FIXO_SUPABASE_KEY =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsYWpqb3drc2d3cmt2aWRuYWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3NzMwMjIsImV4cCI6MjEwOTM0OTAyMn0.kITexL0aTd5O_QYQVry0FLtonFJtUFPm7rpFaWr8q4k";
+
+        if (FIXO_SUPABASE_URL.startsWith("http")) {
+          state.supabaseClient = window.supabase.createClient(
+            FIXO_SUPABASE_URL,
+            FIXO_SUPABASE_KEY,
+          );
+          state.isConnected = true;
+          document.getElementById("connectionBadge").textContent =
+            "🟢 Conectado ao Supabase";
+          document
+            .getElementById("btnOpenSupabaseModal")
+            .classList.add("hidden"); // Oculta o botão verde do topo
+
+          if (
+            state.supabaseClient.auth &&
+            state.supabaseClient.auth.onAuthStateChange
+          ) {
+            state.supabaseClient.auth.onAuthStateChange((event) => {
+              if (event === "PASSWORD_RECOVERY") {
+                authOverlay.classList.remove("hidden");
+                formLoginAuth.classList.add("hidden");
+                formForgotPassword.classList.add("hidden");
+                formResetNewPassword.classList.remove("hidden");
+                showAuthAlert(
+                  "Link de recuperação validado! Digite sua nova senha abaixo.",
+                  "success",
+                );
+              }
+            });
+          }
+        }
+        // =================================================================
       });
     </script>
   </body>
