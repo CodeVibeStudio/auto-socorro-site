@@ -286,6 +286,25 @@
       </div>
     </div>
 
+    <!-- LOADING OVERLAY (BIG DATA) -->
+    <div
+      id="loadingOverlay"
+      class="hidden fixed inset-0 z-[999] bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-white"
+    >
+      <div
+        class="w-14 h-14 border-4 border-slate-700 border-t-amber-500 rounded-full animate-spin mb-5 shadow-lg"
+      ></div>
+      <h3 class="text-lg font-extrabold text-amber-400 tracking-tight">
+        Sincronizando Big Data...
+      </h3>
+      <p
+        id="loadingOverlayText"
+        class="text-xs text-slate-300 mt-2 font-medium"
+      >
+        Conectando ao banco de dados...
+      </p>
+    </div>
+
     <!-- TOP HEADER -->
     <header
       class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md"
@@ -838,6 +857,21 @@
                 class="px-2 py-1 text-xs rounded-md border border-slate-300 bg-white cursor-pointer"
               />
             </div>
+
+            <select
+              id="seguradoraFilter"
+              class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium"
+            >
+              <option value="all">Todas Seguradoras</option>
+              <option value="Brasil Assistência">Brasil Assistência</option>
+              <option value="Allianz">AWP / Allianz</option>
+              <option value="Porto Seguro">Porto Seguro</option>
+              <option value="Movida">Movida</option>
+              <option value="Europ">Europ / Fácil Assist</option>
+              <option value="Mapfre">Mapfre</option>
+              <option value="Bradesco">Bradesco</option>
+              <option value="Particular">Particular / Site</option>
+            </select>
 
             <select
               id="statusFilter"
@@ -1572,11 +1606,34 @@
           );
         };
 
-        const fCred = filterByYear(state.creditos, "data_credito");
-        const fReb = filterByYear(state.reboque, "data_servico");
-        const fColab = filterByYear(state.colaboradores, "data_servico");
-        const fMat = filterByYear(state.mateus, "data_servico");
-        const fDesp = filterByYear(state.despesas, "data_despesa");
+        // Filtro de Integridade: Ignora qualquer lançamento cancelado para não inflar faturamento, lucros e volume de OS
+        const isAtivo = (item) => {
+          const statusStr = String(
+            item.status_pagamento ||
+              item.status_acerto ||
+              item.situacao ||
+              item.forma_pagamento ||
+              "",
+          ).toLowerCase();
+          const obsStr = String(item.observacoes || "").toLowerCase();
+          // Verifica a string de status e o campo observações (usado como fallback em NFs)
+          if (obsStr.includes("situação: cancelada")) return false;
+          return statusStr !== "cancelada";
+        };
+
+        const fCred = filterByYear(state.creditos, "data_credito").filter(
+          isAtivo,
+        );
+        const fReb = filterByYear(state.reboque, "data_servico").filter(
+          isAtivo,
+        );
+        const fColab = filterByYear(state.colaboradores, "data_servico").filter(
+          isAtivo,
+        );
+        const fMat = filterByYear(state.mateus, "data_servico").filter(isAtivo);
+        const fDesp = filterByYear(state.despesas, "data_despesa").filter(
+          isAtivo,
+        );
 
         const p = state.parametros;
         const taxaDas = p.imposto_das / 100;
@@ -1933,6 +1990,8 @@
           "";
         const stFilter =
           document.getElementById("statusFilter")?.value || "all";
+        const segFilter =
+          document.getElementById("seguradoraFilter")?.value || "all";
 
         const dtStart = document.getElementById("dateStartFilter")?.value || "";
         const dtEnd = document.getElementById("dateEndFilter")?.value || "";
@@ -1983,6 +2042,34 @@
             item.data_servico || item.data_credito || item.data_despesa;
           if (dtStart && dateField < dtStart) return false;
           if (dtEnd && dateField > dtEnd) return false;
+
+          if (segFilter !== "all") {
+            // Em despesas, a seguradora pode estar no fornecedor/descrição
+            const segDb = String(
+              item.seguradora || item.fornecedor || item.descricao || "",
+            ).toLowerCase();
+            const filterTerm = segFilter.toLowerCase();
+
+            // Regras flexíveis para as seguradoras com nomes compostos ou siglas
+            if (
+              filterTerm === "allianz" &&
+              !segDb.includes("awp") &&
+              !segDb.includes("allianz")
+            )
+              return false;
+            else if (
+              filterTerm === "europ" &&
+              !segDb.includes("europ") &&
+              !segDb.includes("fácil assist")
+            )
+              return false;
+            else if (
+              filterTerm !== "allianz" &&
+              filterTerm !== "europ" &&
+              !segDb.includes(filterTerm)
+            )
+              return false;
+          }
 
           if (stFilter !== "all") {
             let rawStatus = "";
@@ -2238,10 +2325,22 @@
       }
 
       async function baixarHistoricoCompleto() {
+        // Exibe o Loading Visual Global
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingText = document.getElementById("loadingOverlayText");
+        if (loadingOverlay) loadingOverlay.classList.remove("hidden");
+        if (loadingText)
+          loadingText.textContent =
+            "Preparando a extração dos blocos de dados...";
+
         async function fetchAll(tabela, colunaOrdem) {
           let todosOsDados = [],
             inicio = 0;
           while (true) {
+            // Feedback dinâmico enquanto as Promises resolvem paralelamente
+            if (loadingText)
+              loadingText.textContent = `Baixando pacotes de '${tabela}'... (${todosOsDados.length} registros extraídos)`;
+
             const { data, err } = await state.supabaseClient
               .from(tabela)
               .select("*")
@@ -2312,6 +2411,9 @@
           state.activeTab !== "parceiros"
         )
           renderActiveTable();
+
+        // Concluiu o download de tudo para a memória RAM: oculta o Loading Visual
+        if (loadingOverlay) loadingOverlay.classList.add("hidden");
       }
 
       // INITIALIZATION
@@ -2339,9 +2441,12 @@
           state.searchQuery = e.target.value;
           renderActiveTable();
         });
-        ["dateStartFilter", "dateEndFilter", "statusFilter"].forEach((id) =>
-          safeAddListener(id, "change", renderActiveTable),
-        );
+        [
+          "dateStartFilter",
+          "dateEndFilter",
+          "statusFilter",
+          "seguradoraFilter",
+        ].forEach((id) => safeAddListener(id, "change", renderActiveTable));
         safeAddListener("btnPrintTable", "click", () => window.print());
 
         safeAddListener("btnAddRowTab", "click", () => {
