@@ -1240,7 +1240,7 @@
       </div>
     </div>
 
-    <!-- MODAL 1.5: ADICIONAR NOVO PARCEIRO -->
+    <!-- MODAL 1.5: ADICIONAR / EDITAR PARCEIRO -->
     <div
       id="modalAddPartner"
       class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -1255,7 +1255,10 @@
             <span class="text-xs font-bold uppercase text-blue-600"
               >Banco de Contatos</span
             >
-            <h3 class="text-base font-bold text-slate-900">
+            <h3
+              id="modalPartnerTitle"
+              class="text-base font-bold text-slate-900"
+            >
               Cadastrar Novo Parceiro / Prestador
             </h3>
           </div>
@@ -1269,6 +1272,7 @@
         </div>
 
         <form id="formAddPartner" class="space-y-3">
+          <input type="hidden" id="p_id" value="" />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold mb-1 text-slate-700"
@@ -3000,8 +3004,9 @@
              <td class="py-2.5 px-3 font-mono font-semibold text-slate-800">${p.telefone}</td>
              <td class="py-2.5 px-3 text-slate-600 font-medium">${loc.trim() === "" ? "-" : loc}</td>
              <td class="py-2.5 px-3 text-center text-amber-400 text-[11px] tracking-widest" title="Nota: ${p.avaliacao}/5">${stars}</td>
-             <td class="py-2.5 px-3 text-center">
-                <a href="https://wa.me/55${cleanPhone}" target="_blank" class="text-[10px] font-bold bg-green-100 text-green-800 border border-green-300 px-2.5 py-1 rounded hover:bg-green-200 shadow-sm">WhatsApp</a>
+             <td class="py-2.5 px-3 text-center flex items-center justify-center gap-1.5">
+                <a href="https://wa.me/55${cleanPhone}" target="_blank" class="text-[10px] font-bold bg-green-100 text-green-800 border border-green-300 px-2 py-1 rounded hover:bg-green-200 shadow-sm" title="Chamar no WhatsApp">💬 WA</a>
+                <button type="button" data-edit-id="${p.id}" class="btn-edit-partner text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 px-2 py-1 rounded hover:bg-amber-200 shadow-sm" title="Editar Contato">✏️ Editar</button>
              </td>
            </tr>`;
           })
@@ -3458,15 +3463,22 @@
             .addEventListener("change", renderPartnersDirectory);
         });
 
-        // MODAL NOVO PARCEIRO
+        // MODAL NOVO PARCEIRO / EDITAR PARCEIRO
         document
           .getElementById("btnOpenAddPartner")
           .addEventListener("click", () => {
             document.getElementById("formAddPartner").reset();
+            document.getElementById("p_id").value = "";
+            document.getElementById("modalPartnerTitle").textContent =
+              "Cadastrar Novo Parceiro / Prestador";
+            document.querySelector(
+              "#formAddPartner button[type=submit]",
+            ).textContent = "✔ Salvar Parceiro";
             document
               .getElementById("modalAddPartner")
               .classList.remove("hidden");
           });
+
         document
           .getElementById("btnClosePartnerModal")
           .addEventListener("click", () =>
@@ -3478,10 +3490,48 @@
             document.getElementById("modalAddPartner").classList.add("hidden"),
           );
 
+        // Captura cliques no botão Editar dentro da tabela (Event Delegation)
+        document
+          .getElementById("partnerTableBody")
+          .addEventListener("click", (e) => {
+            const btn = e.target.closest(".btn-edit-partner");
+            if (!btn) return;
+
+            const id = btn.getAttribute("data-edit-id");
+            const partner = state.parceiros_contatos.find(
+              (p) => String(p.id) === String(id),
+            );
+            if (!partner) return;
+
+            // Preenche os campos com os dados existentes
+            document.getElementById("p_id").value = partner.id;
+            document.getElementById("p_nome").value = partner.nome || "";
+            document.getElementById("p_empresa").value = partner.empresa || "";
+            document.getElementById("p_cat").value =
+              partner.categoria || "Outros";
+            document.getElementById("p_tel").value = partner.telefone || "";
+            document.getElementById("p_ddd").value = partner.ddd || "";
+            document.getElementById("p_estado").value = partner.estado || "";
+            document.getElementById("p_cidade").value = partner.cidade || "";
+            document.getElementById("p_aval").value = partner.avaliacao || "5";
+            document.getElementById("p_obs").value = partner.observacoes || "";
+
+            // Muda o estilo visual do modal para "Edição"
+            document.getElementById("modalPartnerTitle").textContent =
+              "✏️ Editar Contato Existente";
+            document.querySelector(
+              "#formAddPartner button[type=submit]",
+            ).textContent = "✔ Atualizar Contato";
+            document
+              .getElementById("modalAddPartner")
+              .classList.remove("hidden");
+          });
+
         document
           .getElementById("formAddPartner")
           .addEventListener("submit", async (e) => {
             e.preventDefault();
+            const editId = document.getElementById("p_id").value;
             const dddInp = document.getElementById("p_ddd").value;
             let estInp = document
               .getElementById("p_estado")
@@ -3502,21 +3552,56 @@
               observacoes: document.getElementById("p_obs").value,
             };
 
-            // Grava direto na sua tabela Supabase
             if (state.supabaseClient) {
-              await state.supabaseClient
-                .from("parceiros_contatos")
-                .insert([payload]);
+              if (editId) {
+                // ATUALIZAR (UPDATE)
+                await state.supabaseClient
+                  .from("parceiros_contatos")
+                  .update(payload)
+                  .eq("id", editId);
+                const idx = state.parceiros_contatos.findIndex(
+                  (p) => String(p.id) === String(editId),
+                );
+                if (idx > -1)
+                  state.parceiros_contatos[idx] = {
+                    ...state.parceiros_contatos[idx],
+                    ...payload,
+                  };
+                showToast("✔ Contato atualizado com sucesso no Supabase!");
+              } else {
+                // CADASTRAR NOVO (INSERT)
+                const { data } = await state.supabaseClient
+                  .from("parceiros_contatos")
+                  .insert([payload])
+                  .select();
+                const newRow =
+                  data && data.length > 0
+                    ? data[0]
+                    : { ...payload, id: Date.now() };
+                state.parceiros_contatos.unshift(newRow);
+                showToast("✔ Novo contato cadastrado no diretório!");
+              }
+            } else {
+              // Modo demonstração (sem banco conectado)
+              if (editId) {
+                const idx = state.parceiros_contatos.findIndex(
+                  (p) => String(p.id) === String(editId),
+                );
+                if (idx > -1)
+                  state.parceiros_contatos[idx] = {
+                    ...state.parceiros_contatos[idx],
+                    ...payload,
+                  };
+              } else {
+                state.parceiros_contatos.unshift({
+                  ...payload,
+                  id: Date.now(),
+                });
+              }
             }
 
-            state.parceiros_contatos.unshift(payload);
             renderPartnersDirectory();
             document.getElementById("modalAddPartner").classList.add("hidden");
-            showToast(
-              "✔ Contato salvo no diretório e com estado (" +
-                estInp +
-                ") calculado!",
-            );
           });
         // =======================================================
 
