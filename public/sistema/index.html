@@ -1793,7 +1793,7 @@
           creditos: {
             title: "Aba 4: Créditos e Notas Fiscais",
             badge: "public.creditos_faturamento",
-            desc: "Clique direto na Situação (Amarela) para mudar para Pago (Azul) ou Cancelada (Vermelho).",
+            desc: "Clique direto no Status (Amarelo) para mudar para Pago (Azul) ou Cancelada (Vermelho).",
           },
           despesas: {
             title: "Aba 5: Despesas Operacionais",
@@ -1829,14 +1829,20 @@
           else if (tab === "despesas")
             itemStatus = item.forma_pagamento || "A Pagar";
 
+          // Conversão para padronizar os nomes internamente para a filtragem funcionar
+          let normalizedStatus = itemStatus.toLowerCase();
+          if (
+            normalizedStatus === "a receber" ||
+            normalizedStatus === "a pagar"
+          )
+            normalizedStatus = "pendente";
+
           if (stFilter !== "all") {
-            const stLC = itemStatus.toLowerCase();
-            if (stFilter === "Pago" && stLC !== "pago") return false;
-            if (stFilter === "Cancelada" && stLC !== "cancelada") return false;
-            if (
-              stFilter === "Pendente" &&
-              (stLC === "pago" || stLC === "cancelada")
-            )
+            const stLC = stFilter.toLowerCase();
+            if (stLC === "pago" && normalizedStatus !== "pago") return false;
+            if (stLC === "cancelada" && normalizedStatus !== "cancelada")
+              return false;
+            if (stLC === "pendente" && normalizedStatus !== "pendente")
               return false;
           }
           return true;
@@ -1874,7 +1880,8 @@
             })
             .join("");
         } else if (tab === "mateus") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS / Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          // AQUI: A coluna OS e Seguradora foram separadas[cite: 16]
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
           body.innerHTML = rows
             .map((r) => {
               sumBruto += Number(r.valor_servico) || 0;
@@ -1884,13 +1891,13 @@
                 sit === "Pago"
                   ? "bg-emerald-100 text-emerald-800"
                   : sit.toLowerCase() === "cancelada"
-                    ? "bg-rose-100 text-rose-800"
+                    ? "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer"
                     : "bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.sinistro_os || ""} - ${r.seguradora}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-amber-300 ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono">${r.sinistro_os || ""}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora || ""}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_servico)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.lucro_empresa)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-amber-300 ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button></td></tr>`;
             })
             .join("");
         } else if (tab === "creditos") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Nº NF</th><th class="py-3 px-3 text-right">Bruto NF</th><th class="py-3 px-3 text-right bg-emerald-950/60">Líquido (Auto)</th><th class="py-3 px-3 text-center">Situação</th><th class="py-3 px-3">Extra</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Nº NF</th><th class="py-3 px-3 text-right">Bruto NF</th><th class="py-3 px-3 text-right bg-emerald-950/60">Líquido (Auto)</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Extra</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
           body.innerHTML = rows
             .map((r) => {
               sumBruto += Number(r.valor_bruto) || 0;
