@@ -932,14 +932,8 @@
             class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4"
           >
             <div class="flex items-center justify-between">
-              <div>
-                <span class="text-xs font-bold uppercase text-emerald-600"
-                  >Simulador ao Vivo do Site Público</span
-                >
-                <h3 class="text-base font-bold text-slate-900">
-                  Formulário em www.autosocorrolaranjal.com.br
-                </h3>
-              </div>
+              <div><span class="text-xs font-bold uppercase text-emerald-600">Simulador ao Vivo do Site Público</span><h3 class="text-base font-bold text-slate-900">Formulário em www.autosocorrolaranjal.com.br</h3></div>
+            </div>
               <span
                 class="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold"
                 >Tabela: solicitacoes_site</span
@@ -1775,36 +1769,17 @@
           : "";
 
         const meta = {
-          reboque: {
-            title: "Aba 1: Reboque Fábio",
-            badge: "public.reboque_fabio",
-            desc: "Clique no status para alterar. Use o botão Editar para ajustar KMs e Valores.",
-          },
-          colaboradores: {
-            title: "Aba 2: Colaboradores",
-            badge: "public.servicos_colaboradores",
-            desc: "Clique no status para alterar. Use o botão Editar para corrigir parceiros.",
-          },
-          mateus: {
-            title: "Aba 3: Parceiro Mateus",
-            badge: "public.servicos_mateus",
-            desc: "Controle de repasses do Mateus.",
-          },
-          creditos: {
-            title: "Aba 4: Créditos e Notas Fiscais",
-            badge: "public.creditos_faturamento",
-            desc: "Clique direto no Status (Amarelo) para mudar para Pago (Azul) ou Cancelada (Vermelho).",
-          },
-          despesas: {
-            title: "Aba 5: Despesas Operacionais",
-            badge: "public.despesas_gerais",
-            desc: "Clique no status para marcar conta como Paga.",
-          },
+          reboque: { title: "Aba 1: Reboque Fábio", desc: "Clique no status para alterar. Use o botão Editar para ajustar KMs e Valores." },
+          colaboradores: { title: "Aba 2: Colaboradores", desc: "Clique no status para alterar. Use o botão Editar para corrigir parceiros." },
+          mateus: { title: "Aba 3: Parceiro Mateus", desc: "Controle de repasses do Mateus." },
+          creditos: { title: "Aba 4: Créditos e Notas Fiscais", desc: "Clique direto na Situação para mudar o Status (Pago/A Receber/Cancelada)." },
+          despesas: { title: "Aba 5: Despesas Operacionais", desc: "Clique no status para marcar conta como Paga." },
         }[tab];
 
         if (!meta) return;
         document.getElementById("tableTitle").textContent = meta.title;
-        document.getElementById("tableSubtitleBadge").textContent = meta.badge;
+        // Oculta a badge com o nome da tabela do banco de dados
+        document.getElementById("tableSubtitleBadge").classList.add("hidden"); 
         document.getElementById("tableDescription").textContent = meta.desc;
 
         const head = document.getElementById("tableHead");
@@ -1812,38 +1787,31 @@
 
         const rows = (state[tab] || []).filter((item) => {
           const textBlob = JSON.stringify(item).toLowerCase();
+          
+          // Filtro por Texto Geral (Seguradora, OS, etc)
           if (q && !textBlob.includes(q)) return false;
-
-          let dateField =
-            item.data_servico || item.data_credito || item.data_despesa;
+          
+          // Filtro de Período (De / Até)
+          let dateField = item.data_servico || item.data_credito || item.data_despesa;
           if (dtStart && dateField < dtStart) return false;
           if (dtEnd && dateField > dtEnd) return false;
 
-          let itemStatus = "";
-          if (tab === "reboque" || tab === "mateus")
-            itemStatus = item.status_pagamento || "Pendente";
-          else if (tab === "colaboradores")
-            itemStatus = item.status_acerto || "Pendente";
-          else if (tab === "creditos")
-            itemStatus = item.situacao || "A Receber";
-          else if (tab === "despesas")
-            itemStatus = item.forma_pagamento || "A Pagar";
-
-          // Conversão para padronizar os nomes internamente para a filtragem funcionar
-          let normalizedStatus = itemStatus.toLowerCase();
-          if (
-            normalizedStatus === "a receber" ||
-            normalizedStatus === "a pagar"
-          )
-            normalizedStatus = "pendente";
-
+          // Filtro de Status Exato 
           if (stFilter !== "all") {
-            const stLC = stFilter.toLowerCase();
-            if (stLC === "pago" && normalizedStatus !== "pago") return false;
-            if (stLC === "cancelada" && normalizedStatus !== "cancelada")
-              return false;
-            if (stLC === "pendente" && normalizedStatus !== "pendente")
-              return false;
+             let itemStatus = "";
+             if (tab === "reboque" || tab === "mateus") itemStatus = item.status_pagamento || "Pendente";
+             else if (tab === "colaboradores") itemStatus = item.status_acerto || "Pendente";
+             else if (tab === "creditos") itemStatus = item.situacao || "A Receber";
+             else if (tab === "despesas") itemStatus = item.forma_pagamento || "A Pagar";
+             
+             let sitStr = itemStatus.toLowerCase();
+             let filtro = stFilter.toLowerCase();
+             
+             if (filtro === "pago" && sitStr !== "pago") return false;
+             if (filtro === "cancelada" && sitStr !== "cancelada") return false;
+             
+             // O Filtro de tela envia "Pendente", mas na base pode estar como "A Receber" ou "A Pagar". Ele cobre todos aqui:
+             if (filtro === "pendente" && sitStr !== "pendente" && sitStr !== "a receber" && sitStr !== "a pagar") return false;
           }
           return true;
         });
