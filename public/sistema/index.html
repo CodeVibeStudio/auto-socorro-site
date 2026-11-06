@@ -612,88 +612,71 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            <div
-              class="col-span-1 sm:col-span-2 lg:col-span-1 p-3 rounded-xl bg-sky-50 border border-sky-200"
-            >
-              <label class="text-xs font-bold text-sky-900 block mb-1"
-                >Custo do Terceiro (R$)</label
+            <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+              <label
+                class="text-[10px] font-bold text-sky-900 uppercase block mb-1"
+                >Custo Parceiro</label
               >
               <input
                 id="calcBaseColab"
                 type="number"
-                value="100"
-                class="w-full px-3 py-2 rounded-lg border border-sky-300 bg-white font-extrabold text-lg text-slate-900 focus:outline-none focus:border-sky-500"
+                value="1000"
+                class="w-full px-2 py-1.5 text-sm rounded-lg border border-sky-300 bg-white font-extrabold text-slate-900 focus:outline-none focus:border-sky-500"
               />
             </div>
 
             <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
               <label
                 class="text-[10px] font-bold text-amber-900 uppercase block mb-1"
-                >Margem Livre (%)</label
+                >Sua Margem (%)</label
               >
               <input
                 id="calcMargem"
                 type="number"
                 step="0.5"
-                placeholder="Ex: 30"
-                class="w-full px-2 py-2 text-xs rounded-lg border border-amber-300 bg-white font-extrabold text-amber-900 focus:outline-none focus:border-amber-500"
-                title="Altere livremente para competir. Deixe vazio para usar a margem padrão global."
+                value="30"
+                class="w-full px-2 py-1.5 text-sm rounded-lg border border-amber-300 bg-white font-extrabold text-amber-900 focus:outline-none focus:border-amber-500"
               />
             </div>
 
             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
               <label
                 class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
-                >Piso Lucro Mín (R$)</label
+                >Método de Cálculo</label
+              >
+              <select
+                id="calcMetodo"
+                class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+              >
+                <option value="multiplicador">Multiplicador (Comercial)</option>
+                <option value="divisor">Divisor (Lucro Limpo)</option>
+              </select>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Piso Lucro (R$)</label
               >
               <input
                 id="calcLucroFixo"
                 type="number"
                 value="50"
-                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
-                title="Trava de segurança: se a % gerar um lucro menor que este valor, o sistema força este piso."
+                class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
               />
             </div>
 
             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
               <label
                 class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
-                >Lucro Mín. Fixo (R$)</label
-              >
-              <input
-                id="calcLucroFixo"
-                type="number"
-                value="50"
-                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
-                title="Garante um retorno monetário mínimo mesmo em serviços baratos."
-              />
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-              <label
-                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
-                >IBS/CBS Projetado (%)</label
+                >IBS/CBS Extra (%)</label
               >
               <input
                 id="calcImpostoAdicional"
                 type="number"
                 step="0.5"
-                value="11"
-                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
-              />
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-              <label
-                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
-                >Teto Seguradora (R$)</label
-              >
-              <input
-                id="calcTeto"
-                type="number"
                 value="0"
-                placeholder="0 = Sem teto"
-                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+                class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
               />
             </div>
           </div>
@@ -2029,7 +2012,7 @@
         });
       }
 
-      // LOGICA CALCULADORA DE PARCEIROS (MARKUP DIVISOR & PISO INTELIGENTE)
+      // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS)
       function atualizarCalculadoraParceiros() {
         const valColab = Number(
           document.getElementById("calcBaseColab")?.value || 0,
@@ -2039,43 +2022,47 @@
         );
         const inputMargem = document.getElementById("calcMargem")?.value;
         const lucroMinimoFixo = Number(
-          document.getElementById("calcLucroFixo")?.value || 50,
+          document.getElementById("calcLucroFixo")?.value || 0,
         );
-        const tetoSeguradora = Number(
-          document.getElementById("calcTeto")?.value || 0,
-        );
+        const metodo =
+          document.getElementById("calcMetodo")?.value || "multiplicador";
 
         const p = state.parametros;
+        // Puxamos apenas o imposto estadual para não encarecer a tarifa comercial de balcão
         const dasAtualPct = p.imposto_das || 7.4729;
-        const escritorioPct = p.taxa_escritorio || 5.0;
-
-        // Define a margem dinamicamente: usa o valor digitado na hora, ou o padrão global se estiver vazio
         let margemPct =
           inputMargem !== "" && inputMargem !== undefined
             ? Number(inputMargem)
-            : p.margem_lucro || 30.0;
+            : 30.0;
 
-        const aliqImpostos = (dasAtualPct + escritorioPct + impAdicional) / 100;
+        const aliqImpostos = (dasAtualPct + impAdicional) / 100;
         const aliqMargem = margemPct / 100;
 
-        // 1. Cálculo Inicial: Markup Divisor
-        let somaTaxas = aliqImpostos + aliqMargem;
-        if (somaTaxas >= 1) somaTaxas = 0.99; // Prevenção contra divisão por zero/negativa
+        let precoFinal = 0;
+        let lucroLiquido = 0;
 
-        let precoFinal = valColab / (1 - somaTaxas);
-        let lucroLiquido = precoFinal * aliqMargem;
+        if (metodo === "divisor") {
+          // Método Divisor (Protege a margem exata após impostos)
+          let somaTaxas = aliqImpostos + aliqMargem;
+          if (somaTaxas >= 1) somaTaxas = 0.99;
+          precoFinal = valColab / (1 - somaTaxas);
+          lucroLiquido = precoFinal * aliqMargem;
+        } else {
+          // Método Multiplicador (Custo + X% - Abordagem Comercial)
+          let somaMultiplicador = aliqImpostos + aliqMargem;
+          precoFinal = valColab * (1 + somaMultiplicador);
+          // Lucro que sobra no bolso = Valor Cobrado - Impostos da NF - Custo Terceiro
+          lucroLiquido = precoFinal - precoFinal * aliqImpostos - valColab;
+        }
 
-        // 2. Trava do Piso Monetário Inteligente
+        // Trava do Piso Monetário
         if (lucroLiquido < lucroMinimoFixo) {
-          // Se o lucro em % é menor que o piso fixo (ex: R$ 50), recalculamos
-          // garantindo o lucro fixo e dividindo apenas pela taxa de impostos.
           precoFinal = (valColab + lucroMinimoFixo) / (1 - aliqImpostos);
           lucroLiquido = lucroMinimoFixo;
         }
 
         const impostosReais = precoFinal * aliqImpostos;
 
-        // UI Updates
         if (document.getElementById("calcComImposto"))
           document.getElementById("calcComImposto").textContent =
             formatBRL(precoFinal);
@@ -2086,24 +2073,11 @@
           document.getElementById("calcLucro").textContent =
             formatBRL(lucroLiquido);
 
-        // Alerta de Teto da Seguradora
+        // Reseta cores do card
         const cardCobrar = document.getElementById("cardCobrarBox");
-        const msgAlerta = document.getElementById("msgTetoAlerta");
-        const lblAlerta = document.getElementById("labelTetoAlerta");
-
-        if (tetoSeguradora > 0 && precoFinal > tetoSeguradora) {
-          cardCobrar.classList.remove("bg-slate-900");
-          cardCobrar.classList.add("bg-red-800", "animate-pulse");
-          msgAlerta.classList.remove("hidden");
-          lblAlerta.classList.remove("text-slate-400");
-          lblAlerta.classList.add("text-white");
-        } else {
-          cardCobrar.classList.remove("bg-red-800", "animate-pulse");
-          cardCobrar.classList.add("bg-slate-900");
-          msgAlerta.classList.add("hidden");
-          lblAlerta.classList.remove("text-white");
-          lblAlerta.classList.add("text-slate-400");
-        }
+        if (cardCobrar)
+          cardCobrar.className =
+            "p-5 rounded-xl bg-slate-900 text-white flex flex-col justify-center shadow-lg transition-colors duration-300";
       }
 
       // INFERIR ESTADO PELO DDD (INTELIGÊNCIA DO CADASTRO)
@@ -2746,7 +2720,6 @@
       window.addEventListener("DOMContentLoaded", () => {
         initCharts();
 
-        safeAddListener("dashPeriodFilter", "change", updateDashboardPeriod);
         safeAddListener(
           "calcBaseColab",
           "input",
@@ -2763,7 +2736,7 @@
           "input",
           atualizarCalculadoraParceiros,
         );
-        safeAddListener("calcTeto", "input", atualizarCalculadoraParceiros);
+        safeAddListener("calcMetodo", "change", atualizarCalculadoraParceiros);
 
         document.querySelectorAll(".nav-tab").forEach((btn) => {
           btn.addEventListener("click", () => switchTab(btn.dataset.tab));
