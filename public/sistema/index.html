@@ -2708,6 +2708,17 @@
             custo_km: cfg.custo_km ?? state.parametros.custo_km,
             piso_minimo: cfg.piso_minimo ?? state.parametros.piso_minimo,
             imposto_colab: cfg.imposto_colab ?? state.parametros.imposto_colab,
+            // Mapeamento das novas colunas de composição do custo real
+            diesel_preco: cfg.diesel_preco ?? state.parametros.diesel_preco,
+            diesel_kml: cfg.diesel_kml ?? state.parametros.diesel_kml,
+            folha_encargos:
+              cfg.folha_encargos ?? state.parametros.folha_encargos,
+            custos_base_caminhao:
+              cfg.custos_base_caminhao ?? state.parametros.custos_base_caminhao,
+            manutencao_variavel:
+              cfg.manutencao_variavel ?? state.parametros.manutencao_variavel,
+            km_medio_mensal:
+              cfg.km_medio_mensal ?? state.parametros.km_medio_mensal,
           };
         }
 
@@ -3329,33 +3340,27 @@
               Number(document.getElementById("cfg_custokm")?.value) || 0,
           };
 
-          // Atualiza o state local para refletir na tabela operacional, dashboard e simulador imediatamente
+          // Actualiza o state local para a interface reagir instantaneamente
           Object.assign(state.parametros, payload);
 
           if (state.supabaseClient) {
             try {
-              // Assume que a tabela configuracoes_financeiras tem uma linha fixa com id = 1
+              // Passamos o objecto payload inteiro, que já contém todas as colunas exactas do banco
               const { error } = await state.supabaseClient
                 .from("configuracoes_financeiras")
-                .update({
-                  imposto_das: novoDas,
-                  taxa_escritorio: novoEscritorio,
-                  margem_lucro: novoLucro,
-                  custo_km: novoCustoKm,
-                })
+                .update(payload)
                 .eq("id", 1);
 
               if (error) throw error;
-              showToast("✔ Parâmetros salvos no Supabase!");
+              showToast("✔ Parâmetros guardados no Supabase!");
             } catch (err) {
-              console.error(err);
-              showToast("Erro ao salvar no banco. Verifique o console.");
+              console.error("Erro do Supabase:", err);
+              showToast("Erro ao guardar no banco. Verifique o console.");
             }
           } else {
-            showToast("✔ Salvo localmente (Modo Demonstração).");
+            showToast("✔ Guardado localmente (Modo Demonstração).");
           }
 
-          // Re-renderiza a calculadora para refletir os novos números
           atualizarCalculadoraParceiros();
         });
 
