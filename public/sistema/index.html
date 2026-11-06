@@ -626,19 +626,33 @@
               />
             </div>
 
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+              <label
+                class="text-[10px] font-bold text-amber-900 uppercase block mb-1"
+                >Margem Livre (%)</label
+              >
+              <input
+                id="calcMargem"
+                type="number"
+                step="0.5"
+                placeholder="Ex: 30"
+                class="w-full px-2 py-2 text-xs rounded-lg border border-amber-300 bg-white font-extrabold text-amber-900 focus:outline-none focus:border-amber-500"
+                title="Altere livremente para competir. Deixe vazio para usar a margem padrão global."
+              />
+            </div>
+
             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
               <label
                 class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
-                >Nível do Serviço</label
+                >Piso Lucro Mín (R$)</label
               >
-              <select
-                id="calcNivelServico"
+              <input
+                id="calcLucroFixo"
+                type="number"
+                value="50"
                 class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
-              >
-                <option value="padrao">Padrão (Margem Alvo)</option>
-                <option value="simples">Simples / Rápido (15%)</option>
-                <option value="risco">Madrugada / Risco (45%)</option>
-              </select>
+                title="Trava de segurança: se a % gerar um lucro menor que este valor, o sistema força este piso."
+              />
             </div>
 
             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
@@ -2023,7 +2037,7 @@
         const impAdicional = Number(
           document.getElementById("calcImpostoAdicional")?.value || 0,
         );
-        const margemSelect = document.getElementById("calcNivelServico")?.value;
+        const inputMargem = document.getElementById("calcMargem")?.value;
         const lucroMinimoFixo = Number(
           document.getElementById("calcLucroFixo")?.value || 50,
         );
@@ -2035,10 +2049,11 @@
         const dasAtualPct = p.imposto_das || 7.4729;
         const escritorioPct = p.taxa_escritorio || 5.0;
 
-        // Define a margem dinamicamente pelo nível de serviço
-        let margemPct = p.margem_lucro || 30.0;
-        if (margemSelect === "simples") margemPct = 15.0;
-        else if (margemSelect === "risco") margemPct = 45.0;
+        // Define a margem dinamicamente: usa o valor digitado na hora, ou o padrão global se estiver vazio
+        let margemPct =
+          inputMargem !== "" && inputMargem !== undefined
+            ? Number(inputMargem)
+            : p.margem_lucro || 30.0;
 
         const aliqImpostos = (dasAtualPct + escritorioPct + impAdicional) / 100;
         const aliqMargem = margemPct / 100;
@@ -2742,11 +2757,7 @@
           "input",
           atualizarCalculadoraParceiros,
         );
-        safeAddListener(
-          "calcNivelServico",
-          "change",
-          atualizarCalculadoraParceiros,
-        );
+        safeAddListener("calcMargem", "input", atualizarCalculadoraParceiros);
         safeAddListener(
           "calcLucroFixo",
           "input",
