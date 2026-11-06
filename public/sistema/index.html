@@ -2102,9 +2102,11 @@
 
       // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS)
       function atualizarCalculadoraParceiros() {
-        const valColab = Number(
-          document.getElementById("calcBaseColab")?.value || 0,
-        );
+        const baseElement = document.getElementById("calcBaseColab");
+        // Previne a execução caso o DOM ainda não tenha sido montado (evita que fique tudo a R$ 0,00)
+        if (!baseElement) return;
+
+        const valColab = Number(baseElement.value || 0);
         const impAdicional = Number(
           document.getElementById("calcImpostoAdicional")?.value || 0,
         );
@@ -2115,9 +2117,12 @@
         const metodo =
           document.getElementById("calcMetodo")?.value || "multiplicador";
 
-        const p = state.parametros;
-        // Puxamos apenas o imposto estadual para não encarecer a tarifa comercial de balcão
-        const dasAtualPct = p.imposto_das || 7.4729;
+        // Garante que o estado existe, caso contrário usa um objeto vazio para o fallback
+        const p = state.parametros || {};
+
+        // Puxamos apenas o imposto estadual para não encarecer a tarifa comercial
+        const dasAtualPct = Number(p.imposto_das) || 7.4729;
+
         let margemPct =
           inputMargem !== "" && inputMargem !== undefined
             ? Number(inputMargem)
@@ -2812,12 +2817,17 @@
           document.getElementById("count-despesas").textContent =
             state.despesas.length;
 
-        if (
-          state.activeTab !== "dashboard" &&
-          state.activeTab !== "site" &&
-          state.activeTab !== "parceiros"
-        )
+        // Atualiza ativamente as views dinâmicas com os dados que acabaram de chegar do banco
+        if (state.activeTab === "dashboard") {
+          updateDashboardPeriod();
+        } else if (state.activeTab === "parceiros") {
+          renderPartnersDirectory();
+          atualizarCalculadoraParceiros();
+        } else if (state.activeTab === "parametros") {
+          renderParametros();
+        } else if (state.activeTab !== "site") {
           renderActiveTable();
+        }
 
         // Concluiu o download de tudo para a memória RAM: oculta o Loading Visual
         if (loadingOverlay) loadingOverlay.classList.add("hidden");
