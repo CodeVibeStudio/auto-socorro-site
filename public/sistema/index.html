@@ -611,8 +611,10 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+          <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-sky-50 border border-sky-200"
+            >
               <label
                 class="text-[10px] font-bold text-sky-900 uppercase block mb-1"
                 >Custo Parceiro</label
@@ -625,7 +627,26 @@
               />
             </div>
 
-            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-slate-50 border border-slate-200"
+            >
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Cenário da OS</label
+              >
+              <select
+                id="calcCenario"
+                class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+              >
+                <option value="30">Comercial / Dia</option>
+                <option value="40">Noite / Fim de Semana</option>
+                <option value="50">Risco / Complexo</option>
+              </select>
+            </div>
+
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-amber-50 border border-amber-200"
+            >
               <label
                 class="text-[10px] font-bold text-amber-900 uppercase block mb-1"
                 >Sua Margem (%)</label
@@ -636,6 +657,7 @@
                 step="0.5"
                 value="30"
                 class="w-full px-2 py-1.5 text-sm rounded-lg border border-amber-300 bg-white font-extrabold text-amber-900 focus:outline-none focus:border-amber-500"
+                title="Altere livremente. O seletor de cenário apenas preenche um valor rápido aqui."
               />
             </div>
 
@@ -646,10 +668,10 @@
               >
               <select
                 id="calcMetodo"
-                class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+                class="w-full px-1 py-1.5 text-[11px] rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
               >
-                <option value="multiplicador">Multiplicador (Comercial)</option>
-                <option value="divisor">Divisor (Lucro Limpo)</option>
+                <option value="multiplicador">Multiplicador</option>
+                <option value="divisor">Divisor</option>
               </select>
             </div>
 
@@ -2737,6 +2759,15 @@
           atualizarCalculadoraParceiros,
         );
         safeAddListener("calcMetodo", "change", atualizarCalculadoraParceiros);
+
+        safeAddListener("calcCenario", "change", (e) => {
+          // Puxa a porcentagem definida no value do dropdown e joga para o campo de margem
+          const margemInput = document.getElementById("calcMargem");
+          if (margemInput) {
+            margemInput.value = e.target.value;
+            atualizarCalculadoraParceiros();
+          }
+        });
 
         document.querySelectorAll(".nav-tab").forEach((btn) => {
           btn.addEventListener("click", () => switchTab(btn.dataset.tab));
