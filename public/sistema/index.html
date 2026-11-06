@@ -593,7 +593,7 @@
 
       <!-- VIEW PARCEIROS (CALCULATOR + DIRETÓRIO) -->
       <section id="view-parceiros" class="hidden space-y-4">
-        <!-- CALCULADORA -->
+        <!-- CALCULADORA INTELIGENTE B2B -->
         <div
           class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
         >
@@ -602,95 +602,132 @@
           >
             <div>
               <h2 class="text-lg font-extrabold text-slate-900">
-                Tabela Rápida de Orçamentos de Parceiros
+                Calculadora de Orçamentos B2B (Markup Divisor)
               </h2>
               <p class="text-xs text-slate-500 mt-1">
-                Piso mínimo automático de R$ 280,00 • Lucro líquido travado em
-                30%
+                Precisão matemática para garantir o lucro líquido exato após
+                retenção de impostos.
               </p>
             </div>
-            <div class="flex items-center gap-3">
-              <label class="text-xs font-bold text-slate-700"
-                >Adicional Projetado (%):</label
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div
+              class="col-span-1 sm:col-span-2 lg:col-span-1 p-3 rounded-xl bg-sky-50 border border-sky-200"
+            >
+              <label class="text-xs font-bold text-sky-900 block mb-1"
+                >Custo do Terceiro (R$)</label
+              >
+              <input
+                id="calcBaseColab"
+                type="number"
+                value="100"
+                class="w-full px-3 py-2 rounded-lg border border-sky-300 bg-white font-extrabold text-lg text-slate-900 focus:outline-none focus:border-sky-500"
+              />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Nível do Serviço</label
+              >
+              <select
+                id="calcNivelServico"
+                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+              >
+                <option value="padrao">Padrão (Margem Alvo)</option>
+                <option value="simples">Simples / Rápido (15%)</option>
+                <option value="risco">Madrugada / Risco (45%)</option>
+              </select>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Lucro Mín. Fixo (R$)</label
+              >
+              <input
+                id="calcLucroFixo"
+                type="number"
+                value="50"
+                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+                title="Garante um retorno monetário mínimo mesmo em serviços baratos."
+              />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >IBS/CBS Projetado (%)</label
               >
               <input
                 id="calcImpostoAdicional"
                 type="number"
                 step="0.5"
                 value="11"
-                class="w-20 px-3 py-1.5 text-sm font-bold rounded-lg bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-500"
+                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
+              />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Teto Seguradora (R$)</label
+              >
+              <input
+                id="calcTeto"
+                type="number"
+                value="0"
+                placeholder="0 = Sem teto"
+                class="w-full px-2 py-2 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
               />
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div class="p-4 rounded-xl bg-sky-50 border border-sky-200">
-              <label class="text-xs font-bold text-sky-900 block mb-1"
-                >Valor Colaborador (A3)</label
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+            <div
+              id="cardCobrarBox"
+              class="p-5 rounded-xl bg-slate-900 text-white flex flex-col justify-center shadow-lg transition-colors duration-300"
+            >
+              <span
+                id="labelTetoAlerta"
+                class="text-[11px] font-bold uppercase text-slate-400"
+                >Preço Final a Cobrar</span
               >
-              <input
-                id="calcBaseColab"
-                type="number"
-                value="300"
-                class="w-full px-3 py-2 rounded-lg border border-sky-300 bg-white font-extrabold text-lg text-slate-900 focus:outline-none focus:border-sky-500"
-              />
+              <p id="calcComImposto" class="text-3xl font-extrabold mt-1">
+                R$ 0,00
+              </p>
+              <p
+                id="msgTetoAlerta"
+                class="text-[10px] text-red-300 font-bold hidden mt-2"
+              >
+                ⚠️ VALOR ULTRAPASSA O TETO DA SEGURADORA
+              </p>
             </div>
             <div
-              class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center"
+              class="p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center"
             >
-              <span class="text-[11px] font-bold text-slate-500 uppercase"
-                >Regra Antiga (+40%)</span
+              <span class="text-xs font-bold text-slate-500 uppercase"
+                >Impostos + Escritório</span
               >
               <p
-                id="calcRegraAntiga"
-                class="text-xl font-extrabold text-slate-800 mt-1"
+                id="calcImpostos"
+                class="text-2xl font-bold text-rose-700 mt-1"
               >
-                R$ 420,00
+                R$ 0,00
               </p>
             </div>
             <div
-              class="p-4 rounded-xl bg-yellow-50 border border-yellow-300 flex flex-col justify-center"
+              class="p-5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col justify-center shadow-sm"
             >
-              <span class="text-[11px] font-bold text-yellow-900 uppercase"
-                >Sem Reforma (DAS)</span
-              >
-              <p
-                id="calcSemReforma"
-                class="text-xl font-extrabold text-yellow-900 mt-1"
-              >
-                R$ 445,58
-              </p>
-            </div>
-            <div
-              class="p-4 rounded-xl bg-rose-600 text-white flex flex-col justify-center shadow-md"
-            >
-              <span class="text-[11px] font-bold uppercase text-rose-100"
-                >Cobrar c/ Imposto</span
-              >
-              <p id="calcComImposto" class="text-xl font-extrabold mt-1">
-                R$ 509,62
-              </p>
-            </div>
-            <div
-              class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-center"
-            >
-              <span class="text-[11px] font-bold text-slate-500 uppercase"
-                >Imp. + Escritório</span
-              >
-              <p id="calcImpostos" class="text-lg font-bold text-rose-700 mt-1">
-                R$ 119,62
-              </p>
-            </div>
-            <div
-              class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col justify-center"
-            >
-              <span class="text-[11px] font-bold text-emerald-800 uppercase"
-                >Seu Lucro (G3)</span
+              <span class="text-xs font-bold text-emerald-800 uppercase"
+                >Lucro Líquido Real</span
               >
               <p
                 id="calcLucro"
-                class="text-xl font-extrabold text-emerald-700 mt-1"
+                class="text-2xl font-extrabold text-emerald-700 mt-1"
               >
-                R$ 90,00
+                R$ 0,00
               </p>
             </div>
           </div>
@@ -1978,7 +2015,7 @@
         });
       }
 
-      // LOGICA CALCULADORA DE PARCEIROS
+      // LOGICA CALCULADORA DE PARCEIROS (MARKUP DIVISOR & PISO INTELIGENTE)
       function atualizarCalculadoraParceiros() {
         const valColab = Number(
           document.getElementById("calcBaseColab")?.value || 0,
@@ -1986,48 +2023,72 @@
         const impAdicional = Number(
           document.getElementById("calcImpostoAdicional")?.value || 0,
         );
-
-        // Agora a calculadora lê do estado dinâmico, não de variáveis chumbadas
-        const dasAtualPct = state.parametros.imposto_das;
-        const escritorioPct = state.parametros.taxa_escritorio;
-        const lucroMinPct = state.parametros.margem_lucro;
-
-        const baseColab = Math.max(200, valColab);
-        const regraAntiga = Math.max(280, baseColab * 1.4);
-        const cobrarSemReforma = Math.max(
-          280,
-          (baseColab * (1 + lucroMinPct / 100)) /
-            (1 - (dasAtualPct + escritorioPct) / 100),
+        const margemSelect = document.getElementById("calcNivelServico")?.value;
+        const lucroMinimoFixo = Number(
+          document.getElementById("calcLucroFixo")?.value || 50,
+        );
+        const tetoSeguradora = Number(
+          document.getElementById("calcTeto")?.value || 0,
         );
 
-        const aliqProjetadaTotal = dasAtualPct + impAdicional;
-        const cobrarComImposto = Math.max(
-          280,
-          (baseColab * (1 + lucroMinPct / 100)) /
-            (1 - (aliqProjetadaTotal + escritorioPct) / 100),
-        );
+        const p = state.parametros;
+        const dasAtualPct = p.imposto_das || 7.4729;
+        const escritorioPct = p.taxa_escritorio || 5.0;
 
-        const impostosReais = cobrarComImposto * (aliqProjetadaTotal / 100);
-        const custoEscritorioReais = cobrarComImposto * (escritorioPct / 100);
-        const lucroLiquidoParceiro =
-          cobrarComImposto - impostosReais - custoEscritorioReais - valColab;
+        // Define a margem dinamicamente pelo nível de serviço
+        let margemPct = p.margem_lucro || 30.0;
+        if (margemSelect === "simples") margemPct = 15.0;
+        else if (margemSelect === "risco") margemPct = 45.0;
 
-        if (document.getElementById("calcRegraAntiga"))
-          document.getElementById("calcRegraAntiga").textContent =
-            formatBRL(regraAntiga);
-        if (document.getElementById("calcSemReforma"))
-          document.getElementById("calcSemReforma").textContent =
-            formatBRL(cobrarSemReforma);
+        const aliqImpostos = (dasAtualPct + escritorioPct + impAdicional) / 100;
+        const aliqMargem = margemPct / 100;
+
+        // 1. Cálculo Inicial: Markup Divisor
+        let somaTaxas = aliqImpostos + aliqMargem;
+        if (somaTaxas >= 1) somaTaxas = 0.99; // Prevenção contra divisão por zero/negativa
+
+        let precoFinal = valColab / (1 - somaTaxas);
+        let lucroLiquido = precoFinal * aliqMargem;
+
+        // 2. Trava do Piso Monetário Inteligente
+        if (lucroLiquido < lucroMinimoFixo) {
+          // Se o lucro em % é menor que o piso fixo (ex: R$ 50), recalculamos
+          // garantindo o lucro fixo e dividindo apenas pela taxa de impostos.
+          precoFinal = (valColab + lucroMinimoFixo) / (1 - aliqImpostos);
+          lucroLiquido = lucroMinimoFixo;
+        }
+
+        const impostosReais = precoFinal * aliqImpostos;
+
+        // UI Updates
         if (document.getElementById("calcComImposto"))
           document.getElementById("calcComImposto").textContent =
-            formatBRL(cobrarComImposto);
+            formatBRL(precoFinal);
         if (document.getElementById("calcImpostos"))
-          document.getElementById("calcImpostos").textContent = formatBRL(
-            impostosReais + custoEscritorioReais,
-          );
+          document.getElementById("calcImpostos").textContent =
+            formatBRL(impostosReais);
         if (document.getElementById("calcLucro"))
           document.getElementById("calcLucro").textContent =
-            formatBRL(lucroLiquidoParceiro);
+            formatBRL(lucroLiquido);
+
+        // Alerta de Teto da Seguradora
+        const cardCobrar = document.getElementById("cardCobrarBox");
+        const msgAlerta = document.getElementById("msgTetoAlerta");
+        const lblAlerta = document.getElementById("labelTetoAlerta");
+
+        if (tetoSeguradora > 0 && precoFinal > tetoSeguradora) {
+          cardCobrar.classList.remove("bg-slate-900");
+          cardCobrar.classList.add("bg-red-800", "animate-pulse");
+          msgAlerta.classList.remove("hidden");
+          lblAlerta.classList.remove("text-slate-400");
+          lblAlerta.classList.add("text-white");
+        } else {
+          cardCobrar.classList.remove("bg-red-800", "animate-pulse");
+          cardCobrar.classList.add("bg-slate-900");
+          msgAlerta.classList.add("hidden");
+          lblAlerta.classList.remove("text-white");
+          lblAlerta.classList.add("text-slate-400");
+        }
       }
 
       // INFERIR ESTADO PELO DDD (INTELIGÊNCIA DO CADASTRO)
@@ -2681,6 +2742,17 @@
           "input",
           atualizarCalculadoraParceiros,
         );
+        safeAddListener(
+          "calcNivelServico",
+          "change",
+          atualizarCalculadoraParceiros,
+        );
+        safeAddListener(
+          "calcLucroFixo",
+          "input",
+          atualizarCalculadoraParceiros,
+        );
+        safeAddListener("calcTeto", "input", atualizarCalculadoraParceiros);
 
         document.querySelectorAll(".nav-tab").forEach((btn) => {
           btn.addEventListener("click", () => switchTab(btn.dataset.tab));
