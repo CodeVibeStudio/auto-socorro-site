@@ -1955,28 +1955,56 @@
         const p = state.parametros;
 
         form.innerHTML = `
+          <!-- BLOCO 1: RATEIO TRIBUTÁRIO E ADMINISTRATIVO -->
           <div class="col-span-full mb-2 border-b border-slate-200 pb-2 flex justify-between items-end">
-            <h3 class="text-sm font-bold text-slate-800">1. Impostos e Alvos Comerciais (B2B e B2C)</h3>
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">1. Rateio Tributário (PGDAS) e Administrativo</h3>
+              <p class="text-[10px] text-slate-500 mt-0.5">Transforma despesas reais (R$) na porcentagem exata que deve ser descontada de cada OS.</p>
+            </div>
             <div class="text-right">
               <span class="text-[10px] uppercase font-bold text-emerald-600 block">Preço de Venda / KM Sugerido</span>
               <span id="display_precokm" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
             </div>
           </div>
+          
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Imposto DAS e IBS/CBS (%)</label>
-            <input id="cfg_das" type="number" step="0.0001" value="${p.imposto_das}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Faturamento Base (Mês R$)</label>
+            <input id="cfg_fat_medio" type="number" step="0.01" value="${p.faturamento_medio || 35000}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500" title="Usado como divisor (RBT12) para encontrar a alíquota real.">
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Imposto Colab/Terceiros (%)</label>
-            <input id="cfg_colab" type="number" step="0.0001" value="${p.imposto_colab}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500">
+          
+          <div class="flex items-center gap-2">
+            <div class="w-2/3">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Guia PGDAS (Mês R$)</label>
+              <input id="cfg_guia_das" type="number" step="0.01" value="${p.valor_guia_das || 2615.51}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500">
+            </div>
+            <div class="w-1/3 flex flex-col justify-end pb-1 border-l border-slate-200 pl-3">
+              <span class="text-[9px] font-bold text-slate-500 uppercase">DAS Efetivo</span>
+              <span id="display_das_efetivo" class="text-sm font-extrabold text-amber-600">0.00%</span>
+              <input type="hidden" id="cfg_das" value="${p.imposto_das}">
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Taxa Escritório / Adm (%)</label>
-            <input id="cfg_escritorio" type="number" step="0.01" value="${p.taxa_escritorio}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500">
+
+          <div class="flex items-center gap-2">
+            <div class="w-2/3">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Custo Adm Fixo (Mês R$)</label>
+              <input id="cfg_custo_adm_fixo" type="number" step="0.01" value="${p.custo_escritorio_fixo || 1750}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500" title="Contador, Telefonia, Banco, Internet">
+            </div>
+            <div class="w-1/3 flex flex-col justify-end pb-1 border-l border-slate-200 pl-3">
+              <span class="text-[9px] font-bold text-slate-500 uppercase">Taxa Adm</span>
+              <span id="display_taxa_adm" class="text-sm font-extrabold text-amber-600">0.00%</span>
+              <input type="hidden" id="cfg_escritorio" value="${p.taxa_escritorio}">
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Margem Lucro Alvo (%)</label>
-            <input id="cfg_lucro" type="number" step="0.1" value="${p.margem_lucro}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-amber-500">
+          
+          <div class="flex items-center gap-2">
+             <div class="w-1/2">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Margem Alvo (%)</label>
+                <input id="cfg_lucro" type="number" step="0.1" value="${p.margem_lucro}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-emerald-500">
+             </div>
+             <div class="w-1/2">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Imp. Colab (%)</label>
+                <input id="cfg_colab" type="number" step="0.0001" value="${p.imposto_colab}" class="cfg-calc w-full px-3 py-2 text-sm font-semibold rounded-lg bg-slate-50 border border-slate-300 focus:border-emerald-500">
+             </div>
           </div>
 
           <div class="col-span-full mt-4 mb-2 border-b border-slate-200 pb-2 flex justify-between items-end">
@@ -2015,7 +2043,27 @@
 
         // Motor de cálculo dinâmico: Atualiza o Custo/KM e o Preço de Venda ao digitar qualquer valor
         const recalcularVisuais = () => {
-          // 1. Custos
+          // 1. Rateio Tributário e Administrativo
+          const fatMedio =
+            Number(document.getElementById("cfg_fat_medio").value) || 1;
+          const guiaDas =
+            Number(document.getElementById("cfg_guia_das").value) || 0;
+          const custoAdmFixo =
+            Number(document.getElementById("cfg_custo_adm_fixo").value) || 0;
+
+          // Fórmulas exatas da aba PGDAS e Custos Fixos da sua Planilha
+          const aliqDas = (guiaDas / fatMedio) * 100;
+          const taxaAdm = (custoAdmFixo / fatMedio) * 100;
+
+          document.getElementById("cfg_das").value = aliqDas.toFixed(4);
+          document.getElementById("display_das_efetivo").textContent =
+            aliqDas.toFixed(2) + "%";
+
+          document.getElementById("cfg_escritorio").value = taxaAdm.toFixed(2);
+          document.getElementById("display_taxa_adm").textContent =
+            taxaAdm.toFixed(2) + "%";
+
+          // 2. Custos Operacionais da Frota
           const diesel =
             Number(document.getElementById("cfg_diesel").value) || 0;
           const kml = Number(document.getElementById("cfg_kml").value) || 1;
@@ -2032,10 +2080,7 @@
           document.getElementById("display_custokm").textContent =
             "R$ " + custoKmReal.toFixed(2);
 
-          // 2. Preço de Venda Sugerido (Custo + Impostos + Margem)
-          const das = Number(document.getElementById("cfg_das").value) || 0;
-          const esc =
-            Number(document.getElementById("cfg_escritorio").value) || 0;
+          // 3. Preço de Venda Sugerido (Custo + Impostos + Margem)
           const lucro = Number(document.getElementById("cfg_lucro").value) || 0;
 
           // Usando o Markup Divisor para mostrar o preço ideal do KM
@@ -2740,6 +2785,14 @@
               cfg.manutencao_variavel ?? state.parametros.manutencao_variavel,
             km_medio_mensal:
               cfg.km_medio_mensal ?? state.parametros.km_medio_mensal,
+            // Rateio Administrativo e Tributário (Baseado na Planilha)
+            faturamento_medio:
+              cfg.faturamento_medio ?? state.parametros.faturamento_medio,
+            valor_guia_das:
+              cfg.valor_guia_das ?? state.parametros.valor_guia_das,
+            custo_escritorio_fixo:
+              cfg.custo_escritorio_fixo ??
+              state.parametros.custo_escritorio_fixo,
           };
         }
 
@@ -3339,11 +3392,21 @@
         // GRAVAR PARÂMETROS NO SUPABASE
         safeAddListener("btnSalvarParametros", "click", async () => {
           const payload = {
+            // Percentuais Dinâmicos (Calculados a partir dos Reais)
             imposto_das: Number(document.getElementById("cfg_das")?.value) || 0,
-            imposto_colab:
-              Number(document.getElementById("cfg_colab")?.value) || 0,
             taxa_escritorio:
               Number(document.getElementById("cfg_escritorio")?.value) || 0,
+
+            // Valores de Base (Faturamento, Guia DAS e Contabilidade)
+            faturamento_medio:
+              Number(document.getElementById("cfg_fat_medio")?.value) || 0,
+            valor_guia_das:
+              Number(document.getElementById("cfg_guia_das")?.value) || 0,
+            custo_escritorio_fixo:
+              Number(document.getElementById("cfg_custo_adm_fixo")?.value) || 0,
+
+            imposto_colab:
+              Number(document.getElementById("cfg_colab")?.value) || 0,
             margem_lucro:
               Number(document.getElementById("cfg_lucro")?.value) || 0,
             diesel_preco:
