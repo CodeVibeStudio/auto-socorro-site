@@ -2731,6 +2731,9 @@
           return true;
         });
 
+        // ORDENAÇÃO ALFABÉTICA (A a Z)
+        rows.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
         const tbody = document.getElementById("partnerTableBody");
         if (!tbody) return;
 
