@@ -2801,13 +2801,17 @@
         recalcularVisuais();
       }
 
-      // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS)
+      // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS E PISO MÍNIMO)
       function atualizarCalculadoraParceiros() {
         const baseElement = document.getElementById("calcBaseColab");
-        // Previne a execução caso o DOM ainda não tenha sido montado (evita que fique tudo a R$ 0,00)
         if (!baseElement) return;
 
-        const valColab = Number(baseElement.value || 0);
+        // O custo REAL que o terceiro cobrou (ex: 150)
+        const valColabRaw = Number(baseElement.value || 0);
+
+        // Aplica a trava base MÁXIMO(200, Custo) da planilha Excel
+        const valColabCalc = Math.max(200, valColabRaw);
+
         const impAdicional = Number(
           document.getElementById("calcImpostoAdicional")?.value || 0,
         );
@@ -2818,11 +2822,9 @@
         const metodo =
           document.getElementById("calcMetodo")?.value || "multiplicador";
 
-        // Garante que o estado existe, caso contrário usa um objeto vazio para o fallback
         const p = state.parametros || {};
-
-        // Puxamos apenas o imposto estadual para não encarecer a tarifa comercial
         const dasAtualPct = Number(p.imposto_das) || 7.4729;
+        const pisoPrecoFinal = Number(p.piso_minimo) || 280; // Trava global de preço mínimo (R$ 280)
 
         let margemPct =
           inputMargem !== "" && inputMargem !== undefined
@@ -2835,23 +2837,27 @@
         let precoFinal = 0;
         let lucroLiquido = 0;
 
+        // Calcula o preço final usando a base artificial da trava (nunca menor que 200)
         if (metodo === "divisor") {
-          // Método Divisor (Protege a margem exata após impostos)
           let somaTaxas = aliqImpostos + aliqMargem;
           if (somaTaxas >= 1) somaTaxas = 0.99;
-          precoFinal = valColab / (1 - somaTaxas);
-          lucroLiquido = precoFinal * aliqMargem;
+          precoFinal = valColabCalc / (1 - somaTaxas);
         } else {
-          // Método Multiplicador (Custo + X% - Abordagem Comercial)
           let somaMultiplicador = aliqImpostos + aliqMargem;
-          precoFinal = valColab * (1 + somaMultiplicador);
-          // Lucro que sobra no bolso = Valor Cobrado - Impostos da NF - Custo Terceiro
-          lucroLiquido = precoFinal - precoFinal * aliqImpostos - valColab;
+          precoFinal = valColabCalc * (1 + somaMultiplicador);
         }
 
-        // Trava do Piso Monetário
+        // Força a trava absoluta na seguradora: O Preço Final nunca pode ser menor que R$ 280
+        if (precoFinal < pisoPrecoFinal) {
+          precoFinal = pisoPrecoFinal;
+        }
+
+        // O Lucro Líquido REAL da empresa subtrai os impostos da NF cheia e o custo REAL (baixo) pago ao parceiro
+        lucroLiquido = precoFinal - precoFinal * aliqImpostos - valColabRaw;
+
+        // Trava do Piso Monetário de Lucro (ex: se o lucro ficar menor que R$ 50, ajusta o preço para cima)
         if (lucroLiquido < lucroMinimoFixo) {
-          precoFinal = (valColab + lucroMinimoFixo) / (1 - aliqImpostos);
+          precoFinal = (valColabRaw + lucroMinimoFixo) / (1 - aliqImpostos);
           lucroLiquido = lucroMinimoFixo;
         }
 
@@ -3618,6 +3624,23 @@
         { rota: "Base x Fervedouro", km: 170 },
         { rota: "Base x Itaperuna", km: 180 },
         { rota: "Base x Juiz de Fora", km: 270 },
+        { rota: "Base x Leopoldina", km: 70 },
+        { rota: "Base x Maripá", km: 156 },
+        { rota: "Base x Miracema", km: 85 },
+        { rota: "Base x Miradouro", km: 125 },
+        { rota: "Base x Miraí", km: 130 },
+        { rota: "Base x Muriaé", km: 70 },
+        { rota: "Base x Palma", km: 50 },
+        { rota: "Base x Patrocínio Muriaé", km: 115 },
+        { rota: "Base x Piacatuba", km: 107 },
+        { rota: "Base x Pirapanema", km: 91 },
+        { rota: "Base x Pirapetinga", km: 111 },
+        { rota: "Base x Piraúba", km: 181 },
+        { rota: "Base x Recreio", km: 53 },
+        { rota: "Base x Santo A. Pádua", km: 115 },
+        { rota: "Base x Tebas", km: 95 },
+        { rota: "Base x Ubá", km: 203 },
+        { rota: "Base x Viçosa", km: 225 },
       ];
 
       function renderRotasB2c() {
