@@ -728,7 +728,7 @@
               <input
                 id="calcLucroFixo"
                 type="number"
-                value="50"
+                value="150"
                 class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none"
               />
             </div>
@@ -2801,30 +2801,26 @@
         recalcularVisuais();
       }
 
-      // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS E PISO MÍNIMO)
+      // LOGICA CALCULADORA DE PARCEIROS (MÚLTIPLOS MÉTODOS E PISO MÍNIMO 150)
       function atualizarCalculadoraParceiros() {
         const baseElement = document.getElementById("calcBaseColab");
         if (!baseElement) return;
 
-        // O custo REAL que o terceiro cobrou (ex: 150)
-        const valColabRaw = Number(baseElement.value || 0);
-
-        // Aplica a trava base MÁXIMO(200, Custo) da planilha Excel
-        const valColabCalc = Math.max(200, valColabRaw);
+        // Removemos as travas antigas. Lê o custo exato do parceiro.
+        const valColab = Number(baseElement.value || 0);
 
         const impAdicional = Number(
           document.getElementById("calcImpostoAdicional")?.value || 0,
         );
         const inputMargem = document.getElementById("calcMargem")?.value;
         const lucroMinimoFixo = Number(
-          document.getElementById("calcLucroFixo")?.value || 0,
+          document.getElementById("calcLucroFixo")?.value || 150,
         );
         const metodo =
           document.getElementById("calcMetodo")?.value || "multiplicador";
 
         const p = state.parametros || {};
         const dasAtualPct = Number(p.imposto_das) || 7.4729;
-        const pisoPrecoFinal = Number(p.piso_minimo) || 280; // Trava global de preço mínimo (R$ 280)
 
         let margemPct =
           inputMargem !== "" && inputMargem !== undefined
@@ -2837,28 +2833,23 @@
         let precoFinal = 0;
         let lucroLiquido = 0;
 
-        // Calcula o preço final usando a base artificial da trava (nunca menor que 200)
+        // 1. Calcula o preço base pela margem (%) desejada
         if (metodo === "divisor") {
           let somaTaxas = aliqImpostos + aliqMargem;
           if (somaTaxas >= 1) somaTaxas = 0.99;
-          precoFinal = valColabCalc / (1 - somaTaxas);
+          precoFinal = valColab / (1 - somaTaxas);
         } else {
           let somaMultiplicador = aliqImpostos + aliqMargem;
-          precoFinal = valColabCalc * (1 + somaMultiplicador);
+          precoFinal = valColab * (1 + somaMultiplicador);
         }
 
-        // Força a trava absoluta na seguradora: O Preço Final nunca pode ser menor que R$ 280
-        if (precoFinal < pisoPrecoFinal) {
-          precoFinal = pisoPrecoFinal;
-        }
+        // 2. Apura o lucro líquido real com a % informada
+        lucroLiquido = precoFinal - precoFinal * aliqImpostos - valColab;
 
-        // O Lucro Líquido REAL da empresa subtrai os impostos da NF cheia e o custo REAL (baixo) pago ao parceiro
-        lucroLiquido = precoFinal - precoFinal * aliqImpostos - valColabRaw;
-
-        // Trava do Piso Monetário de Lucro (ex: se o lucro ficar menor que R$ 50, ajusta o preço para cima)
+        // 3. Trava de Lucro Mínimo: Se a % não gerar pelo menos R$ 150, recalcula subindo o preço
         if (lucroLiquido < lucroMinimoFixo) {
-          precoFinal = (valColabRaw + lucroMinimoFixo) / (1 - aliqImpostos);
-          lucroLiquido = lucroMinimoFixo;
+          precoFinal = (valColab + lucroMinimoFixo) / (1 - aliqImpostos);
+          lucroLiquido = lucroMinimoFixo; // Garante o lucro fixado no caixa
         }
 
         const impostosReais = precoFinal * aliqImpostos;
