@@ -1213,6 +1213,14 @@
             </select>
 
             <button
+              id="btnExportCSV"
+              type="button"
+              class="px-3 py-2 rounded-lg text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm transition flex items-center gap-1"
+              title="Exportar dados filtrados para Excel/CSV"
+            >
+              📊 Exportar CSV
+            </button>
+            <button
               id="btnPrintTable"
               type="button"
               class="px-3 py-2 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white shadow transition flex items-center gap-1"
@@ -3800,6 +3808,70 @@
           "seguradoraFilter",
         ].forEach((id) => safeAddListener(id, "change", renderActiveTable));
         safeAddListener("btnPrintTable", "click", () => window.print());
+
+        // MOTOR DE EXPORTAÇÃO CSV
+        safeAddListener("btnExportCSV", "click", () => {
+          const tableHead = document.getElementById("tableHead");
+          const tableBody = document.getElementById("tableBody");
+          if (!tableHead || !tableBody) return;
+
+          let csvContent = "";
+
+          // 1. Extrair Cabeçalhos (ignorando a última coluna "Ações")
+          const headers = Array.from(tableHead.querySelectorAll("th")).map(
+            (th) => `"${th.innerText.trim()}"`,
+          );
+          headers.pop();
+          csvContent += headers.join(";") + "\n";
+
+          // 2. Extrair Linhas Visíveis
+          const rows = Array.from(tableBody.querySelectorAll("tr"));
+          if (
+            rows.length === 0 ||
+            (rows.length === 1 && rows[0].innerText.includes("Nenhum"))
+          ) {
+            showToast("⚠️ Não há dados visíveis para exportar.");
+            return;
+          }
+
+          rows.forEach((tr) => {
+            const cols = Array.from(tr.querySelectorAll("td"));
+            cols.pop(); // Remove a coluna do botão editar/excluir
+            const rowData = cols.map((td) => {
+              // Remove quebras de linha que possam existir (ex: nome e empresa na mesma célula)
+              let text = td.innerText
+                .replace(/(\r\n|\n|\r)/gm, " - ")
+                .replace(/"/g, '""')
+                .trim();
+              return `"${text}"`;
+            });
+            csvContent += rowData.join(";") + "\n";
+          });
+
+          // 3. Gerar Arquivo com codificação UTF-8 para o Excel ler os acentos perfeitamente
+          const bom = "\uFEFF";
+          const blob = new Blob([bom + csvContent], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.setAttribute("href", url);
+          const dataAtual = new Date().toISOString().slice(0, 10);
+          const nomeAba =
+            document
+              .getElementById("tableTitle")
+              ?.innerText.replace(/[^a-zA-Z0-9]/g, "_") || "Relatorio";
+          link.setAttribute(
+            "download",
+            `Faturamento_${nomeAba}_${dataAtual}.csv`,
+          );
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          showToast("✔ Relatório CSV gerado e descarregado com sucesso!");
+        });
 
         // CHIPS DE FILTRO RÁPIDO DE PERÍODO
         document.querySelectorAll(".btn-quick-period").forEach((btn) => {
