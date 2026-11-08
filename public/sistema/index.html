@@ -797,6 +797,183 @@
           </div>
         </div>
 
+        <!-- CALCULADORA DE SERVIÇOS PARTICULARES E NA REGIÃO (NOVO B2C) -->
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4"
+          >
+            <div>
+              <h2 class="text-lg font-extrabold text-slate-900">
+                Calculadora de Serviços Particulares (Região)
+              </h2>
+              <p class="text-xs text-slate-500 mt-1">
+                Orçamentos rápidos para clientes finais com base em tabela de
+                saídas, veículo e km.
+              </p>
+            </div>
+            <button
+              id="btnManageRoutes"
+              type="button"
+              class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-sm border border-slate-200 transition flex items-center gap-1.5"
+            >
+              ⚙️ Gerenciar Cidades e Rotas
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-slate-50 border border-slate-200"
+            >
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Cidades da Região</label
+              >
+              <select
+                id="calcB2cRota"
+                class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none focus:border-blue-500"
+              >
+                <!-- Injetado via JS -->
+              </select>
+            </div>
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-slate-50 border border-slate-200"
+            >
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Tipo de Veículo</label
+              >
+              <select
+                id="calcB2cVeiculo"
+                class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Selecione o porte...</option>
+                <option value="leve" data-saida="150" data-km="3.20">
+                  Leve / Moto
+                </option>
+                <option value="utilitario" data-saida="250" data-km="3.50">
+                  Utilitário / SUV
+                </option>
+                <option value="pesado" data-saida="500" data-km="5.50">
+                  Pesado / Caminhão
+                </option>
+                <option value="extrapesado" data-saida="800" data-km="9.00">
+                  Extra Pesado / Carreta
+                </option>
+              </select>
+            </div>
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-slate-50 border border-slate-200"
+            >
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Cenário da OS (%)</label
+              >
+              <select
+                id="calcB2cCenario"
+                class="b2c-input w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold focus:outline-none focus:border-blue-500"
+              >
+                <option value="0">Comercial / Dia (0%)</option>
+                <option value="15">Noite / Fim de Semana (+15%)</option>
+                <option value="30">Risco / Feriado / Complexo (+30%)</option>
+              </select>
+            </div>
+            <div
+              class="col-span-2 lg:col-span-1 p-3 rounded-xl bg-slate-50 border border-slate-200"
+            >
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                title="Ida e Volta"
+                >KM Totais (Ida+Volta)</label
+              >
+              <input
+                id="calcB2cKm"
+                type="number"
+                step="0.1"
+                value="0"
+                class="b2c-input w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 bg-white font-bold text-slate-900 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+              <label
+                class="text-[10px] font-bold text-sky-900 uppercase block mb-1"
+                >Valor da Saída (R$)</label
+              >
+              <input
+                id="calcB2cSaida"
+                type="number"
+                step="0.01"
+                value="0"
+                class="b2c-input w-full px-2 py-1.5 text-sm rounded-lg border border-sky-300 bg-white font-bold text-slate-900 focus:outline-none focus:border-sky-500"
+              />
+            </div>
+            <div class="p-3 rounded-xl bg-sky-50 border border-sky-200">
+              <label
+                class="text-[10px] font-bold text-sky-900 uppercase block mb-1"
+                >Valor do KM (R$)</label
+              >
+              <input
+                id="calcB2cValorKm"
+                type="number"
+                step="0.01"
+                value="0"
+                class="b2c-input w-full px-2 py-1.5 text-sm rounded-lg border border-sky-300 bg-white font-bold text-slate-900 focus:outline-none focus:border-sky-500"
+              />
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label
+                class="text-[10px] font-bold text-slate-500 uppercase block mb-1"
+                >Pedágios (R$)</label
+              >
+              <input
+                id="calcB2cPedagio"
+                type="number"
+                step="0.01"
+                value="0"
+                class="b2c-input w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 bg-white font-bold text-slate-900 focus:outline-none"
+              />
+            </div>
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+              <label
+                class="text-[10px] font-bold text-amber-900 uppercase block mb-1"
+                title="Estrada de chão, rodas travadas, patins..."
+                >Despesas Extras (R$)</label
+              >
+              <input
+                id="calcB2cExtra"
+                type="number"
+                step="0.01"
+                value="0"
+                class="b2c-input w-full px-2 py-1.5 text-sm rounded-lg border border-amber-300 bg-white font-bold text-slate-900 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+          </div>
+
+          <div
+            class="mt-4 p-5 rounded-xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg transition-all duration-300"
+          >
+            <div>
+              <span class="text-[11px] font-bold uppercase text-slate-400"
+                >Preço Final a Cobrar do Cliente</span
+              >
+              <p class="text-[10px] text-slate-500 mt-0.5">
+                Fórmula: [ Saída + (KM × R$/KM) ] + Acréscimo Cenário + Extras +
+                Pedágios
+              </p>
+            </div>
+            <div class="text-right">
+              <p
+                id="calcB2cTotal"
+                class="text-3xl font-extrabold text-emerald-400"
+              >
+                R$ 0,00
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- DIRETÓRIO DE PARCEIROS -->
         <div
           class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5"
@@ -1369,12 +1546,27 @@
                   />
                   <datalist id="listaParceiros"></datalist>
                 </div>
-                <button
-                  type="submit"
-                  class="px-6 py-2.5 rounded-lg bg-green-600 hover:bg-green-500 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
-                >
-                  💬 Disparar OS via WhatsApp
-                </button>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-500 uppercase mb-1"
+                      >Qual Conta / App?</label
+                    >
+                    <select
+                      id="dspPlataforma"
+                      class="px-3 py-2.5 text-xs rounded-lg border border-slate-300 bg-white font-semibold outline-none focus:border-green-500"
+                    >
+                      <option value="app">1. WhatsApp Padrão / App</option>
+                      <option value="web">2. WhatsApp Web (Browser)</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="mt-4 px-6 py-2.5 rounded-lg bg-green-600 hover:bg-green-500 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
+                  >
+                    💬 Disparar OS
+                  </button>
+                </div>
               </div>
             </div>
           </form>
@@ -3396,9 +3588,129 @@
         }
       }
 
+      // =======================================================
+      // CALCULADORA DE SERVIÇOS PARTICULARES (B2C) E REGIONAIS
+      // =======================================================
+      let rotasParticulares = JSON.parse(
+        localStorage.getItem("asl_rotas_b2c"),
+      ) || [
+        { rota: "Base x Além Paraíba", km: 210 },
+        { rota: "Base x Argirita", km: 122 },
+        { rota: "Base x Bicas", km: 185 },
+        { rota: "Base x Cataguases", km: 110 },
+        { rota: "Base x Dona Eusébia", km: 130 },
+        { rota: "Base x Ervália", km: 170 },
+        { rota: "Base x Eugenópolis", km: 115 },
+        { rota: "Base x Fervedouro", km: 170 },
+        { rota: "Base x Itaperuna", km: 180 },
+        { rota: "Base x Juiz de Fora", km: 270 },
+      ];
+
+      function renderRotasB2c() {
+        const select = document.getElementById("calcB2cRota");
+        if (!select) return;
+        select.innerHTML =
+          '<option value="">Personalizada / Digitar KM Total</option>';
+
+        const ordenadas = [...rotasParticulares].sort((a, b) =>
+          a.rota.localeCompare(b.rota),
+        );
+        ordenadas.forEach((r) => {
+          select.innerHTML += `<option value="${r.km}">${r.rota} (${r.km} km)</option>`;
+        });
+      }
+
+      function calcularPrecoB2c() {
+        const km = Number(document.getElementById("calcB2cKm")?.value || 0);
+        const saida = Number(
+          document.getElementById("calcB2cSaida")?.value || 0,
+        );
+        const valorKm = Number(
+          document.getElementById("calcB2cValorKm")?.value || 0,
+        );
+        const pedagio = Number(
+          document.getElementById("calcB2cPedagio")?.value || 0,
+        );
+        const extra = Number(
+          document.getElementById("calcB2cExtra")?.value || 0,
+        );
+        const cenarioMult =
+          Number(document.getElementById("calcB2cCenario")?.value || 0) / 100;
+
+        // A matemática: [ Saída + (KM * ValorKM) ] + Percentual do Cenário + Pedágio + Extra
+        const subtotal = saida + km * valorKm;
+        const acrescimoCenario = subtotal * cenarioMult;
+        const precoFinal = subtotal + acrescimoCenario + pedagio + extra;
+
+        const totalEl = document.getElementById("calcB2cTotal");
+        if (totalEl) totalEl.textContent = formatBRL(precoFinal);
+      }
+
       // INITIALIZATION
       window.addEventListener("DOMContentLoaded", () => {
         initCharts();
+
+        // Inicializa B2C Regional
+        renderRotasB2c();
+        safeAddListener("calcB2cRota", "change", (e) => {
+          if (e.target.value) {
+            document.getElementById("calcB2cKm").value = e.target.value;
+            calcularPrecoB2c();
+          }
+        });
+        safeAddListener("calcB2cVeiculo", "change", (e) => {
+          const opt = e.target.options[e.target.selectedIndex];
+          if (opt.value) {
+            document.getElementById("calcB2cSaida").value = opt.dataset.saida;
+            document.getElementById("calcB2cValorKm").value = opt.dataset.km;
+            calcularPrecoB2c();
+          }
+        });
+        document
+          .querySelectorAll(".b2c-input")
+          .forEach((el) => safeAddListener(el.id, "input", calcularPrecoB2c));
+        safeAddListener("calcB2cCenario", "change", calcularPrecoB2c);
+
+        safeAddListener("btnManageRoutes", "click", () => {
+          const acao = prompt(
+            "⚙️ GERENCIAR CIDADES E ROTAS\n\nDigite 1 para ADICIONAR NOVA ROTA\nDigite 2 para EXCLUIR UMA ROTA",
+          );
+          if (acao === "1") {
+            const nome = prompt(
+              "Digite o nome da Rota/Cidade (Ex: Base x Muriaé):",
+            );
+            if (!nome) return;
+            const km = parseFloat(
+              prompt("Digite a distância TOTAL em KM (Ida e Volta):"),
+            );
+            if (nome && km) {
+              rotasParticulares.push({ rota: nome, km: km });
+              localStorage.setItem(
+                "asl_rotas_b2c",
+                JSON.stringify(rotasParticulares),
+              );
+              renderRotasB2c();
+              showToast("✔ Rota adicionada com sucesso!");
+            }
+          } else if (acao === "2") {
+            let lista = "";
+            rotasParticulares.forEach(
+              (r, i) => (lista += `${i} - ${r.rota}\n`),
+            );
+            const exc = prompt(
+              `Qual rota deseja excluir? Digite o NÚMERO correspondente:\n\n${lista}`,
+            );
+            if (exc !== null && rotasParticulares[exc]) {
+              rotasParticulares.splice(exc, 1);
+              localStorage.setItem(
+                "asl_rotas_b2c",
+                JSON.stringify(rotasParticulares),
+              );
+              renderRotasB2c();
+              showToast("✔ Rota removida da listagem!");
+            }
+          }
+        });
 
         safeAddListener(
           "calcBaseColab",
@@ -3976,10 +4288,20 @@
             mapsTxt +
             `\n👉 *Por favor, confirme o recebimento desta OS!*`;
 
-          // Abertura da URL oficial do WhatsApp
-          const url = `https://wa.me/55${telefoneParceiro}?text=${encodeURIComponent(mensagem)}`;
-          window.open(url, "_blank");
+          // Lógica Multi-Conta (WhatsApp Web vs App)
+          const plataforma =
+            document.getElementById("dspPlataforma")?.value || "app";
+          let url = "";
 
+          if (plataforma === "web") {
+            // Força abrir no WhatsApp Web (útil para quem usa múltiplas contas no navegador)
+            url = `https://web.whatsapp.com/send?phone=55${telefoneParceiro}&text=${encodeURIComponent(mensagem)}`;
+          } else {
+            // Padrão wa.me abre no App do Windows/Mac ou nativo do celular
+            url = `https://wa.me/55${telefoneParceiro}?text=${encodeURIComponent(mensagem)}`;
+          }
+
+          window.open(url, "_blank");
           showToast("✔ Acionamento montado e redirecionado para o WhatsApp!");
           document.getElementById("formDispatchWA").reset();
         });
