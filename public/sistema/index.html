@@ -3644,7 +3644,8 @@
           a.rota.localeCompare(b.rota),
         );
         ordenadas.forEach((r) => {
-          select.innerHTML += `<option value="${r.km}">${r.rota} (${r.km} km)</option>`;
+          // O valor continua a passar a KM para a lógica matemática, mas o texto exibe só o nome
+          select.innerHTML += `<option value="${r.km}">${r.rota}</option>`;
         });
       }
 
