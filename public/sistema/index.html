@@ -4313,358 +4313,6 @@
         });
 
         // EVENTOS ABA PARCEIROS
-          if (badge) {
-            const id = badge.getAttribute("data-id");
-            const row = state[state.activeTab].find(
-              (r) => String(r.id) === String(id),
-            );
-            if (!row) return;
-
-            let tblName, fldName, newVal;
-            if (state.activeTab === "creditos") {
-              tblName = "creditos_faturamento";
-              fldName = "situacao";
-              const curr = row.situacao || "A Receber";
-              newVal =
-                curr === "A Receber"
-                  ? "Pago"
-                  : curr === "Pago"
-                    ? "Cancelada"
-                    : "A Receber";
-            } else if (state.activeTab === "reboque") {
-              tblName = "reboque_fabio";
-              fldName = "status_pagamento";
-              newVal =
-                (row.status_pagamento || "Pendente") === "Pago"
-                  ? "Pendente"
-                  : "Pago";
-            } else if (state.activeTab === "colaboradores") {
-              tblName = "servicos_colaboradores";
-              fldName = "status_acerto";
-              newVal =
-                (row.status_acerto || "Pendente") === "Pago"
-                  ? "Pendente"
-                  : "Pago";
-            } else if (state.activeTab === "mateus") {
-              tblName = "servicos_mateus";
-              fldName = "status_pagamento";
-              const curr = row.status_pagamento || "Pendente";
-              newVal =
-                curr === "Pendente"
-                  ? "Pago"
-                  : curr === "Pago"
-                    ? "Cancelada"
-                    : "Pendente";
-            } else if (state.activeTab === "despesas") {
-              tblName = "despesas_gerais";
-              fldName = "forma_pagamento";
-              newVal =
-                (row.forma_pagamento || "A Pagar") === "Pago"
-                  ? "A Pagar"
-                  : "Pago";
-            }
-
-            const oldVal =
-              row[fldName] ||
-              (state.activeTab === "despesas" ? "A Pagar" : "Pendente");
-            if (
-              !window.confirm(
-                `Você tem certeza que deseja alterar o status de "${oldVal}" para "${newVal}"?`,
-              )
-            )
-              return;
-
-            if (state.supabaseClient && tblName) {
-              const py = {};
-              py[fldName] = newVal;
-              await state.supabaseClient.from(tblName).update(py).eq("id", id);
-            }
-            row[fldName] = newVal;
-            renderActiveTable();
-            showToast("✔ Status alterado com sucesso!");
-            return;
-          }
-
-          const btnEdit = e.target.closest(".btn-edit-op");
-          if (btnEdit) {
-            const id = btnEdit.getAttribute("data-id");
-            const row = state[state.activeTab].find(
-              (r) => String(r.id) === String(id),
-            );
-            if (!row) return;
-
-            document.getElementById("edit_row_id").value = id;
-            document.getElementById("modalTargetTab").value = state.activeTab;
-            buildQuickAddFields(state.activeTab);
-            document.getElementById("modalAddTitle").textContent =
-              "✏️ Editar Lançamento";
-
-            setTimeout(() => {
-              if (state.activeTab === "reboque") {
-                document.getElementById("f_data").value = row.data_servico;
-                document.getElementById("f_os").value = row.sinistro_os;
-                document.getElementById("f_seg").value = row.seguradora;
-                document.getElementById("f_rota").value = row.origem_destino;
-                document.getElementById("f_km").value = row.km_rodado;
-                document.getElementById("f_pedagio").value = row.pedagio;
-                document.getElementById("f_valor").value = row.valor_servico;
-                document.getElementById("f_status").value =
-                  row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
-              } else if (state.activeTab === "colaboradores") {
-                document.getElementById("f_data").value = row.data_servico;
-                document.getElementById("f_colab").value = row.colaborador;
-                document.getElementById("f_tipo").value = row.veiculo;
-                document.getElementById("f_seg").value = row.seguradora;
-                document.getElementById("f_rota").value = row.placa;
-                document.getElementById("f_valor").value = row.valor_recebido;
-                document.getElementById("f_pago_colab").value =
-                  row.valor_pago_colaborador;
-                document.getElementById("f_status").value =
-                  row.status_acerto || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
-              } else if (state.activeTab === "mateus") {
-                document.getElementById("f_data").value = row.data_servico;
-                document.getElementById("f_os").value = row.sinistro_os;
-                document.getElementById("f_seg").value = row.seguradora;
-                document.getElementById("f_rota").value = row.placa;
-                document.getElementById("f_km").value = row.km_rodado;
-                document.getElementById("f_valor").value = row.valor_servico;
-                document.getElementById("f_pago_colab").value =
-                  row.comissao_mateus;
-                document.getElementById("f_status").value =
-                  row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
-              } else if (state.activeTab === "creditos") {
-                document.getElementById("f_data").value = row.data_credito;
-                document.getElementById("f_seg").value = row.seguradora;
-                document.getElementById("f_nf").value = row.numero_nf;
-                document.getElementById("f_valor").value = row.valor_bruto;
-                document.getElementById("f_status").value =
-                  row.situacao || "A Receber";
-                document.getElementById("f_obs_extra").value =
-                  row.observacoes || "";
-                document.getElementById("f_previsao").value =
-                  row.previsao_pagamento || "";
-              } else if (state.activeTab === "despesas") {
-                document.getElementById("f_data").value = row.data_despesa;
-                document.getElementById("f_cat").value = row.categoria;
-                document.getElementById("f_desc").value = row.descricao;
-                document.getElementById("f_forn").value = row.fornecedor;
-                document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value =
-                  row.forma_pagamento || "A Pagar";
-              }
-              updateLiveFormulaPreview();
-            }, 50);
-            document.getElementById("modalQuickAdd").classList.remove("hidden");
-          }
-
-          // --- NOVA LÓGICA: BOTÃO DE EXCLUIR (LIXEIRA) ---
-          const btnDelete = e.target.closest(".btn-delete-op");
-          if (btnDelete) {
-            const id = btnDelete.getAttribute("data-delete-id");
-
-            // Trava de segurança para evitar exclusão acidental
-            if (
-              !window.confirm(
-                "⚠️ ATENÇÃO: Tem a certeza que deseja EXCLUIR permanentemente este lançamento?\n\nEsta ação apagará o registo do banco de dados e não pode ser desfeita.",
-              )
-            ) {
-              return;
-            }
-
-            const tab = state.activeTab;
-            let tblName = "";
-            if (tab === "reboque") tblName = "reboque_fabio";
-            else if (tab === "colaboradores")
-              tblName = "servicos_colaboradores";
-            else if (tab === "mateus") tblName = "servicos_mateus";
-            else if (tab === "creditos") tblName = "creditos_faturamento";
-            else if (tab === "despesas") tblName = "despesas_gerais";
-
-            // Se estiver conectado ao Supabase, apaga na nuvem primeiro
-            if (state.supabaseClient && tblName) {
-              const { error } = await state.supabaseClient
-                .from(tblName)
-                .delete()
-                .eq("id", id);
-              if (error) {
-                showToast(
-                  "Erro ao excluir do banco de dados: " + error.message,
-                );
-                return;
-              }
-            }
-
-            // Remove o item da memória local para a linha desaparecer imediatamente da tela
-            state[tab] = state[tab].filter((r) => String(r.id) !== String(id));
-            renderActiveTable(); // Recarrega os visuais, gráficos e KPIs
-            showToast("🗑️ Registo excluído com sucesso!");
-          }
-        });
-
-        safeAddListener("formQuickAdd", "submit", async (e) => {
-          e.preventDefault();
-          const tab = document.getElementById("modalTargetTab").value;
-          const editId = document.getElementById("edit_row_id").value;
-          const dataStr = document.getElementById("f_data")?.value;
-          const val = Number(document.getElementById("f_valor")?.value || 0);
-
-          let payload = {},
-            tbl = "",
-            calcLucro = 0,
-            memoryPayload = {};
-
-          const p = state.parametros;
-          const taxaDas = p.imposto_das / 100;
-          const taxaColab = p.imposto_colab / 100;
-          const custoKm = p.custo_km;
-
-          if (tab === "reboque") {
-            tbl = "reboque_fabio";
-            const km = Number(document.getElementById("f_km")?.value || 0),
-              ped = Number(document.getElementById("f_pedagio")?.value || 0),
-              das = +(val * taxaDas).toFixed(2),
-              desp = +(km * custoKm + ped + das).toFixed(2);
-            calcLucro = +(val - desp).toFixed(2);
-            payload = {
-              data_servico: dataStr,
-              seguradora: document.getElementById("f_seg").value,
-              sinistro_os: document.getElementById("f_os").value,
-              origem_destino: document.getElementById("f_rota").value,
-              km_rodado: km,
-              pedagio: ped,
-              outros_custos: das,
-              valor_servico: val,
-              status_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
-              despesa_estimada: desp,
-              lucro_estimado: calcLucro,
-            };
-          } else if (tab === "colaboradores") {
-            tbl = "servicos_colaboradores";
-            const pagoCol = Number(
-                document.getElementById("f_pago_colab")?.value || 0,
-              ),
-              das = +(val * taxaColab).toFixed(2);
-            calcLucro = +(val - pagoCol - das).toFixed(2);
-            payload = {
-              data_servico: dataStr,
-              colaborador: document.getElementById("f_colab").value,
-              veiculo: document.getElementById("f_tipo").value,
-              seguradora: document.getElementById("f_seg").value,
-              placa: document.getElementById("f_rota").value,
-              valor_recebido: val,
-              valor_pago_colaborador: pagoCol,
-              status_acerto: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = { ...payload, lucro_liquido: calcLucro };
-          } else if (tab === "mateus") {
-            tbl = "servicos_mateus";
-            const km = Number(document.getElementById("f_km")?.value || 0),
-              repasse = Number(
-                document.getElementById("f_pago_colab")?.value || 0,
-              ),
-              das = +(val * taxaColab).toFixed(2);
-            calcLucro = +(val - repasse - das).toFixed(2);
-            payload = {
-              data_servico: dataStr,
-              sinistro_os: document.getElementById("f_os").value,
-              seguradora: document.getElementById("f_seg").value,
-              placa: document.getElementById("f_rota").value,
-              km_rodado: km,
-              valor_servico: val,
-              combustivel_manutencao: das,
-              status_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
-              comissao_mateus: repasse,
-              lucro_empresa: calcLucro,
-            };
-          } else if (tab === "creditos") {
-            tbl = "creditos_faturamento";
-            const imp = +(val * taxaDas).toFixed(2);
-            payload = {
-              data_credito: dataStr,
-              seguradora: document.getElementById("f_seg").value,
-              numero_nf: document.getElementById("f_nf").value,
-              valor_bruto: val,
-              imposto_retido: imp,
-              situacao: document.getElementById("f_status").value,
-              observacoes: document.getElementById("f_obs_extra")?.value,
-              previsao_pagamento:
-                document.getElementById("f_previsao")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
-              valor_liquido: +(val - imp).toFixed(2),
-            };
-          } else if (tab === "despesas") {
-            tbl = "despesas_gerais";
-            payload = {
-              data_despesa: dataStr,
-              categoria: document.getElementById("f_cat").value,
-              descricao: document.getElementById("f_desc").value,
-              fornecedor: document.getElementById("f_forn").value,
-              valor: val,
-              forma_pagamento: document.getElementById("f_status").value,
-            };
-            memoryPayload = { ...payload };
-          }
-
-          if (state.supabaseClient) {
-            if (editId) {
-              await state.supabaseClient
-                .from(tbl)
-                .update(payload)
-                .eq("id", editId);
-              const idx = state[tab].findIndex(
-                (x) => String(x.id) === String(editId),
-              );
-              if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-              showToast("✔ Atualizado com sucesso!");
-            } else {
-              const { data } = await state.supabaseClient
-                .from(tbl)
-                .insert([payload])
-                .select();
-              const newR =
-                data && data.length > 0
-                  ? data[0]
-                  : { ...memoryPayload, id: Date.now() };
-              state[tab].unshift(newR);
-              showToast("✔ Novo registro inserido!");
-            }
-          } else {
-            if (editId) {
-              const idx = state[tab].findIndex(
-                (x) => String(x.id) === String(editId),
-              );
-              if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-            } else {
-              state[tab].unshift({ ...memoryPayload, id: Date.now() });
-            }
-          }
-          document.getElementById("modalQuickAdd").classList.add("hidden");
-          renderActiveTable();
-        });
-
-        // EVENTOS ABA PARCEIROS
         ["filterPartnerBusca", "filterPartnerCidade"].forEach((id) =>
           safeAddListener(id, "input", renderPartnersDirectory),
         );
@@ -4679,44 +4327,32 @@
         safeAddListener("btnOpenAddPartner", "click", () => {
           document.getElementById("formAddPartner").reset();
           document.getElementById("p_id").value = "";
-          document.getElementById("modalPartnerTitle").textContent =
-            "Cadastrar Novo Parceiro / Prestador";
-          document.querySelector(
-            "#formAddPartner button[type=submit]",
-          ).textContent = "✔ Salvar Parceiro";
+          document.getElementById("modalPartnerTitle").textContent = "Cadastrar Novo Parceiro / Prestador";
+          document.querySelector("#formAddPartner button[type=submit]").textContent = "✔ Salvar Parceiro";
           document.getElementById("modalAddPartner").classList.remove("hidden");
         });
-        safeAddListener("btnClosePartnerModal", "click", () =>
-          document.getElementById("modalAddPartner").classList.add("hidden"),
-        );
-        safeAddListener("btnCancelPartnerModal", "click", () =>
-          document.getElementById("modalAddPartner").classList.add("hidden"),
-        );
+
+        safeAddListener("btnClosePartnerModal", "click", () => document.getElementById("modalAddPartner").classList.add("hidden"));
+        safeAddListener("btnCancelPartnerModal", "click", () => document.getElementById("modalAddPartner").classList.add("hidden"));
 
         safeAddListener("partnerTableBody", "click", (e) => {
           const btn = e.target.closest(".btn-edit-partner");
           if (!btn) return;
           const id = btn.getAttribute("data-edit-id");
-          const partner = state.parceiros_contatos.find(
-            (p) => String(p.id) === String(id),
-          );
+          const partner = state.parceiros_contatos.find((p) => String(p.id) === String(id));
           if (!partner) return;
           document.getElementById("p_id").value = partner.id;
           document.getElementById("p_nome").value = partner.nome || "";
           document.getElementById("p_empresa").value = partner.empresa || "";
-          document.getElementById("p_cat").value =
-            partner.categoria || "Outros";
+          document.getElementById("p_cat").value = partner.categoria || "Outros";
           document.getElementById("p_tel").value = partner.telefone || "";
           document.getElementById("p_ddd").value = partner.ddd || "";
           document.getElementById("p_estado").value = partner.estado || "";
           document.getElementById("p_cidade").value = partner.cidade || "";
           document.getElementById("p_aval").value = partner.avaliacao || "5";
           document.getElementById("p_obs").value = partner.observacoes || "";
-          document.getElementById("modalPartnerTitle").textContent =
-            "✏️ Editar Contato Existente";
-          document.querySelector(
-            "#formAddPartner button[type=submit]",
-          ).textContent = "✔ Atualizar Contato";
+          document.getElementById("modalPartnerTitle").textContent = "✏️ Editar Contato Existente";
+          document.querySelector("#formAddPartner button[type=submit]").textContent = "✔ Atualizar Contato";
           document.getElementById("modalAddPartner").classList.remove("hidden");
         });
 
@@ -4728,7 +4364,6 @@
           if (!estInp && dddInp) {
             estInp = inferirEstadoPorDDD(dddInp);
           }
-
           const payload = {
             nome: document.getElementById("p_nome").value,
             empresa: document.getElementById("p_empresa").value,
@@ -4740,44 +4375,22 @@
             avaliacao: parseInt(document.getElementById("p_aval").value),
             observacoes: document.getElementById("p_obs").value,
           };
-
           if (state.supabaseClient) {
             if (editId) {
-              await state.supabaseClient
-                .from("parceiros_contatos")
-                .update(payload)
-                .eq("id", editId);
-              const idx = state.parceiros_contatos.findIndex(
-                (p) => String(p.id) === String(editId),
-              );
-              if (idx > -1)
-                state.parceiros_contatos[idx] = {
-                  ...state.parceiros_contatos[idx],
-                  ...payload,
-                };
+              await state.supabaseClient.from("parceiros_contatos").update(payload).eq("id", editId);
+              const idx = state.parceiros_contatos.findIndex((p) => String(p.id) === String(editId));
+              if (idx > -1) state.parceiros_contatos[idx] = { ...state.parceiros_contatos[idx], ...payload };
               showToast("✔ Contato atualizado!");
             } else {
-              const { data } = await state.supabaseClient
-                .from("parceiros_contatos")
-                .insert([payload])
-                .select();
-              const newRow =
-                data && data.length > 0
-                  ? data[0]
-                  : { ...payload, id: Date.now() };
+              const { data } = await state.supabaseClient.from("parceiros_contatos").insert([payload]).select();
+              const newRow = data && data.length > 0 ? data[0] : { ...payload, id: Date.now() };
               state.parceiros_contatos.unshift(newRow);
               showToast("✔ Novo contato cadastrado!");
             }
           } else {
             if (editId) {
-              const idx = state.parceiros_contatos.findIndex(
-                (p) => String(p.id) === String(editId),
-              );
-              if (idx > -1)
-                state.parceiros_contatos[idx] = {
-                  ...state.parceiros_contatos[idx],
-                  ...payload,
-                };
+              const idx = state.parceiros_contatos.findIndex((p) => String(p.id) === String(editId));
+              if (idx > -1) state.parceiros_contatos[idx] = { ...state.parceiros_contatos[idx], ...payload };
             } else {
               state.parceiros_contatos.unshift({ ...payload, id: Date.now() });
             }
@@ -4786,7 +4399,6 @@
           document.getElementById("modalAddPartner").classList.add("hidden");
         });
 
-        // PUBLIC SITE FORM SIMULATION
         // ----------------------------------------------------
         // LOGICA DE DESPACHO PARA PARCEIROS VIA WHATSAPP (MULTI-APP)
         // ----------------------------------------------------
