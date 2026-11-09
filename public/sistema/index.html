@@ -2989,9 +2989,13 @@
       // RENDERIZAR TABELAS OPERACIONAIS
       function renderActiveTable() {
         const tab = state.activeTab;
-        const q = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
-        const stFilter = document.getElementById("statusFilter")?.value || "all";
-        const segFilter = document.getElementById("seguradoraFilter")?.value || "all";
+        const q =
+          document.getElementById("searchInput")?.value.toLowerCase().trim() ||
+          "";
+        const stFilter =
+          document.getElementById("statusFilter")?.value || "all";
+        const segFilter =
+          document.getElementById("seguradoraFilter")?.value || "all";
 
         const dtStart = document.getElementById("dateStartFilter")?.value || "";
         const dtEnd = document.getElementById("dateEndFilter")?.value || "";
@@ -3035,165 +3039,273 @@
         // FILTRO DE LINHAS
         const rows = (state[tab] || []).filter((item) => {
           const textBlob = JSON.stringify(item).toLowerCase();
+
           if (q && !textBlob.includes(q)) return false;
 
-          let dateField = item.data_servico || item.data_credito || item.data_despesa;
+          let dateField =
+            item.data_servico || item.data_credito || item.data_despesa;
           if (dtStart && dateField < dtStart) return false;
           if (dtEnd && dateField > dtEnd) return false;
 
           if (segFilter !== "all") {
-            const segDb = String(item.seguradora || item.fornecedor || item.descricao || "").toLowerCase();
+            // Em despesas, a seguradora pode estar no fornecedor/descrição
+            const segDb = String(
+              item.seguradora || item.fornecedor || item.descricao || "",
+            ).toLowerCase();
             const filterTerm = segFilter.toLowerCase();
-            if (filterTerm === "allianz" && !segDb.includes("awp") && !segDb.includes("allianz")) return false;
-            else if (filterTerm === "europ" && !segDb.includes("europ") && !segDb.includes("fácil assist")) return false;
-            else if (filterTerm !== "allianz" && filterTerm !== "europ" && !segDb.includes(filterTerm)) return false;
+
+            // Regras flexíveis para as seguradoras com nomes compostos ou siglas
+            if (
+              filterTerm === "allianz" &&
+              !segDb.includes("awp") &&
+              !segDb.includes("allianz")
+            )
+              return false;
+            else if (
+              filterTerm === "europ" &&
+              !segDb.includes("europ") &&
+              !segDb.includes("fácil assist")
+            )
+              return false;
+            else if (
+              filterTerm !== "allianz" &&
+              filterTerm !== "europ" &&
+              !segDb.includes(filterTerm)
+            )
+              return false;
           }
 
           if (stFilter !== "all") {
             let rawStatus = "";
-            if (tab === "reboque" || tab === "mateus") rawStatus = item.status_pagamento || "Pendente";
-            else if (tab === "colaboradores") rawStatus = item.status_acerto || "Pendente";
-            else if (tab === "creditos") rawStatus = item.situacao || "A Receber";
-            else if (tab === "despesas") rawStatus = item.forma_pagamento || "A Pagar";
+            if (tab === "reboque" || tab === "mateus")
+              rawStatus = item.status_pagamento || "Pendente";
+            else if (tab === "colaboradores")
+              rawStatus = item.status_acerto || "Pendente";
+            else if (tab === "creditos")
+              rawStatus = item.situacao || "A Receber";
+            else if (tab === "despesas")
+              rawStatus = item.forma_pagamento || "A Pagar";
 
             let sitStr = rawStatus.toLowerCase().trim();
             let filtro = stFilter.toLowerCase().trim();
 
             if (tab === "creditos" && !item.situacao && item.observacoes) {
-              if (item.observacoes.toLowerCase().includes("situação: pago")) sitStr = "pago";
-              if (item.observacoes.toLowerCase().includes("situação: cancelada")) sitStr = "cancelada";
+              if (item.observacoes.toLowerCase().includes("situação: pago"))
+                sitStr = "pago";
+              if (
+                item.observacoes.toLowerCase().includes("situação: cancelada")
+              )
+                sitStr = "cancelada";
             }
+
             if (filtro === "pago" && sitStr !== "pago") return false;
             if (filtro === "cancelada" && sitStr !== "cancelada") return false;
-            if (filtro === "pendente" && (sitStr === "pago" || sitStr === "cancelada")) return false;
+            if (
+              filtro === "pendente" &&
+              (sitStr === "pago" || sitStr === "cancelada")
+            )
+              return false;
           }
           return true;
         });
 
-        let sumBruto = 0, sumLucro = 0;
+        let sumBruto = 0,
+          sumLucro = 0;
 
         if (tab === "reboque") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Serv.</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Rota</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Margem</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Rota</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Margem</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
               const valBruto = Number(r.valor_servico) || 0;
               const valLucro = Number(r.lucro_estimado) || 0;
-              sumBruto += valBruto; sumLucro += valLucro;
-              const perc = valBruto > 0 ? ((valLucro / valBruto) * 100).toFixed(1) : 0;
-              const pCor = perc >= 30 ? "bg-emerald-100 text-emerald-800 border-emerald-300" : perc >= 15 ? "bg-blue-100 text-blue-800 border-blue-300" : "bg-rose-100 text-rose-800 border-rose-300";
+              sumBruto += valBruto;
+              sumLucro += valLucro;
+
+              const perc =
+                valBruto > 0 ? ((valLucro / valBruto) * 100).toFixed(1) : 0;
+              const pCor =
+                perc >= 30
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : perc >= 15
+                    ? "bg-blue-100 text-blue-800 border-blue-300"
+                    : "bg-rose-100 text-rose-800 border-rose-300";
               const margemBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${pCor}">${perc}%</span>`;
+
               let sit = r.status_pagamento || "Pendente";
               if (sit.toLowerCase() === "a receber") sit = "Pendente";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800";
-              const dataPg = r.data_pagamento ? r.data_pagamento : "-";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono text-slate-600">${r.sinistro_os || "-"}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-slate-600">${r.origem_destino || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center">${margemBadge}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500 font-medium">${dataPg}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
-            }).join("");
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-amber-100 text-amber-800";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono text-slate-600">${r.sinistro_os || "-"}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-slate-600">${r.origem_destino || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center">${margemBadge}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         } else if (tab === "colaboradores") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Serv.</th><th class="py-3 px-3">Colaborador</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Pago Colab.</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Margem</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Colaborador</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Pago Colab.</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Margem</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
               const valBruto = Number(r.valor_recebido) || 0;
               const valLucro = Number(r.lucro_liquido) || 0;
-              sumBruto += valBruto; sumLucro += valLucro;
-              const perc = valBruto > 0 ? ((valLucro / valBruto) * 100).toFixed(1) : 0;
-              const pCor = perc >= 30 ? "bg-emerald-100 text-emerald-800 border-emerald-300" : perc >= 15 ? "bg-blue-100 text-blue-800 border-blue-300" : "bg-rose-100 text-rose-800 border-rose-300";
+              sumBruto += valBruto;
+              sumLucro += valLucro;
+
+              const perc =
+                valBruto > 0 ? ((valLucro / valBruto) * 100).toFixed(1) : 0;
+              const pCor =
+                perc >= 30
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : perc >= 15
+                    ? "bg-blue-100 text-blue-800 border-blue-300"
+                    : "bg-rose-100 text-rose-800 border-rose-300";
               const margemBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${pCor}">${perc}%</span>`;
+
               let sit = r.status_acerto || "Pendente";
               if (sit.toLowerCase() === "a receber") sit = "Pendente";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800";
-              let dataPg = r.data_pagamento;
-              if (!dataPg && r.observacoes && r.observacoes.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                  dataPg = r.observacoes.match(/\d{2}\/\d{2}\/\d{4}/)[0];
-              }
-              if (!dataPg) dataPg = "-";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.colaborador}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.valor_pago_colaborador)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center">${margemBadge}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500 font-medium">${dataPg}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
-            }).join("");
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-amber-100 text-amber-800";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-bold">${r.colaborador}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.valor_pago_colaborador)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center">${margemBadge}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         } else if (tab === "mateus") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Serv.</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">OS</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3 text-right">KM</th><th class="py-3 px-3 text-right">Cobrado</th><th class="py-3 px-3 text-right">Repasse</th><th class="py-3 px-3 text-right bg-emerald-950/60">Lucro Empresa</th><th class="py-3 px-3 text-center">Margem</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
               const valBruto = Number(r.valor_servico) || 0;
               const valLucro = Number(r.lucro_empresa) || 0;
-              sumBruto += valBruto; sumLucro += valLucro;
+              sumBruto += valBruto;
+              sumLucro += valLucro;
+
+              const perc =
+                valBruto > 0 ? ((valLucro / valBruto) * 100).toFixed(1) : 0;
+              const pCor =
+                perc >= 30
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                  : perc >= 15
+                    ? "bg-blue-100 text-blue-800 border-blue-300"
+                    : "bg-rose-100 text-rose-800 border-rose-300";
+              const margemBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${pCor}">${perc}%</span>`;
+
               let sit = r.status_pagamento || "Pendente";
               if (sit.toLowerCase() === "a receber") sit = "Pendente";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800";
-              const dataPg = r.data_pagamento ? r.data_pagamento : "-";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono">${r.sinistro_os || ""}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora || ""}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500 font-medium">${dataPg}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
-            }).join("");
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-amber-100 text-amber-800";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_servico}</td><td class="py-2.5 px-3 font-mono">${r.sinistro_os || ""}</td><td class="py-2.5 px-3 font-semibold">${r.seguradora || ""}</td><td class="py-2.5 px-3 text-right font-mono">${r.km_rodado}km</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="py-2.5 px-3 text-center">${margemBadge}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         } else if (tab === "creditos") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Nº NF</th><th class="py-3 px-3 text-right">Bruto NF</th><th class="py-3 px-3 text-right bg-emerald-950/60">Líquido</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Previsão Pgto</th><th class="py-3 px-3">Extra</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Seguradora</th><th class="py-3 px-3">Nº NF</th><th class="py-3 px-3 text-right">Bruto NF</th><th class="py-3 px-3 text-right bg-emerald-950/60">Líquido (Auto)</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Extra</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
               sumBruto += Number(r.valor_bruto) || 0;
               sumLucro += Number(r.valor_liquido) || 0;
               let sit = r.situacao || "A Receber";
               let obsClean = r.observacoes || "-";
-              if (obsClean.toLowerCase().includes("situação: pago")) sit = "Pago";
-              if (obsClean.toLowerCase().includes("situação: cancelada")) sit = "Cancelada";
-              if (obsClean.startsWith("Situação: ")) obsClean = obsClean.split(" | ")[1] || "-";
-              let sitBadge = sit === "Pago" ? "bg-blue-100 text-blue-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-yellow-100 text-yellow-800";
-              const dataPrev = r.previsao_pagamento ? r.previsao_pagamento : "-";
-              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_credito}</td><td class="py-2.5 px-3 font-bold">${r.seguradora}</td><td class="py-2.5 px-3 font-mono">${r.numero_nf || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${sitBadge}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap font-medium text-amber-700">${dataPrev}</td><td class="py-2.5 px-3 text-slate-500 text-[11px] truncate max-w-[100px]">${obsClean}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
-            }).join("");
+              if (obsClean.toLowerCase().includes("situação: pago"))
+                sit = "Pago";
+              if (obsClean.toLowerCase().includes("situação: cancelada"))
+                sit = "Cancelada";
+              if (obsClean.startsWith("Situação: "))
+                obsClean = obsClean.split(" | ")[1] || "-";
+
+              let sitBadge =
+                sit === "Pago"
+                  ? "bg-blue-100 text-blue-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-yellow-100 text-yellow-800";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_credito}</td><td class="py-2.5 px-3 font-bold">${r.seguradora}</td><td class="py-2.5 px-3 font-mono">${r.numero_nf || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${sitBadge}">${sit}</span></td><td class="py-2.5 px-3 text-slate-500 text-[11px] truncate max-w-[100px]">${obsClean}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         } else if (tab === "despesas") {
-          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Categoria</th><th class="py-3 px-3">Descrição / Pagador</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
-          body.innerHTML = rows.map((r) => {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Categoria</th><th class="py-3 px-3">Descrição / Pagador</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
               sumBruto += Number(r.valor) || 0;
               sumLucro += Number(r.valor) || 0;
-              const sit = r.forma_pagamento || "A Pagar";
-              const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer";
-              const dataPg = r.data_pagamento ? r.data_pagamento : "-";
-
-              return `<tr class="hover:bg-slate-50">
-                <td class="py-2.5 px-3 whitespace-nowrap">${r.data_despesa}</td>
-                <td class="py-2.5 px-3 font-semibold">${r.categoria}</td>
-                <td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor || ""}</span></td>
-                <td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td>
-                <td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td>
-                <td class="py-2.5 px-3 whitespace-nowrap text-slate-500 font-medium">${dataPg}</td>
-                <td class="py-2.5 px-3 text-center">
-                  <div class="flex items-center justify-center gap-1">
-                    <button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button>
-                    <button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button>
-                  </div>
-                </td>
-              </tr>`;
-            }).join("");
+              const sit = r.forma_pagamento || "Pago";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${r.data_despesa}</td><td class="py-2.5 px-3 font-semibold">${r.categoria}</td><td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor || ""}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         }
 
-        let sumKm = 0, sumExtra = 0;
+        // Cálculo de métricas secundárias dinâmicas baseadas na aba ativa
+        let sumKm = 0,
+          sumExtra = 0;
         rows.forEach((r) => {
-          if (tab === "reboque") { sumKm += Number(r.km_rodado) || 0; sumExtra += Number(r.pedagio) || 0; }
-          else if (tab === "mateus") { sumKm += Number(r.km_rodado) || 0; sumExtra += Number(r.comissao_mateus) || 0; }
-          else if (tab === "colaboradores") { sumExtra += Number(r.valor_pago_colaborador) || 0; }
+          if (tab === "reboque") {
+            sumKm += Number(r.km_rodado) || 0;
+            sumExtra += Number(r.pedagio) || 0;
+          } else if (tab === "mateus") {
+            sumKm += Number(r.km_rodado) || 0;
+            sumExtra += Number(r.comissao_mateus) || 0;
+          } else if (tab === "colaboradores") {
+            sumExtra += Number(r.valor_pago_colaborador) || 0;
+          }
         });
 
-        if (document.getElementById("sumVal1")) document.getElementById("sumVal1").textContent = rows.length + " registros";
-        if (document.getElementById("sumVal2")) document.getElementById("sumVal2").textContent = formatBRL(sumBruto);
-        if (document.getElementById("sumVal3")) document.getElementById("sumVal3").textContent = formatBRL(sumLucro);
+        // Atualização da UI (Valores Fixos)
+        if (document.getElementById("sumVal1"))
+          document.getElementById("sumVal1").textContent =
+            rows.length + " registros";
+        if (document.getElementById("sumVal2"))
+          document.getElementById("sumVal2").textContent = formatBRL(sumBruto);
+        if (document.getElementById("sumVal3"))
+          document.getElementById("sumVal3").textContent = formatBRL(sumLucro);
 
+        // Atualização da UI (Dinâmicos) - Exibe e oculta os cards apropriados
         const box4 = document.getElementById("sumBox4");
         const box5 = document.getElementById("sumBox5");
 
         if (tab === "reboque" || tab === "mateus") {
           box4?.classList.remove("hidden");
-          if (document.getElementById("sumVal4")) document.getElementById("sumVal4").textContent = sumKm.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " km";
+          if (document.getElementById("sumVal4"))
+            document.getElementById("sumVal4").textContent =
+              sumKm.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) +
+              " km";
         } else {
           box4?.classList.add("hidden");
         }
 
         if (tab === "reboque") {
           box5?.classList.remove("hidden");
-          if (document.getElementById("sumLabel5")) document.getElementById("sumLabel5").textContent = "Total Pedágios";
-          if (document.getElementById("sumVal5")) document.getElementById("sumVal5").textContent = formatBRL(sumExtra);
+          if (document.getElementById("sumLabel5"))
+            document.getElementById("sumLabel5").textContent = "Total Pedágios";
+          if (document.getElementById("sumVal5"))
+            document.getElementById("sumVal5").textContent =
+              formatBRL(sumExtra);
         } else if (tab === "colaboradores" || tab === "mateus") {
           box5?.classList.remove("hidden");
-          if (document.getElementById("sumLabel5")) document.getElementById("sumLabel5").textContent = "Repasse / Comissão";
-          if (document.getElementById("sumVal5")) document.getElementById("sumVal5").textContent = formatBRL(sumExtra);
+          if (document.getElementById("sumLabel5"))
+            document.getElementById("sumLabel5").textContent =
+              "Repasse / Comissão";
+          if (document.getElementById("sumVal5"))
+            document.getElementById("sumVal5").textContent =
+              formatBRL(sumExtra);
         } else {
           box5?.classList.add("hidden");
         }
 
+        // Ajusta as colunas do grid dinamicamente para não sobrar espaço em branco
         const grid = document.getElementById("summaryStripGrid");
         if (grid) {
-          const visCount = 3 + (box4?.classList.contains("hidden") ? 0 : 1) + (box5?.classList.contains("hidden") ? 0 : 1);
+          const visCount =
+            3 +
+            (box4?.classList.contains("hidden") ? 0 : 1) +
+            (box5?.classList.contains("hidden") ? 0 : 1);
           grid.className = `grid grid-cols-2 lg:grid-cols-${visCount} gap-3`;
         }
       }
@@ -3204,17 +3316,21 @@
         if (!container) return;
 
         if (tab === "reboque") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 126509981" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota *</label><input id="f_rota" type="text" placeholder="Ex: Laranjal / Juiz de Fora" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Não (A Receber)</option><option value="Pago">Sim (Pago)</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pagamento (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº Assistência / OS *</label><input id="f_os" type="text" placeholder="Ex: 126509981" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" placeholder="Ex: Brasil Assistência" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota *</label><input id="f_rota" type="text" placeholder="Ex: Laranjal / Juiz de Fora" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM Rodado</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pedágio (R$)</label><input id="f_pedagio" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Total OS (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Não (A Receber)</option><option value="Pago">Sim (Pago)</option><option value="Cancelada">Cancelada</option></select></div>`;
         } else if (tab === "colaboradores") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status Acerto</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pagamento (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Colaborador *</label><input id="f_colab" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Modalidade *</label><input id="f_tipo" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seguradora (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Pago ao Colab. (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status Acerto</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>`;
         } else if (tab === "mateus") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">OS *</label><input id="f_os" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seg. (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Repasse (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pagamento (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">OS *</label><input id="f_os" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Destino / Rota</label><input id="f_rota" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Total KM</label><input id="f_km" type="number" step="0.1" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Cobrado Seg. (R$)</label><input id="f_valor" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Repasse (R$)</label><input id="f_pago_colab" type="number" step="0.01" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>`;
         } else if (tab === "creditos") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1 text-amber-700">Previsão Pgto (Opcional)</label><input id="f_previsao" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-amber-300" /></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         } else if (tab === "despesas") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="1. Combustível / Abastecimento">1. Combustível / Abastecimento</option><option value="2. Manutenção / Pneus / Frota">2. Manutenção / Pneus / Frota</option><option value="3. Pedágio / Tag Veloe">3. Pedágio / Tag Veloe</option><option value="4. Repasse a Parceiros / Terceiros">4. Repasse a Parceiros / Terceiros</option><option value="5. Fixas Escritório / Contador / Luz / Vivo">5. Fixas Escritório / Contador / Luz / Vivo</option><option value="6. Pessoal / INSS / Guia MEI">6. Pessoal / INSS / Guia MEI</option><option value="7. Impostos / Parcelamentos / IPVA / Seguro">7. Impostos / Parcelamentos / IPVA / Seguro</option><option value="8. Financiamentos / Pronampe / BNDES / Bancos">8. Financiamentos / Pronampe / BNDES / Bancos</option></select></div><div><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Pagar">A Pagar</option><option value="Pago">Pago</option></select></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><input id="f_cat" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Pagar">A Pagar</option><option value="Pago">Pago</option></select></div>`;
         }
-        document.querySelectorAll(".calc-input").forEach((inp) => safeAddListener(inp.id, "input", updateLiveFormulaPreview));
+        document
+          .querySelectorAll(".calc-input")
+          .forEach((inp) =>
+            safeAddListener(inp.id, "input", updateLiveFormulaPreview),
+          );
         updateLiveFormulaPreview();
       }
 
@@ -3223,7 +3339,9 @@
         const val = Number(document.getElementById("f_valor")?.value || 0);
         const km = Number(document.getElementById("f_km")?.value || 0);
         const ped = Number(document.getElementById("f_pedagio")?.value || 0);
-        const pagoColab = Number(document.getElementById("f_pago_colab")?.value || 0);
+        const pagoColab = Number(
+          document.getElementById("f_pago_colab")?.value || 0,
+        );
 
         const explainEl = document.getElementById("liveFormulaExplain");
         const resultEl = document.getElementById("liveFormulaResult");
@@ -3258,7 +3376,9 @@
         const container = document.getElementById("siteQueueList");
         if (!container) return;
 
-        container.innerHTML = state.siteQueue.map((item) => `
+        container.innerHTML = state.siteQueue
+          .map(
+            (item) => `
           <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
             <div>
               <div class="flex items-center gap-2"><span class="font-bold text-xs text-slate-900">${item.nome_cliente}</span><span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">${item.tipo_ocorrencia}</span></div>
@@ -3267,7 +3387,9 @@
             </div>
             <button type="button" data-convert-id="${item.id}" class="btn-convert-os px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm">＋ Gerar OS no Topo</button>
           </div>
-        `).join("");
+        `,
+          )
+          .join("");
 
         document.querySelectorAll(".btn-convert-os").forEach((btn) => {
           btn.addEventListener("click", () => {
@@ -3276,11 +3398,25 @@
             if (!found) return;
             const today = new Date().toISOString().slice(0, 10);
             const newReb = {
-              data_servico: today, sinistro_os: "SITE-" + found.id, seguradora: "Particular / Site",
-              origem_destino: found.local_origem + " -> " + (found.local_destino || "Base"),
-              km_rodado: 45, pedagio: 0, outros_custos: 18.5, valor_servico: 280, custo_km_aplicado: 1.06,
-              despesa_estimada: 66.2, lucro_estimado: 213.8, status_pagamento: "Pendente",
-              observacoes: "Cliente Site: " + found.nome_cliente + " (" + found.telefone_whatsapp + ")",
+              data_servico: today,
+              sinistro_os: "SITE-" + found.id,
+              seguradora: "Particular / Site",
+              origem_destino:
+                found.local_origem + " -> " + (found.local_destino || "Base"),
+              km_rodado: 45,
+              pedagio: 0,
+              outros_custos: 18.5,
+              valor_servico: 280,
+              custo_km_aplicado: 1.06,
+              despesa_estimada: 66.2,
+              lucro_estimado: 213.8,
+              status_pagamento: "Pendente",
+              observacoes:
+                "Cliente Site: " +
+                found.nome_cliente +
+                " (" +
+                found.telefone_whatsapp +
+                ")",
             };
             state.reboque.unshift(newReb);
             found.status_atendimento = "Convertido em OS";
@@ -3290,12 +3426,15 @@
         });
       }
 
-      // RENDERIZAR PARCEIROS NO DATALIST
+      // RENDERIZAR PARCEIROS NO DATALIST DE PESQUISA (AUTOCUMPLETE)
       function populateDispatchPartners() {
         const datalist = document.getElementById("listaParceiros");
         if (!datalist) return;
+
         datalist.innerHTML = "";
         const parceiros = state.parceiros_contatos || [];
+
+        // Coloca os "Frequentes" (Mateus/Guinchos da base) ou notas altas primeiro, depois alfabético
         const ordenados = [...parceiros].sort((a, b) => {
           if ((a.avaliacao || 0) > (b.avaliacao || 0)) return -1;
           if ((a.avaliacao || 0) < (b.avaliacao || 0)) return 1;
@@ -3305,20 +3444,36 @@
         ordenados.forEach((p) => {
           if (p.telefone) {
             const numLimpo = String(p.telefone).replace(/\D/g, "");
-            const nomeExibicao = p.empresa ? `${p.nome} (${p.empresa})` : p.nome;
-            const cidadeUF = p.cidade ? `${p.cidade}/${p.estado}` : p.estado || "S/ Local";
+            const nomeExibicao = p.empresa
+              ? `${p.nome} (${p.empresa})`
+              : p.nome;
+            const cidadeUF = p.cidade
+              ? `${p.cidade}/${p.estado}`
+              : p.estado || "S/ Local";
+
             const opt = document.createElement("option");
+            // No datalist, o value é o que vai pro input, mas o text ajuda na busca.
+            // Para não queimar a interface com só o número, colocamos Nome + Número
             opt.value = `${nomeExibicao} | ${numLimpo}`;
             opt.textContent = `${cidadeUF} - [${p.categoria}]`;
             datalist.appendChild(opt);
           }
         });
 
+        // Lógica de Destino Opcional
         const dspTipo = document.getElementById("dspTipo");
         const dspDestino = document.getElementById("dspDestino");
         if (dspTipo && dspDestino) {
           dspTipo.addEventListener("change", (e) => {
-            if (["Troca de Pneu", "Auxiliar de Partida (Bateria)", "Chaveiro (Abertura de Porta)"].includes(e.target.value)) {
+            const tipo = e.target.value;
+            // Se for serviço de pátio/local, destino não é obrigatório
+            if (
+              [
+                "Troca de Pneu",
+                "Auxiliar de Partida (Bateria)",
+                "Chaveiro (Abertura de Porta)",
+              ].includes(tipo)
+            ) {
               dspDestino.removeAttribute("required");
               dspDestino.placeholder = "Não se aplica";
             } else {
@@ -3329,259 +3484,791 @@
         }
       }
 
-      // TABELA OPERACIONAL: CLIQUE STATUS E EDITAR E EXCLUIR
-      safeAddListener("tableBody", "click", async (e) => {
-        const badge = e.target.closest(".inline-status-toggle");
-        if (badge) {
-          const id = badge.getAttribute("data-id");
-          const row = state[state.activeTab].find((r) => String(r.id) === String(id));
-          if (!row) return;
+      async function baixarHistoricoCompleto() {
+        // Exibe o Loading Visual Global
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingText = document.getElementById("loadingOverlayText");
+        if (loadingOverlay) loadingOverlay.classList.remove("hidden");
+        if (loadingText)
+          loadingText.textContent =
+            "Preparando a extração dos blocos de dados...";
 
-          let tblName, fldName, newVal;
-          if (state.activeTab === "creditos") {
-            tblName = "creditos_faturamento"; fldName = "situacao";
-            const curr = row.situacao || "A Receber";
-            newVal = curr === "A Receber" ? "Pago" : curr === "Pago" ? "Cancelada" : "A Receber";
-          } else if (state.activeTab === "reboque") {
-            tblName = "reboque_fabio"; fldName = "status_pagamento";
-            newVal = (row.status_pagamento || "Pendente") === "Pago" ? "Pendente" : "Pago";
-          } else if (state.activeTab === "colaboradores") {
-            tblName = "servicos_colaboradores"; fldName = "status_acerto";
-            newVal = (row.status_acerto || "Pendente") === "Pago" ? "Pendente" : "Pago";
-          } else if (state.activeTab === "mateus") {
-            tblName = "servicos_mateus"; fldName = "status_pagamento";
-            const curr = row.status_pagamento || "Pendente";
-            newVal = curr === "Pendente" ? "Pago" : curr === "Pago" ? "Cancelada" : "Pendente";
-          } else if (state.activeTab === "despesas") {
-            tblName = "despesas_gerais"; fldName = "forma_pagamento";
-            newVal = (row.forma_pagamento || "A Pagar") === "Pago" ? "A Pagar" : "Pago";
+        async function fetchAll(tabela, colunaOrdem) {
+          let todosOsDados = [],
+            inicio = 0;
+          while (true) {
+            // Feedback dinâmico enquanto as Promises resolvem paralelamente
+            if (loadingText)
+              loadingText.textContent = `Baixando pacotes de '${tabela}'... (${todosOsDados.length} registros extraídos)`;
+
+            const { data, err } = await state.supabaseClient
+              .from(tabela)
+              .select("*")
+              .order(colunaOrdem, { ascending: false })
+              .range(inicio, inicio + 999);
+            if (err || !data) break;
+            todosOsDados = todosOsDados.concat(data);
+            if (data.length < 1000) break;
+            inicio += 1000;
           }
-
-          const oldVal = row[fldName] || (state.activeTab === "despesas" ? "A Pagar" : "Pendente");
-          if (!window.confirm(`Você tem certeza que deseja alterar o status de "${oldVal}" para "${newVal}"?`)) return;
-
-          if (state.supabaseClient && tblName) {
-            const py = {}; py[fldName] = newVal;
-            await state.supabaseClient.from(tblName).update(py).eq("id", id);
-          }
-          row[fldName] = newVal;
-          renderActiveTable();
-          showToast("✔ Status alterado com sucesso!");
-          return;
+          return todosOsDados;
         }
 
-        const btnEdit = e.target.closest(".btn-edit-op");
-        if (btnEdit) {
-          const id = btnEdit.getAttribute("data-id");
-          const row = state[state.activeTab].find((r) => String(r.id) === String(id));
-          if (!row) return;
+        const [reb, col, mat, cred, desp, parc, configResp] = await Promise.all(
+          [
+            fetchAll("reboque_fabio", "data_servico"),
+            fetchAll("servicos_colaboradores", "data_servico"),
+            fetchAll("servicos_mateus", "data_servico"),
+            fetchAll("creditos_faturamento", "data_credito"),
+            fetchAll("despesas_gerais", "data_despesa"),
+            fetchAll("parceiros_contatos", "id"),
+            state.supabaseClient
+              .from("configuracoes_financeiras")
+              .select("*")
+              .limit(1),
+          ],
+        );
 
-          document.getElementById("edit_row_id").value = id;
-          document.getElementById("modalTargetTab").value = state.activeTab;
-          buildQuickAddFields(state.activeTab);
-          document.getElementById("modalAddTitle").textContent = "✏️ Editar Lançamento";
+        state.reboque = reb;
+        state.colaboradores = col;
+        state.mateus = mat;
+        state.creditos = cred;
+        state.despesas = desp;
+        if (parc && parc.length > 0) state.parceiros_contatos = parc;
 
-          setTimeout(() => {
-            if (state.activeTab === "reboque") {
-              document.getElementById("f_data").value = row.data_servico;
-              document.getElementById("f_os").value = row.sinistro_os;
-              document.getElementById("f_seg").value = row.seguradora;
-              document.getElementById("f_rota").value = row.origem_destino;
-              document.getElementById("f_km").value = row.km_rodado;
-              document.getElementById("f_pedagio").value = row.pedagio;
-              document.getElementById("f_valor").value = row.valor_servico;
-              document.getElementById("f_status").value = row.status_pagamento || "Pendente";
-              document.getElementById("f_datapg").value = row.data_pagamento || "";
-            } else if (state.activeTab === "colaboradores") {
-              document.getElementById("f_data").value = row.data_servico;
-              document.getElementById("f_colab").value = row.colaborador;
-              document.getElementById("f_tipo").value = row.veiculo;
-              document.getElementById("f_seg").value = row.seguradora;
-              document.getElementById("f_rota").value = row.placa;
-              document.getElementById("f_valor").value = row.valor_recebido;
-              document.getElementById("f_pago_colab").value = row.valor_pago_colaborador;
-              document.getElementById("f_status").value = row.status_acerto || "Pendente";
-              document.getElementById("f_datapg").value = row.data_pagamento || "";
-            } else if (state.activeTab === "mateus") {
-              document.getElementById("f_data").value = row.data_servico;
-              document.getElementById("f_os").value = row.sinistro_os;
-              document.getElementById("f_seg").value = row.seguradora;
-              document.getElementById("f_rota").value = row.placa;
-              document.getElementById("f_km").value = row.km_rodado;
-              document.getElementById("f_valor").value = row.valor_servico;
-              document.getElementById("f_pago_colab").value = row.comissao_mateus;
-              document.getElementById("f_status").value = row.status_pagamento || "Pendente";
-              document.getElementById("f_datapg").value = row.data_pagamento || "";
-            } else if (state.activeTab === "creditos") {
-              document.getElementById("f_data").value = row.data_credito;
-              document.getElementById("f_seg").value = row.seguradora;
-              document.getElementById("f_nf").value = row.numero_nf;
-              document.getElementById("f_valor").value = row.valor_bruto;
-              document.getElementById("f_status").value = row.situacao || "A Receber";
-              document.getElementById("f_obs_extra").value = row.observacoes || "";
-              document.getElementById("f_previsao").value = row.previsao_pagamento || "";
-            } else if (state.activeTab === "despesas") {
-              document.getElementById("f_data").value = row.data_despesa;
-              document.getElementById("f_cat").value = row.categoria;
-              document.getElementById("f_desc").value = row.descricao;
-              document.getElementById("f_forn").value = row.fornecedor;
-              document.getElementById("f_valor").value = row.valor;
-              document.getElementById("f_status").value = row.forma_pagamento || "A Pagar";
+        if (configResp.data && configResp.data.length > 0) {
+          const cfg = configResp.data[0];
+          state.parametros = {
+            imposto_das: cfg.imposto_das ?? state.parametros.imposto_das,
+            taxa_escritorio:
+              cfg.taxa_escritorio ?? state.parametros.taxa_escritorio,
+            margem_lucro: cfg.margem_lucro ?? state.parametros.margem_lucro,
+            custo_km: cfg.custo_km ?? state.parametros.custo_km,
+            piso_minimo: cfg.piso_minimo ?? state.parametros.piso_minimo,
+            imposto_colab: cfg.imposto_colab ?? state.parametros.imposto_colab,
+            // Mapeamento das novas colunas de composição do custo real
+            diesel_preco: cfg.diesel_preco ?? state.parametros.diesel_preco,
+            diesel_kml: cfg.diesel_kml ?? state.parametros.diesel_kml,
+            folha_encargos:
+              cfg.folha_encargos ?? state.parametros.folha_encargos,
+            custos_base_caminhao:
+              cfg.custos_base_caminhao ?? state.parametros.custos_base_caminhao,
+            manutencao_variavel:
+              cfg.manutencao_variavel ?? state.parametros.manutencao_variavel,
+            km_medio_mensal:
+              cfg.km_medio_mensal ?? state.parametros.km_medio_mensal,
+            // Rateio Administrativo e Tributário (Baseado na Planilha)
+            faturamento_medio:
+              cfg.faturamento_medio ?? state.parametros.faturamento_medio,
+            valor_guia_das:
+              cfg.valor_guia_das ?? state.parametros.valor_guia_das,
+            custo_escritorio_fixo:
+              cfg.custo_escritorio_fixo ??
+              state.parametros.custo_escritorio_fixo,
+          };
+        }
+
+        if (document.getElementById("count-reboque"))
+          document.getElementById("count-reboque").textContent =
+            state.reboque.length;
+        if (document.getElementById("count-colaboradores"))
+          document.getElementById("count-colaboradores").textContent =
+            state.colaboradores.length;
+        if (document.getElementById("count-mateus"))
+          document.getElementById("count-mateus").textContent =
+            state.mateus.length;
+        if (document.getElementById("count-creditos"))
+          document.getElementById("count-creditos").textContent =
+            state.creditos.length;
+        if (document.getElementById("count-despesas"))
+          document.getElementById("count-despesas").textContent =
+            state.despesas.length;
+
+        // Atualiza ativamente as views dinâmicas blindando contra falhas
+        try {
+          if (state.activeTab === "dashboard") {
+            updateDashboardPeriod();
+          } else if (state.activeTab === "parceiros") {
+            renderPartnersDirectory();
+            atualizarCalculadoraParceiros();
+          } else if (state.activeTab === "parametros") {
+            renderParametros();
+          } else if (state.activeTab !== "site") {
+            renderActiveTable();
+          }
+        } catch (err) {
+          console.error("Erro crítico na montagem da interface:", err);
+          showToast(
+            "Aviso: Ocorreu um erro visual, mas os dados foram carregados.",
+          );
+        } finally {
+          // GARANTIA: Quer o ecrã tenha sido montado com sucesso ou com erro, o Loading SEMPRE fecha.
+          if (loadingOverlay) loadingOverlay.classList.add("hidden");
+        }
+      }
+
+      // =======================================================
+      // CALCULADORA DE SERVIÇOS PARTICULARES (B2C) E REGIONAIS
+      // =======================================================
+      let rotasParticulares = JSON.parse(
+        localStorage.getItem("asl_rotas_b2c"),
+      ) || [
+        { rota: "Base x Além Paraíba", km: 210 },
+        { rota: "Base x Argirita", km: 122 },
+        { rota: "Base x Bicas", km: 185 },
+        { rota: "Base x Cataguases", km: 110 },
+        { rota: "Base x Dona Eusébia", km: 130 },
+        { rota: "Base x Ervália", km: 170 },
+        { rota: "Base x Eugenópolis", km: 115 },
+        { rota: "Base x Fervedouro", km: 170 },
+        { rota: "Base x Itaperuna", km: 180 },
+        { rota: "Base x Juiz de Fora", km: 270 },
+        { rota: "Base x Leopoldina", km: 70 },
+        { rota: "Base x Maripá", km: 156 },
+        { rota: "Base x Miracema", km: 85 },
+        { rota: "Base x Miradouro", km: 125 },
+        { rota: "Base x Miraí", km: 130 },
+        { rota: "Base x Muriaé", km: 70 },
+        { rota: "Base x Palma", km: 50 },
+        { rota: "Base x Patrocínio Muriaé", km: 115 },
+        { rota: "Base x Piacatuba", km: 107 },
+        { rota: "Base x Pirapanema", km: 91 },
+        { rota: "Base x Pirapetinga", km: 111 },
+        { rota: "Base x Piraúba", km: 181 },
+        { rota: "Base x Recreio", km: 53 },
+        { rota: "Base x Santo A. Pádua", km: 115 },
+        { rota: "Base x Tebas", km: 95 },
+        { rota: "Base x Ubá", km: 203 },
+        { rota: "Base x Viçosa", km: 225 },
+      ];
+
+      function renderRotasB2c() {
+        const select = document.getElementById("calcB2cRota");
+        if (!select) return;
+        select.innerHTML =
+          '<option value="">Personalizada / Digitar KM Total</option>';
+
+        const ordenadas = [...rotasParticulares].sort((a, b) =>
+          a.rota.localeCompare(b.rota),
+        );
+        ordenadas.forEach((r) => {
+          // O valor continua a passar a KM para a lógica matemática, mas o texto exibe só o nome
+          select.innerHTML += `<option value="${r.km}">${r.rota}</option>`;
+        });
+      }
+
+      function calcularPrecoB2c() {
+        const kmTotal = Number(
+          document.getElementById("calcB2cKm")?.value || 0,
+        );
+        const saida = Number(
+          document.getElementById("calcB2cSaida")?.value || 0,
+        );
+        const valorKm = Number(
+          document.getElementById("calcB2cValorKm")?.value || 0,
+        );
+        const pedagio = Number(
+          document.getElementById("calcB2cPedagio")?.value || 0,
+        );
+        const extra = Number(
+          document.getElementById("calcB2cExtra")?.value || 0,
+        );
+        const cenarioMult =
+          Number(document.getElementById("calcB2cCenario")?.value || 0) / 100;
+
+        // A matemática (Franquia de 40km):
+        let kmExcedente = 0;
+        if (kmTotal > 40) {
+          kmExcedente = kmTotal - 40;
+        }
+
+        // Atualiza a label para dar feedback visual de quantos KMs estão a ser cobrados
+        const lbl = document.getElementById("lblExcedente");
+        if (lbl) lbl.textContent = `KM Excedente: ${kmExcedente.toFixed(1)}km`;
+
+        // [ Saída Fixa + (KM Excedente * ValorKM) ] + Percentual do Cenário + Pedágio + Extra
+        const subtotal = saida + kmExcedente * valorKm;
+        const acrescimoCenario = subtotal * cenarioMult;
+        const precoFinal = subtotal + acrescimoCenario + pedagio + extra;
+
+        const totalEl = document.getElementById("calcB2cTotal");
+        if (totalEl) totalEl.textContent = formatBRL(precoFinal);
+      }
+
+      // INITIALIZATION
+      window.addEventListener("DOMContentLoaded", () => {
+        initCharts();
+
+        // Inicializa B2C Regional
+        renderRotasB2c();
+        safeAddListener("calcB2cRota", "change", (e) => {
+          if (e.target.value) {
+            document.getElementById("calcB2cKm").value = e.target.value;
+            calcularPrecoB2c();
+          }
+        });
+        safeAddListener("calcB2cVeiculo", "change", (e) => {
+          const opt = e.target.options[e.target.selectedIndex];
+          if (opt.value) {
+            document.getElementById("calcB2cSaida").value = opt.dataset.saida;
+            document.getElementById("calcB2cValorKm").value = opt.dataset.km;
+            calcularPrecoB2c();
+          }
+        });
+        document
+          .querySelectorAll(".b2c-input")
+          .forEach((el) => safeAddListener(el.id, "input", calcularPrecoB2c));
+        safeAddListener("calcB2cCenario", "change", calcularPrecoB2c);
+
+        safeAddListener("btnManageRoutes", "click", () => {
+          const acao = prompt(
+            "⚙️ GERENCIAR CIDADES E ROTAS\n\nDigite 1 para ADICIONAR NOVA ROTA\nDigite 2 para EXCLUIR UMA ROTA",
+          );
+          if (acao === "1") {
+            const nome = prompt(
+              "Digite o nome da Rota/Cidade (Ex: Base x Muriaé):",
+            );
+            if (!nome) return;
+            const km = parseFloat(
+              prompt("Digite a distância TOTAL em KM (Ida e Volta):"),
+            );
+            if (nome && km) {
+              rotasParticulares.push({ rota: nome, km: km });
+              localStorage.setItem(
+                "asl_rotas_b2c",
+                JSON.stringify(rotasParticulares),
+              );
+              renderRotasB2c();
+              showToast("✔ Rota adicionada com sucesso!");
             }
-            updateLiveFormulaPreview();
-          }, 50);
-          document.getElementById("modalQuickAdd").classList.remove("hidden");
-        }
+          } else if (acao === "2") {
+            let lista = "";
+            rotasParticulares.forEach(
+              (r, i) => (lista += `${i} - ${r.rota}\n`),
+            );
+            const exc = prompt(
+              `Qual rota deseja excluir? Digite o NÚMERO correspondente:\n\n${lista}`,
+            );
+            if (exc !== null && rotasParticulares[exc]) {
+              rotasParticulares.splice(exc, 1);
+              localStorage.setItem(
+                "asl_rotas_b2c",
+                JSON.stringify(rotasParticulares),
+              );
+              renderRotasB2c();
+              showToast("✔ Rota removida da listagem!");
+            }
+          }
+        });
 
-        const btnDelete = e.target.closest(".btn-delete-op");
-        if (btnDelete) {
-          const id = btnDelete.getAttribute("data-delete-id");
-          if (!window.confirm("⚠️ ATENÇÃO: Tem a certeza que deseja EXCLUIR permanentemente este lançamento?\n\nEsta ação apagará o registo do banco de dados e não pode ser desfeita.")) {
+        safeAddListener(
+          "calcBaseColab",
+          "input",
+          atualizarCalculadoraParceiros,
+        );
+        safeAddListener(
+          "calcImpostoAdicional",
+          "input",
+          atualizarCalculadoraParceiros,
+        );
+        safeAddListener("calcMargem", "input", atualizarCalculadoraParceiros);
+        safeAddListener(
+          "calcLucroFixo",
+          "input",
+          atualizarCalculadoraParceiros,
+        );
+        safeAddListener("calcMetodo", "change", atualizarCalculadoraParceiros);
+
+        safeAddListener("calcCenario", "change", (e) => {
+          // Puxa a porcentagem definida no value do dropdown e joga para o campo de margem
+          const margemInput = document.getElementById("calcMargem");
+          if (margemInput) {
+            margemInput.value = e.target.value;
+            atualizarCalculadoraParceiros();
+          }
+        });
+
+        document.querySelectorAll(".nav-tab").forEach((btn) => {
+          btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+        });
+
+        // EVENTOS GERAIS ABA TABELAS E IMPRESSÃO
+
+        // Gatilho do Filtro de Ano do Dashboard
+        safeAddListener("dashPeriodFilter", "change", updateDashboardPeriod);
+
+        safeAddListener("searchInput", "input", (e) => {
+          state.searchQuery = e.target.value;
+          renderActiveTable();
+        });
+        [
+          "dateStartFilter",
+          "dateEndFilter",
+          "statusFilter",
+          "seguradoraFilter",
+        ].forEach((id) => safeAddListener(id, "change", renderActiveTable));
+        safeAddListener("btnPrintTable", "click", () => window.print());
+
+        // MOTOR DE EXPORTAÇÃO CSV
+        safeAddListener("btnExportCSV", "click", () => {
+          const tableHead = document.getElementById("tableHead");
+          const tableBody = document.getElementById("tableBody");
+          if (!tableHead || !tableBody) return;
+
+          let csvContent = "";
+
+          // 1. Extrair Cabeçalhos (ignorando a última coluna "Ações")
+          const headers = Array.from(tableHead.querySelectorAll("th")).map(
+            (th) => `"${th.innerText.trim()}"`,
+          );
+          headers.pop();
+          csvContent += headers.join(";") + "\n";
+
+          // 2. Extrair Linhas Visíveis
+          const rows = Array.from(tableBody.querySelectorAll("tr"));
+          if (
+            rows.length === 0 ||
+            (rows.length === 1 && rows[0].innerText.includes("Nenhum"))
+          ) {
+            showToast("⚠️ Não há dados visíveis para exportar.");
             return;
           }
 
-          const tab = state.activeTab;
-          let tblName = "";
-          if (tab === "reboque") tblName = "reboque_fabio";
-          else if (tab === "colaboradores") tblName = "servicos_colaboradores";
-          else if (tab === "mateus") tblName = "servicos_mateus";
-          else if (tab === "creditos") tblName = "creditos_faturamento";
-          else if (tab === "despesas") tblName = "despesas_gerais";
+          rows.forEach((tr) => {
+            const cols = Array.from(tr.querySelectorAll("td"));
+            cols.pop(); // Remove a coluna do botão editar/excluir
+            const rowData = cols.map((td) => {
+              // Remove quebras de linha que possam existir (ex: nome e empresa na mesma célula)
+              let text = td.innerText
+                .replace(/(\r\n|\n|\r)/gm, " - ")
+                .replace(/"/g, '""')
+                .trim();
+              return `"${text}"`;
+            });
+            csvContent += rowData.join(";") + "\n";
+          });
 
-          if (state.supabaseClient && tblName) {
-            const { error } = await state.supabaseClient.from(tblName).delete().eq("id", id);
-            if (error) {
-              showToast("Erro ao excluir do banco de dados: " + error.message);
+          // 3. Gerar Arquivo com codificação UTF-8 para o Excel ler os acentos perfeitamente
+          const bom = "\uFEFF";
+          const blob = new Blob([bom + csvContent], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.setAttribute("href", url);
+          const dataAtual = new Date().toISOString().slice(0, 10);
+          const nomeAba =
+            document
+              .getElementById("tableTitle")
+              ?.innerText.replace(/[^a-zA-Z0-9]/g, "_") || "Relatorio";
+          link.setAttribute(
+            "download",
+            `Faturamento_${nomeAba}_${dataAtual}.csv`,
+          );
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          showToast("✔ Relatório CSV gerado e descarregado com sucesso!");
+        });
+
+        // CHIPS DE FILTRO RÁPIDO DE PERÍODO
+        document.querySelectorAll(".btn-quick-period").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const period = e.target.getAttribute("data-period");
+            const startInput = document.getElementById("dateStartFilter");
+            const endInput = document.getElementById("dateEndFilter");
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth(); // Janeiro é 0
+
+            // Corrige o timezone para evitar fuso brasileiro (GMT-3) jogando o dia 1 para o mês anterior
+            const format = (d) => {
+              const adjustedDate = new Date(
+                d.getTime() - d.getTimezoneOffset() * 60000,
+              );
+              return adjustedDate.toISOString().slice(0, 10);
+            };
+
+            if (period === "mes_atual") {
+              startInput.value = format(new Date(year, month, 1));
+              endInput.value = format(new Date(year, month + 1, 0));
+            } else if (period === "mes_passado") {
+              startInput.value = format(new Date(year, month - 1, 1));
+              endInput.value = format(new Date(year, month, 0));
+            } else if (period === "ano_atual") {
+              startInput.value = format(new Date(year, 0, 1));
+              endInput.value = format(new Date(year, 11, 31));
+            } else if (period === "limpar") {
+              startInput.value = "";
+              endInput.value = "";
+            }
+
+            // Dispara a re-renderização da tabela imediatamente após aplicar as datas
+            renderActiveTable();
+          });
+        });
+
+        safeAddListener("btnAddRowTab", "click", () => {
+          document.getElementById("edit_row_id").value = "";
+          document.getElementById("modalAddTitle").textContent =
+            "Novo Lançamento";
+          document.getElementById("modalTargetTab").value = state.activeTab;
+          buildQuickAddFields(state.activeTab);
+          document.getElementById("modalQuickAdd").classList.remove("hidden");
+        });
+
+        safeAddListener("btnCloseQuickAdd", "click", () =>
+          document.getElementById("modalQuickAdd").classList.add("hidden"),
+        );
+        safeAddListener("btnCancelQuickAdd", "click", () =>
+          document.getElementById("modalQuickAdd").classList.add("hidden"),
+        );
+        safeAddListener("modalTargetTab", "change", (e) =>
+          buildQuickAddFields(e.target.value),
+        );
+
+        // TABELA OPERACIONAL: CLIQUE STATUS E EDITAR
+        safeAddListener("tableBody", "click", async (e) => {
+          const badge = e.target.closest(".inline-status-toggle");
+          if (badge) {
+            const id = badge.getAttribute("data-id");
+            const row = state[state.activeTab].find(
+              (r) => String(r.id) === String(id),
+            );
+            if (!row) return;
+
+            let tblName, fldName, newVal;
+            if (state.activeTab === "creditos") {
+              tblName = "creditos_faturamento";
+              fldName = "situacao";
+              const curr = row.situacao || "A Receber";
+              newVal =
+                curr === "A Receber"
+                  ? "Pago"
+                  : curr === "Pago"
+                    ? "Cancelada"
+                    : "A Receber";
+            } else if (state.activeTab === "reboque") {
+              tblName = "reboque_fabio";
+              fldName = "status_pagamento";
+              newVal =
+                (row.status_pagamento || "Pendente") === "Pago"
+                  ? "Pendente"
+                  : "Pago";
+            } else if (state.activeTab === "colaboradores") {
+              tblName = "servicos_colaboradores";
+              fldName = "status_acerto";
+              newVal =
+                (row.status_acerto || "Pendente") === "Pago"
+                  ? "Pendente"
+                  : "Pago";
+            } else if (state.activeTab === "mateus") {
+              tblName = "servicos_mateus";
+              fldName = "status_pagamento";
+              const curr = row.status_pagamento || "Pendente";
+              newVal =
+                curr === "Pendente"
+                  ? "Pago"
+                  : curr === "Pago"
+                    ? "Cancelada"
+                    : "Pendente";
+            } else if (state.activeTab === "despesas") {
+              tblName = "despesas_gerais";
+              fldName = "forma_pagamento";
+              newVal =
+                (row.forma_pagamento || "A Pagar") === "Pago"
+                  ? "A Pagar"
+                  : "Pago";
+            }
+
+            const oldVal =
+              row[fldName] ||
+              (state.activeTab === "despesas" ? "A Pagar" : "Pendente");
+            if (
+              !window.confirm(
+                `Você tem certeza que deseja alterar o status de "${oldVal}" para "${newVal}"?`,
+              )
+            )
+              return;
+
+            if (state.supabaseClient && tblName) {
+              const py = {};
+              py[fldName] = newVal;
+              await state.supabaseClient.from(tblName).update(py).eq("id", id);
+            }
+            row[fldName] = newVal;
+            renderActiveTable();
+            showToast("✔ Status alterado com sucesso!");
+            return;
+          }
+
+          const btnEdit = e.target.closest(".btn-edit-op");
+          if (btnEdit) {
+            const id = btnEdit.getAttribute("data-id");
+            const row = state[state.activeTab].find(
+              (r) => String(r.id) === String(id),
+            );
+            if (!row) return;
+
+            document.getElementById("edit_row_id").value = id;
+            document.getElementById("modalTargetTab").value = state.activeTab;
+            buildQuickAddFields(state.activeTab);
+            document.getElementById("modalAddTitle").textContent =
+              "✏️ Editar Lançamento";
+
+            setTimeout(() => {
+              if (state.activeTab === "reboque") {
+                document.getElementById("f_data").value = row.data_servico;
+                document.getElementById("f_os").value = row.sinistro_os;
+                document.getElementById("f_seg").value = row.seguradora;
+                document.getElementById("f_rota").value = row.origem_destino;
+                document.getElementById("f_km").value = row.km_rodado;
+                document.getElementById("f_pedagio").value = row.pedagio;
+                document.getElementById("f_valor").value = row.valor_servico;
+                document.getElementById("f_status").value =
+                  row.status_pagamento || "Pendente";
+              } else if (state.activeTab === "colaboradores") {
+                document.getElementById("f_data").value = row.data_servico;
+                document.getElementById("f_colab").value = row.colaborador;
+                document.getElementById("f_tipo").value = row.veiculo;
+                document.getElementById("f_seg").value = row.seguradora;
+                document.getElementById("f_rota").value = row.placa;
+                document.getElementById("f_valor").value = row.valor_recebido;
+                document.getElementById("f_pago_colab").value =
+                  row.valor_pago_colaborador;
+                document.getElementById("f_status").value =
+                  row.status_acerto || "Pendente";
+              } else if (state.activeTab === "mateus") {
+                document.getElementById("f_data").value = row.data_servico;
+                document.getElementById("f_os").value = row.sinistro_os;
+                document.getElementById("f_seg").value = row.seguradora;
+                document.getElementById("f_rota").value = row.placa;
+                document.getElementById("f_km").value = row.km_rodado;
+                document.getElementById("f_valor").value = row.valor_servico;
+                document.getElementById("f_pago_colab").value =
+                  row.comissao_mateus;
+                document.getElementById("f_status").value =
+                  row.status_pagamento || "Pendente";
+              } else if (state.activeTab === "creditos") {
+                document.getElementById("f_data").value = row.data_credito;
+                document.getElementById("f_seg").value = row.seguradora;
+                document.getElementById("f_nf").value = row.numero_nf;
+                document.getElementById("f_valor").value = row.valor_bruto;
+                document.getElementById("f_status").value =
+                  row.situacao || "A Receber";
+                document.getElementById("f_obs_extra").value =
+                  row.observacoes || "";
+              } else if (state.activeTab === "despesas") {
+                document.getElementById("f_data").value = row.data_despesa;
+                document.getElementById("f_cat").value = row.categoria;
+                document.getElementById("f_desc").value = row.descricao;
+                document.getElementById("f_forn").value = row.fornecedor;
+                document.getElementById("f_valor").value = row.valor;
+                document.getElementById("f_status").value =
+                  row.forma_pagamento || "A Pagar";
+              }
+              updateLiveFormulaPreview();
+            }, 50);
+            document.getElementById("modalQuickAdd").classList.remove("hidden");
+          }
+
+          // --- NOVA LÓGICA: BOTÃO DE EXCLUIR (LIXEIRA) ---
+          const btnDelete = e.target.closest(".btn-delete-op");
+          if (btnDelete) {
+            const id = btnDelete.getAttribute("data-delete-id");
+
+            // Trava de segurança para evitar exclusão acidental
+            if (
+              !window.confirm(
+                "⚠️ ATENÇÃO: Tem a certeza que deseja EXCLUIR permanentemente este lançamento?\n\nEsta ação apagará o registo do banco de dados e não pode ser desfeita.",
+              )
+            ) {
               return;
             }
+
+            const tab = state.activeTab;
+            let tblName = "";
+            if (tab === "reboque") tblName = "reboque_fabio";
+            else if (tab === "colaboradores")
+              tblName = "servicos_colaboradores";
+            else if (tab === "mateus") tblName = "servicos_mateus";
+            else if (tab === "creditos") tblName = "creditos_faturamento";
+            else if (tab === "despesas") tblName = "despesas_gerais";
+
+            // Se estiver conectado ao Supabase, apaga na nuvem primeiro
+            if (state.supabaseClient && tblName) {
+              const { error } = await state.supabaseClient
+                .from(tblName)
+                .delete()
+                .eq("id", id);
+              if (error) {
+                showToast(
+                  "Erro ao excluir do banco de dados: " + error.message,
+                );
+                return;
+              }
+            }
+
+            // Remove o item da memória local para a linha desaparecer imediatamente da tela
+            state[tab] = state[tab].filter((r) => String(r.id) !== String(id));
+            renderActiveTable(); // Recarrega os visuais, gráficos e KPIs
+            showToast("🗑️ Registo excluído com sucesso!");
           }
-          state[tab] = state[tab].filter(r => String(r.id) !== String(id));
+        });
+
+        safeAddListener("formQuickAdd", "submit", async (e) => {
+          e.preventDefault();
+          const tab = document.getElementById("modalTargetTab").value;
+          const editId = document.getElementById("edit_row_id").value;
+          const dataStr = document.getElementById("f_data")?.value;
+          const val = Number(document.getElementById("f_valor")?.value || 0);
+
+          let payload = {},
+            tbl = "",
+            calcLucro = 0,
+            memoryPayload = {};
+
+          const p = state.parametros;
+          const taxaDas = p.imposto_das / 100;
+          const taxaColab = p.imposto_colab / 100;
+          const custoKm = p.custo_km;
+
+          if (tab === "reboque") {
+            tbl = "reboque_fabio";
+            const km = Number(document.getElementById("f_km")?.value || 0),
+              ped = Number(document.getElementById("f_pedagio")?.value || 0),
+              das = +(val * taxaDas).toFixed(2),
+              desp = +(km * custoKm + ped + das).toFixed(2);
+            calcLucro = +(val - desp).toFixed(2);
+            payload = {
+              data_servico: dataStr,
+              seguradora: document.getElementById("f_seg").value,
+              sinistro_os: document.getElementById("f_os").value,
+              origem_destino: document.getElementById("f_rota").value,
+              km_rodado: km,
+              pedagio: ped,
+              outros_custos: das,
+              valor_servico: val,
+              status_pagamento: document.getElementById("f_status").value,
+            };
+            memoryPayload = {
+              ...payload,
+              despesa_estimada: desp,
+              lucro_estimado: calcLucro,
+            };
+          } else if (tab === "colaboradores") {
+            tbl = "servicos_colaboradores";
+            const pagoCol = Number(
+                document.getElementById("f_pago_colab")?.value || 0,
+              ),
+              das = +(val * taxaColab).toFixed(2);
+            calcLucro = +(val - pagoCol - das).toFixed(2);
+            payload = {
+              data_servico: dataStr,
+              colaborador: document.getElementById("f_colab").value,
+              veiculo: document.getElementById("f_tipo").value,
+              seguradora: document.getElementById("f_seg").value,
+              placa: document.getElementById("f_rota").value,
+              valor_recebido: val,
+              valor_pago_colaborador: pagoCol,
+              status_acerto: document.getElementById("f_status").value,
+            };
+            memoryPayload = { ...payload, lucro_liquido: calcLucro };
+          } else if (tab === "mateus") {
+            tbl = "servicos_mateus";
+            const km = Number(document.getElementById("f_km")?.value || 0),
+              repasse = Number(
+                document.getElementById("f_pago_colab")?.value || 0,
+              ),
+              das = +(val * taxaColab).toFixed(2);
+            calcLucro = +(val - repasse - das).toFixed(2);
+            payload = {
+              data_servico: dataStr,
+              sinistro_os: document.getElementById("f_os").value,
+              seguradora: document.getElementById("f_seg").value,
+              placa: document.getElementById("f_rota").value,
+              km_rodado: km,
+              valor_servico: val,
+              combustivel_manutencao: das,
+              status_pagamento: document.getElementById("f_status").value,
+            };
+            memoryPayload = {
+              ...payload,
+              comissao_mateus: repasse,
+              lucro_empresa: calcLucro,
+            };
+          } else if (tab === "creditos") {
+            tbl = "creditos_faturamento";
+            const imp = +(val * taxaDas).toFixed(2);
+            payload = {
+              data_credito: dataStr,
+              seguradora: document.getElementById("f_seg").value,
+              numero_nf: document.getElementById("f_nf").value,
+              valor_bruto: val,
+              imposto_retido: imp,
+              situacao: document.getElementById("f_status").value,
+              observacoes: document.getElementById("f_obs_extra")?.value,
+            };
+            memoryPayload = {
+              ...payload,
+              valor_liquido: +(val - imp).toFixed(2),
+            };
+          } else if (tab === "despesas") {
+            tbl = "despesas_gerais";
+            payload = {
+              data_despesa: dataStr,
+              categoria: document.getElementById("f_cat").value,
+              descricao: document.getElementById("f_desc").value,
+              fornecedor: document.getElementById("f_forn").value,
+              valor: val,
+              forma_pagamento: document.getElementById("f_status").value,
+            };
+            memoryPayload = { ...payload };
+          }
+
+          if (state.supabaseClient) {
+            if (editId) {
+              await state.supabaseClient
+                .from(tbl)
+                .update(payload)
+                .eq("id", editId);
+              const idx = state[tab].findIndex(
+                (x) => String(x.id) === String(editId),
+              );
+              if (idx > -1)
+                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+              showToast("✔ Atualizado com sucesso!");
+            } else {
+              const { data } = await state.supabaseClient
+                .from(tbl)
+                .insert([payload])
+                .select();
+              const newR =
+                data && data.length > 0
+                  ? data[0]
+                  : { ...memoryPayload, id: Date.now() };
+              state[tab].unshift(newR);
+              showToast("✔ Novo registro inserido!");
+            }
+          } else {
+            if (editId) {
+              const idx = state[tab].findIndex(
+                (x) => String(x.id) === String(editId),
+              );
+              if (idx > -1)
+                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+            } else {
+              state[tab].unshift({ ...memoryPayload, id: Date.now() });
+            }
+          }
+          document.getElementById("modalQuickAdd").classList.add("hidden");
           renderActiveTable();
-          showToast("🗑️ Registo excluído com sucesso!");
-        }
-      });
+        });
 
-      safeAddListener("formQuickAdd", "submit", async (e) => {
-        e.preventDefault();
-        const tab = document.getElementById("modalTargetTab").value;
-        const editId = document.getElementById("edit_row_id").value;
-        const dataStr = document.getElementById("f_data")?.value;
-        const val = Number(document.getElementById("f_valor")?.value || 0);
-
-        let payload = {}, tbl = "", calcLucro = 0, memoryPayload = {};
-
-        const p = state.parametros;
-        const taxaDas = p.imposto_das / 100;
-        const taxaColab = p.imposto_colab / 100;
-        const custoKm = p.custo_km;
-
-        if (tab === "reboque") {
-          tbl = "reboque_fabio";
-          const km = Number(document.getElementById("f_km")?.value || 0),
-            ped = Number(document.getElementById("f_pedagio")?.value || 0),
-            das = +(val * taxaDas).toFixed(2),
-            desp = +(km * custoKm + ped + das).toFixed(2);
-          calcLucro = +(val - desp).toFixed(2);
-          payload = {
-            data_servico: dataStr,
-            seguradora: document.getElementById("f_seg").value,
-            sinistro_os: document.getElementById("f_os").value,
-            origem_destino: document.getElementById("f_rota").value,
-            km_rodado: km,
-            pedagio: ped,
-            outros_custos: das,
-            valor_servico: val,
-            status_pagamento: document.getElementById("f_status").value,
-            data_pagamento: document.getElementById("f_datapg")?.value || null
-          };
-          memoryPayload = { ...payload, despesa_estimada: desp, lucro_estimado: calcLucro };
-        } else if (tab === "colaboradores") {
-          tbl = "servicos_colaboradores";
-          const pagoCol = Number(document.getElementById("f_pago_colab")?.value || 0),
-            das = +(val * taxaColab).toFixed(2);
-          calcLucro = +(val - pagoCol - das).toFixed(2);
-          payload = {
-            data_servico: dataStr,
-            colaborador: document.getElementById("f_colab").value,
-            veiculo: document.getElementById("f_tipo").value,
-            seguradora: document.getElementById("f_seg").value,
-            placa: document.getElementById("f_rota").value,
-            valor_recebido: val,
-            valor_pago_colaborador: pagoCol,
-            status_acerto: document.getElementById("f_status").value,
-            data_pagamento: document.getElementById("f_datapg")?.value || null
-          };
-          memoryPayload = { ...payload, lucro_liquido: calcLucro };
-        } else if (tab === "mateus") {
-          tbl = "servicos_mateus";
-          const km = Number(document.getElementById("f_km")?.value || 0),
-            repasse = Number(document.getElementById("f_pago_colab")?.value || 0),
-            das = +(val * taxaColab).toFixed(2);
-          calcLucro = +(val - repasse - das).toFixed(2);
-          payload = {
-            data_servico: dataStr,
-            sinistro_os: document.getElementById("f_os").value,
-            seguradora: document.getElementById("f_seg").value,
-            placa: document.getElementById("f_rota").value,
-            km_rodado: km,
-            valor_servico: val,
-            combustivel_manutencao: das,
-            status_pagamento: document.getElementById("f_status").value,
-            data_pagamento: document.getElementById("f_datapg")?.value || null
-          };
-          memoryPayload = { ...payload, comissao_mateus: repasse, lucro_empresa: calcLucro };
-        } else if (tab === "creditos") {
-          tbl = "creditos_faturamento";
-          const imp = +(val * taxaDas).toFixed(2);
-          payload = {
-            data_credito: dataStr,
-            seguradora: document.getElementById("f_seg").value,
-            numero_nf: document.getElementById("f_nf").value,
-            valor_bruto: val,
-            imposto_retido: imp,
-            situacao: document.getElementById("f_status").value,
-            observacoes: document.getElementById("f_obs_extra")?.value,
-            previsao_pagamento: document.getElementById("f_previsao")?.value || null
-          };
-          memoryPayload = { ...payload, valor_liquido: +(val - imp).toFixed(2) };
-        } else if (tab === "despesas") {
-          tbl = "despesas_gerais";
-          payload = {
-            data_despesa: dataStr,
-            categoria: document.getElementById("f_cat").value,
-            descricao: document.getElementById("f_desc").value,
-            fornecedor: document.getElementById("f_forn").value,
-            valor: val,
-            forma_pagamento: document.getElementById("f_status").value,
-          };
-          memoryPayload = { ...payload };
-        }
-
-        if (state.supabaseClient) {
-          if (editId) {
-            await state.supabaseClient.from(tbl).update(payload).eq("id", editId);
-            const idx = state[tab].findIndex((x) => String(x.id) === String(editId));
-            if (idx > -1) state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-            showToast("✔ Atualizado com sucesso!");
-          } else {
-            const { data } = await state.supabaseClient.from(tbl).insert([payload]).select();
-            const newR = data && data.length > 0 ? data[0] : { ...memoryPayload, id: Date.now() };
-            state[tab].unshift(newR);
-            showToast("✔ Novo registro inserido!");
-          }
-        } else {
-          if (editId) {
-            const idx = state[tab].findIndex((x) => String(x.id) === String(editId));
-            if (idx > -1) state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-          } else {
-            state[tab].unshift({ ...memoryPayload, id: Date.now() });
-          }
-        }
-        document.getElementById("modalQuickAdd").classList.add("hidden");
-        renderActiveTable();
-      });
-
-      // EVENTOS ABA PARCEIROS
+        // EVENTOS ABA PARCEIROS
         ["filterPartnerBusca", "filterPartnerCidade"].forEach((id) =>
           safeAddListener(id, "input", renderPartnersDirectory),
         );
@@ -3596,32 +4283,44 @@
         safeAddListener("btnOpenAddPartner", "click", () => {
           document.getElementById("formAddPartner").reset();
           document.getElementById("p_id").value = "";
-          document.getElementById("modalPartnerTitle").textContent = "Cadastrar Novo Parceiro / Prestador";
-          document.querySelector("#formAddPartner button[type=submit]").textContent = "✔ Salvar Parceiro";
+          document.getElementById("modalPartnerTitle").textContent =
+            "Cadastrar Novo Parceiro / Prestador";
+          document.querySelector(
+            "#formAddPartner button[type=submit]",
+          ).textContent = "✔ Salvar Parceiro";
           document.getElementById("modalAddPartner").classList.remove("hidden");
         });
-
-        safeAddListener("btnClosePartnerModal", "click", () => document.getElementById("modalAddPartner").classList.add("hidden"));
-        safeAddListener("btnCancelPartnerModal", "click", () => document.getElementById("modalAddPartner").classList.add("hidden"));
+        safeAddListener("btnClosePartnerModal", "click", () =>
+          document.getElementById("modalAddPartner").classList.add("hidden"),
+        );
+        safeAddListener("btnCancelPartnerModal", "click", () =>
+          document.getElementById("modalAddPartner").classList.add("hidden"),
+        );
 
         safeAddListener("partnerTableBody", "click", (e) => {
           const btn = e.target.closest(".btn-edit-partner");
           if (!btn) return;
           const id = btn.getAttribute("data-edit-id");
-          const partner = state.parceiros_contatos.find((p) => String(p.id) === String(id));
+          const partner = state.parceiros_contatos.find(
+            (p) => String(p.id) === String(id),
+          );
           if (!partner) return;
           document.getElementById("p_id").value = partner.id;
           document.getElementById("p_nome").value = partner.nome || "";
           document.getElementById("p_empresa").value = partner.empresa || "";
-          document.getElementById("p_cat").value = partner.categoria || "Outros";
+          document.getElementById("p_cat").value =
+            partner.categoria || "Outros";
           document.getElementById("p_tel").value = partner.telefone || "";
           document.getElementById("p_ddd").value = partner.ddd || "";
           document.getElementById("p_estado").value = partner.estado || "";
           document.getElementById("p_cidade").value = partner.cidade || "";
           document.getElementById("p_aval").value = partner.avaliacao || "5";
           document.getElementById("p_obs").value = partner.observacoes || "";
-          document.getElementById("modalPartnerTitle").textContent = "✏️ Editar Contato Existente";
-          document.querySelector("#formAddPartner button[type=submit]").textContent = "✔ Atualizar Contato";
+          document.getElementById("modalPartnerTitle").textContent =
+            "✏️ Editar Contato Existente";
+          document.querySelector(
+            "#formAddPartner button[type=submit]",
+          ).textContent = "✔ Atualizar Contato";
           document.getElementById("modalAddPartner").classList.remove("hidden");
         });
 
@@ -3633,6 +4332,7 @@
           if (!estInp && dddInp) {
             estInp = inferirEstadoPorDDD(dddInp);
           }
+
           const payload = {
             nome: document.getElementById("p_nome").value,
             empresa: document.getElementById("p_empresa").value,
@@ -3644,22 +4344,44 @@
             avaliacao: parseInt(document.getElementById("p_aval").value),
             observacoes: document.getElementById("p_obs").value,
           };
+
           if (state.supabaseClient) {
             if (editId) {
-              await state.supabaseClient.from("parceiros_contatos").update(payload).eq("id", editId);
-              const idx = state.parceiros_contatos.findIndex((p) => String(p.id) === String(editId));
-              if (idx > -1) state.parceiros_contatos[idx] = { ...state.parceiros_contatos[idx], ...payload };
+              await state.supabaseClient
+                .from("parceiros_contatos")
+                .update(payload)
+                .eq("id", editId);
+              const idx = state.parceiros_contatos.findIndex(
+                (p) => String(p.id) === String(editId),
+              );
+              if (idx > -1)
+                state.parceiros_contatos[idx] = {
+                  ...state.parceiros_contatos[idx],
+                  ...payload,
+                };
               showToast("✔ Contato atualizado!");
             } else {
-              const { data } = await state.supabaseClient.from("parceiros_contatos").insert([payload]).select();
-              const newRow = data && data.length > 0 ? data[0] : { ...payload, id: Date.now() };
+              const { data } = await state.supabaseClient
+                .from("parceiros_contatos")
+                .insert([payload])
+                .select();
+              const newRow =
+                data && data.length > 0
+                  ? data[0]
+                  : { ...payload, id: Date.now() };
               state.parceiros_contatos.unshift(newRow);
               showToast("✔ Novo contato cadastrado!");
             }
           } else {
             if (editId) {
-              const idx = state.parceiros_contatos.findIndex((p) => String(p.id) === String(editId));
-              if (idx > -1) state.parceiros_contatos[idx] = { ...state.parceiros_contatos[idx], ...payload };
+              const idx = state.parceiros_contatos.findIndex(
+                (p) => String(p.id) === String(editId),
+              );
+              if (idx > -1)
+                state.parceiros_contatos[idx] = {
+                  ...state.parceiros_contatos[idx],
+                  ...payload,
+                };
             } else {
               state.parceiros_contatos.unshift({ ...payload, id: Date.now() });
             }
@@ -3668,6 +4390,7 @@
           document.getElementById("modalAddPartner").classList.add("hidden");
         });
 
+        // PUBLIC SITE FORM SIMULATION
         // ----------------------------------------------------
         // LOGICA DE DESPACHO PARA PARCEIROS VIA WHATSAPP (MULTI-APP)
         // ----------------------------------------------------
