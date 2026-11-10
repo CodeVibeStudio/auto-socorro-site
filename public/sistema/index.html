@@ -411,6 +411,20 @@
           </button>
           <button
             type="button"
+            data-tab="mei_fabio"
+            class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-blue-300 hover:bg-slate-700/60"
+          >
+            💼 MEI Fábio (<span id="count-mei-fabio">0</span>)
+          </button>
+          <button
+            type="button"
+            data-tab="mei_silvia"
+            class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-fuchsia-300 hover:bg-slate-700/60"
+          >
+            💼 MEI Silvia (<span id="count-mei-silvia">0</span>)
+          </button>
+          <button
+            type="button"
             data-tab="site"
             class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-emerald-300 hover:bg-slate-700/60"
           >
@@ -631,6 +645,46 @@
               <tbody id="dashTabelaCorpo" class="text-xs">
                 <!-- Injetado via JS -->
               </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TABELA DECLARAÇÃO ANUAL MEI (NOVO) -->
+        <div
+          class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-4"
+        >
+          <div
+            class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between"
+          >
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">
+                Declaração Anual de Faturamento (Empresas MEI)
+              </h3>
+              <p class="text-[10px] text-slate-500">
+                Divisão e acompanhamento do teto limite (Base R$ 81.000/ano)
+              </p>
+            </div>
+            <span
+              id="dashTabelaPeriodoMEI"
+              class="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded border border-slate-200"
+            ></span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-100/50 text-[10px] uppercase text-slate-500 font-bold border-b border-slate-200"
+                >
+                  <th class="py-2.5 px-4">Titular (MEI)</th>
+                  <th class="py-2.5 px-3 text-right">Faturamento Reboque</th>
+                  <th class="py-2.5 px-3 text-right">Faturamento Táxi</th>
+                  <th class="py-2.5 px-4 text-right text-emerald-700">
+                    Total Acumulado
+                  </th>
+                  <th class="py-2.5 px-4 text-center">Status Limite</th>
+                </tr>
+              </thead>
+              <tbody id="dashMeiCorpo" class="text-xs"></tbody>
             </table>
           </div>
         </div>
@@ -1788,6 +1842,8 @@
               <option value="mateus">3. Matheus</option>
               <option value="creditos">4. Créditos e NFs</option>
               <option value="despesas">5. Despesas Gerais</option>
+              <option value="mei_fabio">6. Faturamento MEI Fábio</option>
+              <option value="mei_silvia">7. Faturamento MEI Silvia</option>
             </select>
           </div>
           <form id="formQuickAdd" class="space-y-3">
@@ -2092,6 +2148,8 @@
         mateus: [],
         creditos: [],
         despesas: [],
+        mei_fabio: [],
+        mei_silvia: [],
         parceiros_contatos: [],
         siteQueue: [],
         parametros: {
@@ -2611,6 +2669,67 @@
             periodoLabel.textContent =
               period === "all" ? "Histórico Completo" : "Ano Base: " + period;
         }
+
+        // --- CALCULADORA AUTOMÁTICA DA DECLARAÇÃO MEI ---
+        const fMeiF = filterByYear(state.mei_fabio, "data_servico").filter(
+          isAtivo,
+        );
+        const fMeiS = filterByYear(state.mei_silvia, "data_servico").filter(
+          isAtivo,
+        );
+        let mfReboque = 0,
+          mfTaxi = 0,
+          msReboque = 0,
+          msTaxi = 0;
+
+        fMeiF.forEach((r) => {
+          const v = Number(r.valor) || 0;
+          const cat = String(r.categoria_reboque_taxi || "").toLowerCase();
+          if (cat.includes("táxi") || cat.includes("taxi")) mfTaxi += v;
+          else mfReboque += v;
+        });
+        fMeiS.forEach((r) => {
+          const v = Number(r.valor) || 0;
+          const cat = String(r.categoria_reboque_taxi || "").toLowerCase();
+          if (cat.includes("táxi") || cat.includes("taxi")) msTaxi += v;
+          else msReboque += v;
+        });
+
+        const meiBody = document.getElementById("dashMeiCorpo");
+        if (meiBody) {
+          const totF = mfReboque + mfTaxi;
+          const totS = msReboque + msTaxi;
+          const limite = 81000;
+          const statusBadge = (t) => {
+            if (period === "all")
+              return `<span class="text-slate-400 font-medium">N/A (Multi-ano)</span>`;
+            const perc = (t / limite) * 100;
+            if (perc >= 90)
+              return `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold border border-rose-300">Risco Teto (${perc.toFixed(1)}%)</span>`;
+            return `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">Seguro (${perc.toFixed(1)}%)</span>`;
+          };
+
+          meiBody.innerHTML = `
+              <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                <td class="py-2.5 px-4 font-bold text-slate-700">💼 MEI Fábio</td>
+                <td class="py-2.5 px-3 text-right font-semibold text-blue-600">${formatBRL(mfReboque)}</td>
+                <td class="py-2.5 px-3 text-right font-semibold text-amber-500">${formatBRL(mfTaxi)}</td>
+                <td class="py-2.5 px-4 text-right font-extrabold text-emerald-600">${formatBRL(totF)}</td>
+                <td class="py-2.5 px-4 text-center">${statusBadge(totF)}</td>
+              </tr>
+              <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                <td class="py-2.5 px-4 font-bold text-slate-700">💼 MEI Silvia</td>
+                <td class="py-2.5 px-3 text-right font-semibold text-blue-600">${formatBRL(msReboque)}</td>
+                <td class="py-2.5 px-3 text-right font-semibold text-amber-500">${formatBRL(msTaxi)}</td>
+                <td class="py-2.5 px-4 text-right font-extrabold text-emerald-600">${formatBRL(totS)}</td>
+                <td class="py-2.5 px-4 text-center">${statusBadge(totS)}</td>
+              </tr>
+           `;
+          const perMEI = document.getElementById("dashTabelaPeriodoMEI");
+          if (perMEI)
+            perMEI.textContent =
+              period === "all" ? "Histórico Completo" : "Ano Base: " + period;
+        }
       }
 
       // TROCAR ABAS
@@ -3021,6 +3140,14 @@
             title: "Aba 5: Despesas Operacionais",
             desc: "Clique no status para marcar conta como Paga ou A Pagar.",
           },
+          mei_fabio: {
+            title: "Aba 6: Faturamento MEI Fábio",
+            desc: "Lançamentos e NFs computados diretamente para a Declaração Anual.",
+          },
+          mei_silvia: {
+            title: "Aba 7: Faturamento MEI Silvia",
+            desc: "Lançamentos e NFs computados diretamente para a Declaração Anual.",
+          },
         }[tab];
 
         if (!meta) return;
@@ -3087,7 +3214,12 @@
 
           if (stFilter !== "all") {
             let rawStatus = "";
-            if (tab === "reboque" || tab === "mateus")
+            if (
+              tab === "reboque" ||
+              tab === "mateus" ||
+              tab === "mei_fabio" ||
+              tab === "mei_silvia"
+            )
               rawStatus = item.status_pagamento || "Pendente";
             else if (tab === "colaboradores")
               rawStatus = item.status_acerto || "Pendente";
@@ -3249,6 +3381,25 @@
               return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${formatBRDate(r.data_despesa)}</td><td class="py-2.5 px-3 font-semibold">${r.categoria}</td><td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor || ""}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500">${formatBRDate(dataPg)}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
             })
             .join("");
+        } else if (tab === "mei_fabio" || tab === "mei_silvia") {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Seguradora / Cliente</th><th class="py-3 px-3">Serviço / NF</th><th class="py-3 px-3 text-center">Categoria</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
+              const valBruto = Number(r.valor) || 0;
+              sumBruto += valBruto;
+              sumLucro += valBruto;
+              let sit = r.status_pagamento || "Pendente";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-amber-100 text-amber-800";
+              const catBadge =
+                r.categoria_reboque_taxi === "Táxi"
+                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                  : "bg-blue-50 text-blue-700 border-blue-200";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${formatBRDate(r.data_servico)}</td><td class="py-2.5 px-3 font-bold">${r.cliente_seguradora}</td><td class="py-2.5 px-3 text-slate-700">${r.servico_descricao || "-"}<br><span class="text-[10px] font-mono text-slate-500">${r.nota_fiscal || ""}</span></td><td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${catBadge}">${r.categoria_reboque_taxi}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-slate-700">${formatBRL(valBruto)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500">${formatBRDate(r.data_pagamento || "-")}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         }
 
         // Cálculo de métricas secundárias dinâmicas baseadas na aba ativa
@@ -3333,10 +3484,10 @@
         } else if (tab === "creditos") {
           container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1 text-amber-700">Previsão Pgto (Opcional)</label><input id="f_previsao" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-amber-300" /></div>`;
         } else if (tab === "despesas") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="1. Combustível / Abastecimento">1. Combustível / Abastecimento</option><option value="2. Manutenção / Pneus / Frota">2. Manutenção / Pneus / Frota</option><option value="3. Pedágio / Tag Veloe">3. Pedágio / Tag Veloe</option><option value="4. Repasse a Parceiros / Terceiros">4. Repasse a Parceiros / Terceiros</option><option value="5. Fixas Escritório / Contador / Luz / Vivo">5. Fixas Escritório / Contador / Luz / Vivo</option><option value="6. Pessoal / INSS / Guia MEI">6. Pessoal / INSS / Guia MEI</option><option value="7. Impostos / Parcelamentos / IPVA / Seguro">7. Impostos / Parcelamentos / IPVA / Seguro</option><option value="8. Financiamentos / Pronampe / BNDES / Bancos">8. Financiamentos / Pronampe / BNDES / Bancos</option></select></div><div><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Pagar">A Pagar</option><option value="Pago">Pago</option></select></div>`;
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="1. Combustível / Abastecimento">1. Combustível / Abastecimento</option><option value="2. Manutenção / Pneus / Frota">2. Manutenção / Pneus / Frota</option><option value="3. Pedágio / Tag Veloe">3. Pedágio / Tag Veloe</option><option value="4. Repasse a Parceiros / Terceiros">4. Repasse a Parceiros / Terceiros</option><option value="5. Fixas Escritório / Contador / Luz / Vivo">5. Fixas Escritório / Contador / Luz / Vivo</option><option value="6. Pessoal / INSS / Guia MEI">6. Pessoal / INSS / Guia MEI</option><option value="7. Impostos / Parcelamentos / IPVA / Seguro">7. Impostos / Parcelamentos / IPVA / Seguro</option><option value="8. Financiamentos / Pronampe / BNDES / Bancos">8. Financiamentos / Pronampe / BNDES / Bancos</option></select></div><div><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Entidade Pagadora</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Valor (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Pagar">A Pagar</option><option value="Pago">Pago</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pagamento (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
+        } else if (tab === "mei_fabio" || tab === "mei_silvia") {
+          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora / Cliente *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF</label><input id="f_nf" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Serviço / Rota</label><input id="f_desc" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Reboque">Reboque</option><option value="Táxi">Táxi</option></select></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente / A Receber</option><option value="Pago">Pago / Recebido</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pgto (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         }
-        document
-          .querySelectorAll(".calc-input")
           .forEach((inp) =>
             safeAddListener(inp.id, "input", updateLiveFormulaPreview),
           );
@@ -3523,26 +3674,29 @@
           return todosOsDados;
         }
 
-        const [reb, col, mat, cred, desp, parc, configResp] = await Promise.all(
-          [
+        const [reb, col, mat, cred, desp, parc, meiF, meiS, configResp] =
+          await Promise.all([
             fetchAll("reboque_fabio", "data_servico"),
             fetchAll("servicos_colaboradores", "data_servico"),
             fetchAll("servicos_mateus", "data_servico"),
             fetchAll("creditos_faturamento", "data_credito"),
             fetchAll("despesas_gerais", "data_despesa"),
             fetchAll("parceiros_contatos", "id"),
+            fetchAll("mei_fabio_faturamento", "data_servico"),
+            fetchAll("mei_silvia_faturamento", "data_servico"),
             state.supabaseClient
               .from("configuracoes_financeiras")
               .select("*")
               .limit(1),
-          ],
-        );
+          ]);
 
         state.reboque = reb;
         state.colaboradores = col;
         state.mateus = mat;
         state.creditos = cred;
         state.despesas = desp;
+        state.mei_fabio = meiF || [];
+        state.mei_silvia = meiS || [];
         if (parc && parc.length > 0) state.parceiros_contatos = parc;
 
         if (configResp.data && configResp.data.length > 0) {
@@ -3580,6 +3734,12 @@
         if (document.getElementById("count-reboque"))
           document.getElementById("count-reboque").textContent =
             state.reboque.length;
+        if (document.getElementById("count-mei-fabio"))
+          document.getElementById("count-mei-fabio").textContent =
+            state.mei_fabio.length;
+        if (document.getElementById("count-mei-silvia"))
+          document.getElementById("count-mei-silvia").textContent =
+            state.mei_silvia.length;
         if (document.getElementById("count-colaboradores"))
           document.getElementById("count-colaboradores").textContent =
             state.colaboradores.length;
@@ -3991,6 +4151,19 @@
                 (row.forma_pagamento || "A Pagar") === "Pago"
                   ? "A Pagar"
                   : "Pago";
+            } else if (
+              state.activeTab === "mei_fabio" ||
+              state.activeTab === "mei_silvia"
+            ) {
+              tblName =
+                state.activeTab === "mei_fabio"
+                  ? "mei_fabio_faturamento"
+                  : "mei_silvia_faturamento";
+              fldName = "status_pagamento";
+              newVal =
+                (row.status_pagamento || "Pendente") === "Pago"
+                  ? "Pendente"
+                  : "Pago";
             }
 
             const oldVal =
@@ -4084,8 +4257,17 @@
                 document.getElementById("f_desc").value = row.descricao;
                 document.getElementById("f_forn").value = row.fornecedor;
                 document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value =
-                  row.forma_pagamento || "A Pagar";
+                document.getElementById("f_status").value = row.forma_pagamento || "A Pagar";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
+              } else if (state.activeTab === "mei_fabio" || state.activeTab === "mei_silvia") {
+                document.getElementById("f_data").value = row.data_servico;
+                document.getElementById("f_seg").value = row.cliente_seguradora;
+                document.getElementById("f_nf").value = row.nota_fiscal || "";
+                document.getElementById("f_desc").value = row.servico_descricao || "";
+                document.getElementById("f_cat").value = row.categoria_reboque_taxi;
+                document.getElementById("f_valor").value = row.valor;
+                document.getElementById("f_status").value = row.status_pagamento || "Pendente";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               }
               updateLiveFormulaPreview();
             }, 50);
@@ -4114,6 +4296,8 @@
             else if (tab === "mateus") tblName = "servicos_mateus";
             else if (tab === "creditos") tblName = "creditos_faturamento";
             else if (tab === "despesas") tblName = "despesas_gerais";
+            else if (tab === "mei_fabio") tblName = "mei_fabio_faturamento";
+            else if (tab === "mei_silvia") tblName = "mei_silvia_faturamento";
 
             // Se estiver conectado ao Supabase, apaga na nuvem primeiro
             if (state.supabaseClient && tblName) {
@@ -4250,6 +4434,20 @@
               fornecedor: document.getElementById("f_forn").value,
               valor: val,
               forma_pagamento: document.getElementById("f_status").value,
+              data_pagamento: document.getElementById("f_datapg")?.value || null,
+            };
+            memoryPayload = { ...payload };
+          } else if (tab === "mei_fabio" || tab === "mei_silvia") {
+            tbl = tab === "mei_fabio" ? "mei_fabio_faturamento" : "mei_silvia_faturamento";
+            payload = {
+              data_servico: dataStr,
+              cliente_seguradora: document.getElementById("f_seg").value,
+              nota_fiscal: document.getElementById("f_nf").value,
+              servico_descricao: document.getElementById("f_desc").value,
+              categoria_reboque_taxi: document.getElementById("f_cat").value,
+              valor: val,
+              status_pagamento: document.getElementById("f_status").value,
+              data_pagamento: document.getElementById("f_datapg")?.value || null,
             };
             memoryPayload = { ...payload };
           }
