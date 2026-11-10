@@ -4370,8 +4370,7 @@
 
           let payload = {},
             tbl = "",
-            calcLucro = 0,
-            memoryPayload = {};
+            calcLucro = 0;
 
           const p = state.parametros;
           const taxaDas = p.imposto_das / 100;
@@ -4394,16 +4393,12 @@
               pedagio: ped,
               outros_custos: das,
               valor_servico: val,
+              despesa_estimada: desp,
+              lucro_estimado: calcLucro,
               status_pagamento: document.getElementById("f_status").value,
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            // memoryPayload injeta cálculos provisórios na tabela visual sem os mandar para o DB
-            memoryPayload = {
-              ...payload,
-              despesa_estimada: desp,
-              lucro_estimado: calcLucro,
-            };
           } else if (tab === "colaboradores") {
             tbl = "servicos_colaboradores";
             const pagoCol = getVal("f_pago_colab"),
@@ -4418,11 +4413,11 @@
               placa: document.getElementById("f_rota").value,
               valor_recebido: val,
               valor_pago_colaborador: pagoCol,
+              lucro_liquido: calcLucro,
               status_acerto: document.getElementById("f_status").value,
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            memoryPayload = { ...payload, lucro_liquido: calcLucro };
           } else if (tab === "mateus") {
             tbl = "servicos_mateus";
             const km = getVal("f_km"),
@@ -4438,11 +4433,11 @@
               valor_servico: val,
               combustivel_manutencao: das,
               comissao_mateus: repasse,
+              lucro_empresa: calcLucro,
               status_pagamento: document.getElementById("f_status").value,
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            memoryPayload = { ...payload, lucro_empresa: calcLucro };
           } else if (tab === "creditos") {
             tbl = "creditos_faturamento";
             const imp = +(val * taxaDas).toFixed(2);
@@ -4452,6 +4447,7 @@
               numero_nf: document.getElementById("f_nf").value,
               valor_bruto: val,
               imposto_retido: imp,
+              valor_liquido: +(val - imp).toFixed(2),
               situacao: document.getElementById("f_status").value,
               observacoes: document.getElementById("f_obs_extra")?.value,
             };
@@ -4459,10 +4455,6 @@
             if (dp) payload.data_pagamento = dp;
             const dprev = getDate("f_previsao");
             if (dprev) payload.previsao_pagamento = dprev;
-            memoryPayload = {
-              ...payload,
-              valor_liquido: +(val - imp).toFixed(2),
-            };
           } else if (tab === "despesas") {
             tbl = "despesas_gerais";
             payload = {
@@ -4475,7 +4467,6 @@
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            memoryPayload = { ...payload };
           } else if (tab === "mei_fabio" || tab === "mei_silvia") {
             tbl =
               tab === "mei_fabio"
@@ -4492,7 +4483,6 @@
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            memoryPayload = { ...payload };
           }
 
           if (state.supabaseClient) {
@@ -4509,7 +4499,7 @@
                 (x) => String(x.id) === String(editId),
               );
               if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+                state[tab][idx] = { ...state[tab][idx], ...payload };
               showToast("✔ Atualizado com sucesso!");
             } else {
               const { data, error } = await state.supabaseClient
@@ -4522,8 +4512,8 @@
               }
               const newR =
                 data && data.length > 0
-                  ? { ...data[0], ...memoryPayload }
-                  : { ...memoryPayload, id: Date.now() };
+                  ? data[0]
+                  : { ...payload, id: Date.now() };
               state[tab].unshift(newR);
               showToast("✔ Novo registro salvo no banco!");
             }
