@@ -4352,7 +4352,7 @@
           const editId = document.getElementById("edit_row_id").value;
           const dataStr = document.getElementById("f_data")?.value;
 
-          // Helper blindado para Valores (aceita vírgula e ponto)
+          // Função interna segura para ler o valor formatado
           const getVal = (id) => {
             const el = document.getElementById(id);
             if (!el || !el.value) return 0;
@@ -4360,7 +4360,7 @@
             return Number(limpo) || 0;
           };
 
-          // Helper blindado para Datas (transforma texto vazio em NULL real)
+          // Função interna segura para converter campos vazios de data em null genuíno
           const getDate = (id) => {
             const v = document.getElementById(id)?.value?.trim();
             return v ? v : null;
@@ -4370,7 +4370,8 @@
 
           let payload = {},
             tbl = "",
-            calcLucro = 0;
+            calcLucro = 0,
+            memoryPayload = {};
 
           const p = state.parametros;
           const taxaDas = p.imposto_das / 100;
@@ -4393,10 +4394,15 @@
               pedagio: ped,
               outros_custos: das,
               valor_servico: val,
+              status_pagamento: document.getElementById("f_status").value,
+            };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            // memoryPayload injeta cálculos provisórios na tabela visual sem os mandar para o DB
+            memoryPayload = {
+              ...payload,
               despesa_estimada: desp,
               lucro_estimado: calcLucro,
-              status_pagamento: document.getElementById("f_status").value,
-              data_pagamento: getDate("f_datapg"),
             };
           } else if (tab === "colaboradores") {
             tbl = "servicos_colaboradores";
@@ -4412,10 +4418,11 @@
               placa: document.getElementById("f_rota").value,
               valor_recebido: val,
               valor_pago_colaborador: pagoCol,
-              lucro_liquido: calcLucro,
               status_acerto: document.getElementById("f_status").value,
-              data_pagamento: getDate("f_datapg"),
             };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            memoryPayload = { ...payload, lucro_liquido: calcLucro };
           } else if (tab === "mateus") {
             tbl = "servicos_mateus";
             const km = getVal("f_km"),
@@ -4431,10 +4438,11 @@
               valor_servico: val,
               combustivel_manutencao: das,
               comissao_mateus: repasse,
-              lucro_empresa: calcLucro,
               status_pagamento: document.getElementById("f_status").value,
-              data_pagamento: getDate("f_datapg"),
             };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            memoryPayload = { ...payload, lucro_empresa: calcLucro };
           } else if (tab === "creditos") {
             tbl = "creditos_faturamento";
             const imp = +(val * taxaDas).toFixed(2);
@@ -4444,11 +4452,16 @@
               numero_nf: document.getElementById("f_nf").value,
               valor_bruto: val,
               imposto_retido: imp,
-              valor_liquido: +(val - imp).toFixed(2),
               situacao: document.getElementById("f_status").value,
               observacoes: document.getElementById("f_obs_extra")?.value,
-              previsao_pagamento: getDate("f_previsao"),
-              data_pagamento: getDate("f_datapg"),
+            };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            const dprev = getDate("f_previsao");
+            if (dprev) payload.previsao_pagamento = dprev;
+            memoryPayload = {
+              ...payload,
+              valor_liquido: +(val - imp).toFixed(2),
             };
           } else if (tab === "despesas") {
             tbl = "despesas_gerais";
@@ -4459,8 +4472,10 @@
               fornecedor: document.getElementById("f_forn").value,
               valor: val,
               forma_pagamento: document.getElementById("f_status").value,
-              data_pagamento: getDate("f_datapg"),
             };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            memoryPayload = { ...payload };
           } else if (tab === "mei_fabio" || tab === "mei_silvia") {
             tbl =
               tab === "mei_fabio"
@@ -4474,8 +4489,10 @@
               categoria_reboque_taxi: document.getElementById("f_cat").value,
               valor: val,
               status_pagamento: document.getElementById("f_status").value,
-              data_pagamento: getDate("f_datapg"),
             };
+            const dp = getDate("f_datapg");
+            if (dp) payload.data_pagamento = dp;
+            memoryPayload = { ...payload };
           }
 
           if (state.supabaseClient) {
@@ -4492,7 +4509,7 @@
                 (x) => String(x.id) === String(editId),
               );
               if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...payload };
+                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
               showToast("✔ Atualizado com sucesso!");
             } else {
               const { data, error } = await state.supabaseClient
@@ -4505,14 +4522,15 @@
               }
               const newR =
                 data && data.length > 0
-                  ? data[0]
-                  : { ...payload, id: Date.now() };
+                  ? { ...data[0], ...memoryPayload }
+                  : { ...memoryPayload, id: Date.now() };
               state[tab].unshift(newR);
               showToast("✔ Novo registro salvo no banco!");
             }
           }
 
           document.getElementById("modalQuickAdd").classList.add("hidden");
+          switchTab(tab);
           renderActiveTable();
         });
 
