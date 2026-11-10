@@ -3488,6 +3488,9 @@
         } else if (tab === "mei_fabio" || tab === "mei_silvia") {
           container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data do Serviço *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora / Cliente *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF</label><input id="f_nf" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Serviço / Rota</label><input id="f_desc" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Reboque">Reboque</option><option value="Táxi">Táxi</option></select></div><div><label class="block text-xs font-semibold mb-1">Valor Bruto (R$) *</label><input id="f_valor" type="number" step="0.01" required class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Status</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="Pendente">Pendente / A Receber</option><option value="Pago">Pago / Recebido</option></select></div><div><label class="block text-xs font-semibold mb-1">Data Pgto (Opcional)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>`;
         }
+
+        document
+          .querySelectorAll(".calc-input")
           .forEach((inp) =>
             safeAddListener(inp.id, "input", updateLiveFormulaPreview),
           );
@@ -4257,17 +4260,26 @@
                 document.getElementById("f_desc").value = row.descricao;
                 document.getElementById("f_forn").value = row.fornecedor;
                 document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value = row.forma_pagamento || "A Pagar";
-                document.getElementById("f_datapg").value = row.data_pagamento || "";
-              } else if (state.activeTab === "mei_fabio" || state.activeTab === "mei_silvia") {
+                document.getElementById("f_status").value =
+                  row.forma_pagamento || "A Pagar";
+                document.getElementById("f_datapg").value =
+                  row.data_pagamento || "";
+              } else if (
+                state.activeTab === "mei_fabio" ||
+                state.activeTab === "mei_silvia"
+              ) {
                 document.getElementById("f_data").value = row.data_servico;
                 document.getElementById("f_seg").value = row.cliente_seguradora;
                 document.getElementById("f_nf").value = row.nota_fiscal || "";
-                document.getElementById("f_desc").value = row.servico_descricao || "";
-                document.getElementById("f_cat").value = row.categoria_reboque_taxi;
+                document.getElementById("f_desc").value =
+                  row.servico_descricao || "";
+                document.getElementById("f_cat").value =
+                  row.categoria_reboque_taxi;
                 document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value = row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value = row.data_pagamento || "";
+                document.getElementById("f_status").value =
+                  row.status_pagamento || "Pendente";
+                document.getElementById("f_datapg").value =
+                  row.data_pagamento || "";
               }
               updateLiveFormulaPreview();
             }, 50);
@@ -4434,11 +4446,15 @@
               fornecedor: document.getElementById("f_forn").value,
               valor: val,
               forma_pagamento: document.getElementById("f_status").value,
-              data_pagamento: document.getElementById("f_datapg")?.value || null,
+              data_pagamento:
+                document.getElementById("f_datapg")?.value || null,
             };
             memoryPayload = { ...payload };
           } else if (tab === "mei_fabio" || tab === "mei_silvia") {
-            tbl = tab === "mei_fabio" ? "mei_fabio_faturamento" : "mei_silvia_faturamento";
+            tbl =
+              tab === "mei_fabio"
+                ? "mei_fabio_faturamento"
+                : "mei_silvia_faturamento";
             payload = {
               data_servico: dataStr,
               cliente_seguradora: document.getElementById("f_seg").value,
@@ -4447,7 +4463,8 @@
               categoria_reboque_taxi: document.getElementById("f_cat").value,
               valor: val,
               status_pagamento: document.getElementById("f_status").value,
-              data_pagamento: document.getElementById("f_datapg")?.value || null,
+              data_pagamento:
+                document.getElementById("f_datapg")?.value || null,
             };
             memoryPayload = { ...payload };
           }
