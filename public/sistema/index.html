@@ -3367,6 +3367,21 @@
               return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${formatBRDate(r.data_credito)}</td><td class="py-2.5 px-3 font-bold">${r.seguradora}</td><td class="py-2.5 px-3 font-mono">${r.numero_nf || "-"}</td><td class="py-2.5 px-3 text-right font-bold">${formatBRL(r.valor_bruto)}</td><td class="py-2.5 px-3 text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(r.valor_liquido)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${sitBadge}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap font-medium text-amber-700">${formatBRDate(dataPrev)}</td><td class="py-2.5 px-3 whitespace-nowrap font-medium text-emerald-700">${formatBRDate(dataPgto)}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
             })
             .join("");
+        } else if (tab === "despesas") {
+          head.innerHTML = `<tr><th class="py-3 px-3">Data Emissão</th><th class="py-3 px-3">Categoria</th><th class="py-3 px-3">Descrição / Pagador</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
+              sumBruto += Number(r.valor) || 0;
+              sumLucro += Number(r.valor) || 0;
+              const sit = r.forma_pagamento || "A Pagar";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-rose-100 text-rose-800 hover:bg-rose-200 cursor-pointer";
+              const dataPg = r.data_pagamento || "-";
+              return `<tr class="hover:bg-slate-50"><td class="py-2.5 px-3 whitespace-nowrap">${formatBRDate(r.data_despesa)}</td><td class="py-2.5 px-3 font-semibold">${r.categoria}</td><td class="py-2.5 px-3">${r.descricao}<br><span class="text-[10px] text-slate-500">${r.fornecedor || ""}</span></td><td class="py-2.5 px-3 text-right font-extrabold text-rose-700">${formatBRL(r.valor)}</td><td class="py-2.5 px-3 text-center"><span data-id="${r.id}" class="inline-status-toggle px-2 py-1 rounded-full text-[10px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="py-2.5 px-3 whitespace-nowrap text-slate-500">${formatBRDate(dataPg)}</td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded">✏️ Editar</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
         } else if (tab === "mei_fabio" || tab === "mei_silvia") {
           head.innerHTML = `<tr><th class="py-3 px-3">Data</th><th class="py-3 px-3">Seguradora / Cliente</th><th class="py-3 px-3">Serviço / NF</th><th class="py-3 px-3 text-center">Categoria</th><th class="py-3 px-3 text-right">Valor</th><th class="py-3 px-3 text-center">Status</th><th class="py-3 px-3">Data Pgto</th><th class="py-3 px-3 text-center">Ações</th></tr>`;
           body.innerHTML = rows
@@ -4337,21 +4352,25 @@
           const editId = document.getElementById("edit_row_id").value;
           const dataStr = document.getElementById("f_data")?.value;
 
-          // Função interna segura para ler o valor formatado
+          // Helper blindado para Valores (aceita vírgula e ponto)
           const getVal = (id) => {
             const el = document.getElementById(id);
             if (!el || !el.value) return 0;
-            // Remove pontos de milhar, troca virgula por ponto
             let limpo = el.value.replace(/\./g, "").replace(",", ".");
             return Number(limpo) || 0;
+          };
+
+          // Helper blindado para Datas (transforma texto vazio em NULL real)
+          const getDate = (id) => {
+            const v = document.getElementById(id)?.value?.trim();
+            return v ? v : null;
           };
 
           const val = getVal("f_valor");
 
           let payload = {},
             tbl = "",
-            calcLucro = 0,
-            memoryPayload = {};
+            calcLucro = 0;
 
           const p = state.parametros;
           const taxaDas = p.imposto_das / 100;
@@ -4374,14 +4393,10 @@
               pedagio: ped,
               outros_custos: das,
               valor_servico: val,
-              status_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
               despesa_estimada: desp,
               lucro_estimado: calcLucro,
+              status_pagamento: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg"),
             };
           } else if (tab === "colaboradores") {
             tbl = "servicos_colaboradores";
@@ -4397,11 +4412,10 @@
               placa: document.getElementById("f_rota").value,
               valor_recebido: val,
               valor_pago_colaborador: pagoCol,
+              lucro_liquido: calcLucro,
               status_acerto: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
+              data_pagamento: getDate("f_datapg"),
             };
-            memoryPayload = { ...payload, lucro_liquido: calcLucro };
           } else if (tab === "mateus") {
             tbl = "servicos_mateus";
             const km = getVal("f_km"),
@@ -4416,14 +4430,10 @@
               km_rodado: km,
               valor_servico: val,
               combustivel_manutencao: das,
-              status_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
               comissao_mateus: repasse,
               lucro_empresa: calcLucro,
+              status_pagamento: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg"),
             };
           } else if (tab === "creditos") {
             tbl = "creditos_faturamento";
@@ -4434,16 +4444,11 @@
               numero_nf: document.getElementById("f_nf").value,
               valor_bruto: val,
               imposto_retido: imp,
+              valor_liquido: +(val - imp).toFixed(2),
               situacao: document.getElementById("f_status").value,
               observacoes: document.getElementById("f_obs_extra")?.value,
-              previsao_pagamento:
-                document.getElementById("f_previsao")?.value || null,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
-            };
-            memoryPayload = {
-              ...payload,
-              valor_liquido: +(val - imp).toFixed(2),
+              previsao_pagamento: getDate("f_previsao"),
+              data_pagamento: getDate("f_datapg"),
             };
           } else if (tab === "despesas") {
             tbl = "despesas_gerais";
@@ -4454,10 +4459,8 @@
               fornecedor: document.getElementById("f_forn").value,
               valor: val,
               forma_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
+              data_pagamento: getDate("f_datapg"),
             };
-            memoryPayload = { ...payload };
           } else if (tab === "mei_fabio" || tab === "mei_silvia") {
             tbl =
               tab === "mei_fabio"
@@ -4471,56 +4474,45 @@
               categoria_reboque_taxi: document.getElementById("f_cat").value,
               valor: val,
               status_pagamento: document.getElementById("f_status").value,
-              data_pagamento:
-                document.getElementById("f_datapg")?.value || null,
+              data_pagamento: getDate("f_datapg"),
             };
-            memoryPayload = { ...payload };
           }
 
           if (state.supabaseClient) {
             if (editId) {
-              await state.supabaseClient
+              const { error } = await state.supabaseClient
                 .from(tbl)
                 .update(payload)
                 .eq("id", editId);
+              if (error) {
+                showToast("Erro ao editar: " + error.message);
+                return;
+              }
               const idx = state[tab].findIndex(
                 (x) => String(x.id) === String(editId),
               );
               if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
+                state[tab][idx] = { ...state[tab][idx], ...payload };
               showToast("✔ Atualizado com sucesso!");
             } else {
               const { data, error } = await state.supabaseClient
                 .from(tbl)
                 .insert([payload])
                 .select();
-
               if (error) {
                 showToast("Erro ao gravar: " + error.message);
                 return;
               }
-
               const newR =
                 data && data.length > 0
                   ? data[0]
-                  : { ...memoryPayload, id: Date.now() };
+                  : { ...payload, id: Date.now() };
               state[tab].unshift(newR);
-              showToast("✔ Novo registro inserido e salvo!");
-            }
-          } else {
-            if (editId) {
-              const idx = state[tab].findIndex(
-                (x) => String(x.id) === String(editId),
-              );
-              if (idx > -1)
-                state[tab][idx] = { ...state[tab][idx], ...memoryPayload };
-            } else {
-              state[tab].unshift({ ...memoryPayload, id: Date.now() });
+              showToast("✔ Novo registro salvo no banco!");
             }
           }
 
           document.getElementById("modalQuickAdd").classList.add("hidden");
-          switchTab(tab);
           renderActiveTable();
         });
 
