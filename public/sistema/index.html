@@ -1375,7 +1375,7 @@
           class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
         >
           <div class="overflow-x-auto custom-scroll max-h-[60vh]">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse min-w-max">
               <thead
                 id="tableHead"
                 class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10"
@@ -3254,13 +3254,15 @@
         let sumBruto = 0,
           sumLucro = 0;
 
-        // Classe compacta unificada para cabeçalhos (th) e células (td)
-        const cTH = "py-2 px-1.5 text-center sm:px-2";
-        const cTD =
-          "py-2 px-1.5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px] sm:max-w-none sm:px-2";
+        // Classes super compactas e rigorosas para caber no ecrã de portáteis
+        const cTH =
+          "py-2 px-2 text-center text-[10px] tracking-tight uppercase";
+        const cTD = "py-2 px-1.5 whitespace-nowrap text-center text-[11px]";
+        const cTD_Text =
+          "py-2 px-2 whitespace-nowrap text-left truncate text-[11px]";
 
         if (tab === "reboque") {
-          head.innerHTML = `<tr><th class="${cTH}">Data</th><th class="${cTH}">OS</th><th class="${cTH}">Modalidade</th><th class="${cTH} text-left">Seguradora</th><th class="${cTH} text-left">Rota</th><th class="${cTH} text-right">Valor</th><th class="${cTH} text-right bg-emerald-950/60">Lucro</th><th class="${cTH}">Margem</th><th class="${cTH}">Status</th><th class="${cTH}">Pgto</th><th class="${cTH}">Ações</th></tr>`;
+          head.innerHTML = `<tr><th class="${cTH}">Data</th><th class="${cTH}">OS</th><th class="${cTH}">Modalidade</th><th class="${cTH} text-left">Seguradora</th><th class="${cTH} text-left">Rota</th><th class="${cTH} text-right">KM</th><th class="${cTH} text-right">Pedágio</th><th class="${cTH} text-right">Valor</th><th class="${cTH} text-right bg-emerald-950/60">Lucro</th><th class="${cTH}">Margem</th><th class="${cTH}">Status</th><th class="${cTH}">Pgto</th><th class="${cTH}">Ações</th></tr>`;
           body.innerHTML = rows
             .map((r) => {
               const valBruto = Number(r.valor_servico) || 0;
@@ -3289,7 +3291,7 @@
               const dataPg = r.data_pagamento || "-";
               const modBadge = `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${r.veiculo === "Táxi" ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-slate-100 text-slate-600 border border-slate-200"}">${r.veiculo || "Reboque"}</span>`;
 
-              return `<tr class="hover:bg-slate-50"><td class="${cTD} text-center">${formatBRDate(r.data_servico)}</td><td class="${cTD} font-mono text-slate-600 text-center">${r.sinistro_os || "-"}</td><td class="${cTD} text-center">${modBadge}</td><td class="${cTD} text-left font-semibold truncate max-w-[120px]" title="${r.seguradora}">${r.seguradora}</td><td class="${cTD} text-left text-slate-600 truncate max-w-[140px]" title="${r.origem_destino || "-"}">${r.origem_destino || "-"}</td><td class="${cTD} text-right font-bold">${formatBRL(valBruto)}</td><td class="${cTD} text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="${cTD} text-center">${margemBadge}</td><td class="${cTD} text-center"><span data-id="${r.id}" class="inline-status-toggle px-1.5 py-0.5 rounded-full text-[9px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="${cTD} text-center text-slate-500">${formatBRDate(dataPg)}</td><td class="${cTD} text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[9px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-1.5 py-1 rounded">✏️ Edit</button><button data-delete-id="${r.id}" class="btn-delete-op text-[9px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-1.5 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+              return `<tr class="hover:bg-slate-50"><td class="${cTD}">${formatBRDate(r.data_servico)}</td><td class="${cTD} font-mono text-slate-600">${r.sinistro_os || "-"}</td><td class="${cTD}">${modBadge}</td><td class="${cTD_Text} font-semibold max-w-[90px]" title="${r.seguradora}">${r.seguradora}</td><td class="${cTD_Text} text-slate-600 max-w-[120px]" title="${r.origem_destino || "-"}">${r.origem_destino || "-"}</td><td class="${cTD} font-mono">${r.km_rodado || 0}km</td><td class="${cTD} text-right">${formatBRL(r.pedagio)}</td><td class="${cTD} text-right font-bold">${formatBRL(valBruto)}</td><td class="${cTD} text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="${cTD}">${margemBadge}</td><td class="${cTD}"><span data-id="${r.id}" class="inline-status-toggle px-1.5 py-0.5 rounded-full text-[9px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="${cTD} text-slate-500">${formatBRDate(dataPg)}</td><td class="${cTD}"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-1.5 py-1 rounded" title="Editar">✏️</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-1.5 py-1 rounded shadow-sm" title="Excluir">🗑️</button></div></td></tr>`;
             })
             .join("");
         } else if (tab === "colaboradores") {
@@ -3322,7 +3324,30 @@
               const dataPg = r.data_pagamento || "-";
               const modBadge = `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${r.veiculo === "Táxi" ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-slate-100 text-slate-600 border border-slate-200"}">${r.veiculo || "Reboque"}</span>`;
 
-              return `<tr class="hover:bg-slate-50"><td class="${cTD} text-center">${formatBRDate(r.data_servico)}</td><td class="${cTD} font-mono text-slate-600 text-center">${r.sinistro_os || "-"}</td><td class="${cTD} text-left font-bold truncate max-w-[100px]" title="${r.colaborador}">${r.colaborador}</td><td class="${cTD} text-center">${modBadge}</td><td class="${cTD} text-left font-semibold truncate max-w-[100px]" title="${r.seguradora}">${r.seguradora}</td><td class="${cTD} text-left text-slate-600 truncate max-w-[120px]" title="${r.placa || "-"}">${r.placa || "-"}</td><td class="${cTD} text-right font-bold">${formatBRL(valBruto)}</td><td class="${cTD} text-right text-rose-700">${formatBRL(r.valor_pago_colaborador)}</td><td class="${cTD} text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="${cTD} text-center">${margemBadge}</td><td class="${cTD} text-center"><span data-id="${r.id}" class="inline-status-toggle px-1.5 py-0.5 rounded-full text-[9px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="${cTD} text-center text-slate-500">${formatBRDate(dataPg)}</td><td class="${cTD} text-center"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[9px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-1.5 py-1 rounded">✏️ Edit</button><button data-delete-id="${r.id}" class="btn-delete-op text-[9px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-1.5 py-1 rounded shadow-sm hover:shadow" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+              return `<tr class="hover:bg-slate-50"><td class="${cTD}">${formatBRDate(r.data_servico)}</td><td class="${cTD} font-mono text-slate-600">${r.sinistro_os || "-"}</td><td class="${cTD_Text} font-bold max-w-[80px]" title="${r.colaborador}">${r.colaborador}</td><td class="${cTD}">${modBadge}</td><td class="${cTD_Text} font-semibold max-w-[80px]" title="${r.seguradora}">${r.seguradora}</td><td class="${cTD_Text} text-slate-600 max-w-[100px]" title="${r.placa || "-"}">${r.placa || "-"}</td><td class="${cTD} text-right font-bold">${formatBRL(valBruto)}</td><td class="${cTD} text-right text-rose-700">${formatBRL(r.valor_pago_colaborador)}</td><td class="${cTD} text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="${cTD}">${margemBadge}</td><td class="${cTD}"><span data-id="${r.id}" class="inline-status-toggle px-1.5 py-0.5 rounded-full text-[9px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="${cTD} text-slate-500">${formatBRDate(dataPg)}</td><td class="${cTD}"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-1.5 py-1 rounded" title="Editar">✏️</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-1.5 py-1 rounded shadow-sm" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
+            })
+            .join("");
+        } else if (tab === "mateus") {
+          head.innerHTML = `<tr><th class="${cTH}">Data</th><th class="${cTH}">OS</th><th class="${cTH}">Modalidade</th><th class="${cTH} text-left">Seguradora</th><th class="${cTH} text-left">Rota</th><th class="${cTH} text-right">KM</th><th class="${cTH} text-right">Cobrado</th><th class="${cTH} text-right">Repasse</th><th class="${cTH} text-right bg-emerald-950/60">Lucro</th><th class="${cTH}">Status</th><th class="${cTH}">Pgto</th><th class="${cTH}">Ações</th></tr>`;
+          body.innerHTML = rows
+            .map((r) => {
+              const valBruto = Number(r.valor_servico) || 0;
+              const valLucro = Number(r.lucro_empresa) || 0;
+              sumBruto += valBruto;
+              sumLucro += valLucro;
+
+              let sit = r.status_pagamento || "Pendente";
+              if (sit.toLowerCase() === "a receber") sit = "Pendente";
+              const bCls =
+                sit === "Pago"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : sit.toLowerCase() === "cancelada"
+                    ? "bg-rose-100 text-rose-800"
+                    : "bg-amber-100 text-amber-800";
+              const dataPg = r.data_pagamento || "-";
+              const modBadge = `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md ${r.veiculo === "Táxi" ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-slate-100 text-slate-600 border border-slate-200"}">${r.veiculo || "Reboque"}</span>`;
+
+              return `<tr class="hover:bg-slate-50"><td class="${cTD}">${formatBRDate(r.data_servico)}</td><td class="${cTD} font-mono">${r.sinistro_os || ""}</td><td class="${cTD}">${modBadge}</td><td class="${cTD_Text} font-semibold max-w-[100px]" title="${r.seguradora || ""}">${r.seguradora || ""}</td><td class="${cTD_Text} text-slate-600 max-w-[120px]" title="${r.placa || "-"}">${r.placa || "-"}</td><td class="${cTD} text-right font-mono">${r.km_rodado}km</td><td class="${cTD} text-right font-bold">${formatBRL(valBruto)}</td><td class="${cTD} text-right text-rose-700">${formatBRL(r.comissao_mateus)}</td><td class="${cTD} text-right font-extrabold text-emerald-700 bg-emerald-50/50">${formatBRL(valLucro)}</td><td class="${cTD}"><span data-id="${r.id}" class="inline-status-toggle px-1.5 py-0.5 rounded-full text-[9px] font-bold transition border border-transparent hover:border-slate-400 cursor-pointer ${bCls}">${sit}</span></td><td class="${cTD} text-slate-500">${formatBRDate(dataPg)}</td><td class="${cTD}"><div class="flex items-center justify-center gap-1"><button data-id="${r.id}" class="btn-edit-op text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 px-1.5 py-1 rounded" title="Editar">✏️</button><button data-delete-id="${r.id}" class="btn-delete-op text-[10px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-700 px-1.5 py-1 rounded shadow-sm" title="Excluir Lançamento">🗑️</button></div></td></tr>`;
             })
             .join("");
         } else if (tab === "mateus") {
