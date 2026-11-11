@@ -4424,7 +4424,6 @@
           const editId = document.getElementById("edit_row_id").value;
           const dataStr = document.getElementById("f_data")?.value;
 
-          // Função interna segura para ler o valor formatado
           const getVal = (id) => {
             const el = document.getElementById(id);
             if (!el || !el.value) return 0;
@@ -4432,14 +4431,12 @@
             return Number(limpo) || 0;
           };
 
-          // Função interna segura para converter campos vazios de data em null genuíno
           const getDate = (id) => {
             const v = document.getElementById(id)?.value?.trim();
             return v ? v : null;
           };
 
           const val = getVal("f_valor");
-
           let payload = {},
             tbl = "",
             calcLucro = 0,
