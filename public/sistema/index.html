@@ -4593,10 +4593,7 @@
             memoryPayload = { ...payload, lucro_liquido: calcLucro };
           } else if (tab === "mateus") {
             tbl = "servicos_mateus";
-            const km = getVal("f_km"),
-              repasse = getVal("f_pago_colab"),
-              ped = getVal("f_pedagio"),
-              das = +(val * taxaColab).toFixed(2);
+            const km = getVal("f_km"), repasse = getVal("f_pago_colab"), ped = getVal("f_pedagio"), das = +(val * taxaColab).toFixed(2);
             calcLucro = +(val - repasse - das).toFixed(2);
             payload = {
               data_servico: dataStr,
@@ -4606,6 +4603,7 @@
               placa: document.getElementById("f_rota").value,
               km_rodado: km,
               valor_servico: val,
+              comissao_mateus: repasse, // AGORA GRAVA O VALOR EXATO DIGITADO!
               pedagio: ped,
               valor_estrada_chao: getVal("f_valor_chao"),
               km_estrada_chao: getVal("f_km_chao"),
@@ -4616,13 +4614,10 @@
               patins: getVal("f_patins"),
               status_pagamento: document.getElementById("f_status").value,
             };
-            const dp = getDate("f_datapg");
-            if (dp) payload.data_pagamento = dp;
+            const dp = getDate("f_datapg"); if(dp) payload.data_pagamento = dp;
             
-            // A comissao_mateus passa para a memória, para que o Supabase possa usar a sua própria fórmula à vontade
             memoryPayload = {
               ...payload,
-              comissao_mateus: repasse,
               combustivel_manutencao: das,
               lucro_empresa: calcLucro,
             };
