@@ -4606,7 +4606,6 @@
               placa: document.getElementById("f_rota").value,
               km_rodado: km,
               valor_servico: val,
-              comissao_mateus: repasse, // Repasse INTOCADO.
               pedagio: ped,
               valor_estrada_chao: getVal("f_valor_chao"),
               km_estrada_chao: getVal("f_km_chao"),
@@ -4619,9 +4618,11 @@
             };
             const dp = getDate("f_datapg");
             if (dp) payload.data_pagamento = dp;
-            // memoryPayload isola as contas perfeitamente, o Supabase fica contente!
+            
+            // A comissao_mateus passa para a memória, para que o Supabase possa usar a sua própria fórmula à vontade
             memoryPayload = {
               ...payload,
+              comissao_mateus: repasse,
               combustivel_manutencao: das,
               lucro_empresa: calcLucro,
             };
