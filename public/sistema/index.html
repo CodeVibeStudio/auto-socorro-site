@@ -3297,15 +3297,19 @@
           return true;
         });
 
-        // Força a ordem DECRESCENTE pelo número da Nota Fiscal na aba Créditos
+        // Ordenação da Aba Créditos: Prioriza Data (Mais recente primeiro) e depois Nº NF (Maior primeiro)
         if (tab === "creditos") {
           rows.sort((a, b) => {
-            const nfA =
-              parseInt(String(a.numero_nf).split("/")[0].replace(/\D/g, "")) ||
-              0;
-            const nfB =
-              parseInt(String(b.numero_nf).split("/")[0].replace(/\D/g, "")) ||
-              0;
+            const dataA = a.data_credito || "";
+            const dataB = b.data_credito || "";
+            
+            // 1º Critério: Data mais recente no topo
+            if (dataA > dataB) return -1;
+            if (dataA < dataB) return 1;
+            
+            // 2º Critério: Se for o mesmo dia, a maior NF fica no topo
+            const nfA = parseInt(String(a.numero_nf).split('/')[0].replace(/\D/g, '')) || 0;
+            const nfB = parseInt(String(b.numero_nf).split('/')[0].replace(/\D/g, '')) || 0;
             return nfB - nfA;
           });
         }
