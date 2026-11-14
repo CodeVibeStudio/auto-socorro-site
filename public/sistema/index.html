@@ -3598,7 +3598,25 @@
             <div><label class="block text-[11px] font-bold mb-1 text-slate-700">Data Pagamento (Baixa)</label><input id="f_datapg" type="date" class="w-full px-2 py-2 text-[12px] font-medium rounded-lg border border-slate-300" /></div>
           `;
         } else if (tab === "creditos") {
-          container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-[11px] font-extrabold mb-1 text-emerald-700">Valor Bruto (R$) *</label><input id="f_valor" type="text" inputmode="decimal" required class="calc-input w-full px-3 py-2 text-[13px] font-bold rounded-lg border border-emerald-500 bg-emerald-50" /></div><div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div><div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1 text-amber-700">Previsão Pgto (Opcional)</label><input id="f_previsao" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-amber-300" /></div><div><label class="block text-xs font-semibold mb-1 text-emerald-700">Data Pagamento (Baixa)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-emerald-300" /></div>`;
+          container.innerHTML = `
+            <div class="sm:col-span-2 border-b border-slate-200 pb-2 mb-1"><span class="text-[10px] font-extrabold text-blue-700 uppercase tracking-widest">🧾 Dados da Nota Fiscal</span></div>
+            <div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+            <div><label class="block text-xs font-semibold mb-1">Seguradora *</label><input id="f_seg" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+            <div><label class="block text-xs font-semibold mb-1">Nº NF *</label><input id="f_nf" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+            <div><label class="block text-[11px] font-extrabold mb-1 text-emerald-700">Valor Bruto (R$) *</label><input id="f_valor" type="text" inputmode="decimal" required class="calc-input w-full px-3 py-2 text-[13px] font-bold rounded-lg border border-emerald-500 bg-emerald-50" /></div>
+            
+            <div class="sm:col-span-2 border-b border-slate-200 pb-2 mt-2 mb-1"><span class="text-[10px] font-extrabold text-rose-600 uppercase tracking-widest">🛣️ Controle de Pedágios (Opcional)</span></div>
+            <div><label class="block text-[11px] font-semibold mb-1 text-slate-500">Recibo Pedágio</label><input id="f_recibo_pedagio" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50" /></div>
+            <div><label class="block text-[11px] font-semibold mb-1 text-slate-500">Vlr. Pedágio (R$)</label><input id="f_valor_pedagio" type="text" inputmode="decimal" class="calc-input w-full px-3 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50" /></div>
+            <div><label class="block text-[11px] font-semibold mb-1 text-slate-500">Dt. Pedágio</label><input id="f_data_pedagio" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50" /></div>
+            <div><label class="block text-[11px] font-semibold mb-1 text-slate-500">Pedágio Recebido?</label><select id="f_pedagio_recebido" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50 font-medium"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
+            
+            <div class="sm:col-span-2 border-b border-slate-200 pb-2 mt-2 mb-1"><span class="text-[10px] font-extrabold text-slate-600 uppercase tracking-widest">💰 Acompanhamento e Baixa</span></div>
+            <div><label class="block text-xs font-semibold mb-1">Situação</label><select id="f_status" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="A Receber">A Receber</option><option value="Pago">Pago</option><option value="Cancelada">Cancelada</option></select></div>
+            <div><label class="block text-xs font-semibold mb-1 text-amber-700">Previsão Pgto (Opcional)</label><input id="f_previsao" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-amber-300" /></div>
+            <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1">Observações</label><input id="f_obs_extra" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div>
+            <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1 text-emerald-700">Data Pagamento (Baixa)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-xs rounded-lg border border-emerald-300" /></div>
+          `;
         } else if (tab === "despesas") {
           container.innerHTML = `<div><label class="block text-xs font-semibold mb-1">Data Emissão *</label><input id="f_data" type="date" value="${today}" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-xs font-semibold mb-1">Categoria *</label><select id="f_cat" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"><option value="1. Combustível / Abastecimento">1. Combustível / Abastecimento</option><option value="2. Manutenção / Pneus / Frota">2. Manutenção / Pneus / Frota</option><option value="3. Pedágio / Tag Veloe">3. Pedágio / Tag Veloe</option><option value="4. Repasse a Parceiros / Terceiros">4. Repasse a Parceiros / Terceiros</option><option value="5. Fixas Escritório / Contador / Luz / Vivo">5. Fixas Escritório / Contador / Luz / Vivo</option><option value="6. Pessoal / INSS / Guia MEI">6. Pessoal / INSS / Guia MEI</option><option value="7. Impostos / Parcelamentos / IPVA / Seguro">7. Impostos / Parcelamentos / IPVA / Seguro</option><option value="8. Financiamentos / Pronampe / BNDES / Bancos">8. Financiamentos / Pronampe / BNDES / Bancos</option></select></div><div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1">Descrição *</label><input id="f_desc" type="text" required class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1">Entidade Pagadora / Fornecedor</label><input id="f_forn" type="text" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300" /></div><div><label class="block text-[11px] font-extrabold mb-1 text-rose-700">Valor Pago (R$) *</label><input id="f_valor" type="text" inputmode="decimal" required class="calc-input w-full px-3 py-2 text-[13px] font-bold rounded-lg border border-rose-400 bg-rose-50 text-rose-900" /></div><div><label class="block text-[11px] font-bold mb-1 text-slate-700">Status</label><select id="f_status" class="w-full px-3 py-2 text-[12px] font-semibold rounded-lg border border-slate-300"><option value="A Pagar">A Pagar</option><option value="Pago">Pago</option></select></div><div class="sm:col-span-2"><label class="block text-[11px] font-bold mb-1 text-slate-700">Data Pagamento (Baixa)</label><input id="f_datapg" type="date" class="w-full px-3 py-2 text-[12px] rounded-lg border border-slate-300" /></div>`;
         } else if (tab === "mei_fabio" || tab === "mei_silvia") {
@@ -4331,131 +4349,94 @@
               "✏️ Editar Lançamento";
 
             setTimeout(() => {
+              // Converte números que vêm do banco com ponto (150.50) de volta para o padrão que o formulário entende (150,50)
+              const valToBR = (num) => {
+                 if (num === null || num === undefined) return "";
+                 return Number(num).toFixed(2).replace(".", ",");
+              };
+
               if (state.activeTab === "reboque") {
                 document.getElementById("f_data").value = row.data_servico;
                 document.getElementById("f_os").value = row.sinistro_os;
-                if (document.getElementById("f_tipo"))
-                  document.getElementById("f_tipo").value =
-                    row.veiculo || "Reboque";
+                if (document.getElementById("f_tipo")) document.getElementById("f_tipo").value = row.veiculo || "Reboque";
                 document.getElementById("f_seg").value = row.seguradora;
                 document.getElementById("f_rota").value = row.origem_destino;
-                document.getElementById("f_km").value = row.km_rodado || "";
-                document.getElementById("f_pedagio").value = row.pedagio || "";
-                document.getElementById("f_valor_chao").value =
-                  row.valor_estrada_chao || "";
-                document.getElementById("f_km_chao").value =
-                  row.km_estrada_chao || "";
-                document.getElementById("f_km_exc").value =
-                  row.km_excedente || "";
-                document.getElementById("f_valor_exc").value =
-                  row.valor_excedente || "";
-                document.getElementById("f_km_pago_cliente").value =
-                  row.km_pago_cliente || "";
-                document.getElementById("f_ht_hp").value =
-                  row.valor_ht_hp || "";
-                document.getElementById("f_patins").value = row.patins || "";
-                document.getElementById("f_valor").value = row.valor_servico;
-                document.getElementById("f_status").value =
-                  row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
+                document.getElementById("f_km").value = valToBR(row.km_rodado);
+                document.getElementById("f_pedagio").value = valToBR(row.pedagio);
+                document.getElementById("f_valor_chao").value = valToBR(row.valor_estrada_chao);
+                document.getElementById("f_km_chao").value = valToBR(row.km_estrada_chao);
+                document.getElementById("f_km_exc").value = valToBR(row.km_excedente);
+                document.getElementById("f_valor_exc").value = valToBR(row.valor_excedente);
+                document.getElementById("f_km_pago_cliente").value = valToBR(row.km_pago_cliente);
+                document.getElementById("f_ht_hp").value = valToBR(row.valor_ht_hp);
+                document.getElementById("f_patins").value = valToBR(row.patins);
+                document.getElementById("f_valor").value = valToBR(row.valor_servico);
+                document.getElementById("f_status").value = row.status_pagamento || "Pendente";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               } else if (state.activeTab === "colaboradores") {
                 document.getElementById("f_data").value = row.data_servico;
                 document.getElementById("f_os").value = row.sinistro_os || "";
                 document.getElementById("f_colab").value = row.colaborador;
-                if (document.getElementById("f_tipo"))
-                  document.getElementById("f_tipo").value =
-                    row.veiculo || "Reboque";
+                if (document.getElementById("f_tipo")) document.getElementById("f_tipo").value = row.veiculo || "Reboque";
                 document.getElementById("f_seg").value = row.seguradora;
                 document.getElementById("f_rota").value = row.placa || "";
-                if (document.getElementById("f_pedagio"))
-                  document.getElementById("f_pedagio").value =
-                    row.pedagio || "";
-                document.getElementById("f_valor").value = row.valor_recebido;
-                document.getElementById("f_pago_colab").value =
-                  row.valor_pago_colaborador;
-                document.getElementById("f_status").value =
-                  row.status_acerto || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
+                if (document.getElementById("f_pedagio")) document.getElementById("f_pedagio").value = valToBR(row.pedagio);
+                document.getElementById("f_valor").value = valToBR(row.valor_recebido);
+                document.getElementById("f_pago_colab").value = valToBR(row.valor_pago_colaborador);
+                document.getElementById("f_status").value = row.status_acerto || "Pendente";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               } else if (state.activeTab === "mateus") {
                 document.getElementById("f_data").value = row.data_servico;
                 document.getElementById("f_os").value = row.sinistro_os;
-                if (document.getElementById("f_tipo"))
-                  document.getElementById("f_tipo").value =
-                    row.veiculo || "Reboque";
+                if (document.getElementById("f_tipo")) document.getElementById("f_tipo").value = row.veiculo || "Reboque";
                 document.getElementById("f_seg").value = row.seguradora;
                 document.getElementById("f_rota").value = row.placa;
-                document.getElementById("f_km").value = row.km_rodado;
-                if (document.getElementById("f_pedagio"))
-                  document.getElementById("f_pedagio").value =
-                    row.pedagio || "";
-                if (document.getElementById("f_valor_chao"))
-                  document.getElementById("f_valor_chao").value =
-                    row.valor_estrada_chao || "";
-                if (document.getElementById("f_km_chao"))
-                  document.getElementById("f_km_chao").value =
-                    row.km_estrada_chao || "";
-                if (document.getElementById("f_km_exc"))
-                  document.getElementById("f_km_exc").value =
-                    row.km_excedente || "";
-                if (document.getElementById("f_valor_exc"))
-                  document.getElementById("f_valor_exc").value =
-                    row.valor_excedente || "";
-                if (document.getElementById("f_km_pago_cliente"))
-                  document.getElementById("f_km_pago_cliente").value =
-                    row.km_pago_cliente || "";
-                if (document.getElementById("f_ht_hp"))
-                  document.getElementById("f_ht_hp").value =
-                    row.valor_ht_hp || "";
-                if (document.getElementById("f_patins"))
-                  document.getElementById("f_patins").value = row.patins || "";
-                document.getElementById("f_valor").value = row.valor_servico;
-                document.getElementById("f_pago_colab").value =
-                  row.comissao_mateus;
-                document.getElementById("f_status").value =
-                  row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
+                document.getElementById("f_km").value = valToBR(row.km_rodado);
+                if (document.getElementById("f_pedagio")) document.getElementById("f_pedagio").value = valToBR(row.pedagio);
+                if (document.getElementById("f_valor_chao")) document.getElementById("f_valor_chao").value = valToBR(row.valor_estrada_chao);
+                if (document.getElementById("f_km_chao")) document.getElementById("f_km_chao").value = valToBR(row.km_estrada_chao);
+                if (document.getElementById("f_km_exc")) document.getElementById("f_km_exc").value = valToBR(row.km_excedente);
+                if (document.getElementById("f_valor_exc")) document.getElementById("f_valor_exc").value = valToBR(row.valor_excedente);
+                if (document.getElementById("f_km_pago_cliente")) document.getElementById("f_km_pago_cliente").value = valToBR(row.km_pago_cliente);
+                if (document.getElementById("f_ht_hp")) document.getElementById("f_ht_hp").value = valToBR(row.valor_ht_hp);
+                if (document.getElementById("f_patins")) document.getElementById("f_patins").value = valToBR(row.patins);
+                document.getElementById("f_valor").value = valToBR(row.valor_servico);
+                document.getElementById("f_pago_colab").value = valToBR(row.comissao_mateus);
+                document.getElementById("f_status").value = row.status_pagamento || "Pendente";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               } else if (state.activeTab === "creditos") {
                 document.getElementById("f_data").value = row.data_credito;
                 document.getElementById("f_seg").value = row.seguradora;
                 document.getElementById("f_nf").value = row.numero_nf;
-                document.getElementById("f_valor").value = row.valor_bruto;
-                document.getElementById("f_status").value =
-                  row.situacao || "A Receber";
-                document.getElementById("f_obs_extra").value =
-                  row.observacoes || "";
-                document.getElementById("f_previsao").value =
-                  row.previsao_pagamento || "";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
+                document.getElementById("f_valor").value = valToBR(row.valor_bruto);
+                document.getElementById("f_status").value = row.situacao || "A Receber";
+                
+                // Preencher campos de pedágio se existirem
+                if(document.getElementById("f_recibo_pedagio")) document.getElementById("f_recibo_pedagio").value = row.recibo_pedagio || "";
+                if(document.getElementById("f_valor_pedagio")) document.getElementById("f_valor_pedagio").value = valToBR(row.valor_pedagio);
+                if(document.getElementById("f_data_pedagio")) document.getElementById("f_data_pedagio").value = row.data_pedagio || "";
+                if(document.getElementById("f_pedagio_recebido")) document.getElementById("f_pedagio_recebido").value = row.pedagio_recebido || "Não";
+                
+                document.getElementById("f_obs_extra").value = row.observacoes || "";
+                document.getElementById("f_previsao").value = row.previsao_pagamento || "";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               } else if (state.activeTab === "despesas") {
                 document.getElementById("f_data").value = row.data_despesa;
                 document.getElementById("f_cat").value = row.categoria;
                 document.getElementById("f_desc").value = row.descricao;
                 document.getElementById("f_forn").value = row.fornecedor;
-                document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value =
-                  row.forma_pagamento || "A Pagar";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
-              } else if (
-                state.activeTab === "mei_fabio" ||
-                state.activeTab === "mei_silvia"
-              ) {
+                document.getElementById("f_valor").value = valToBR(row.valor);
+                document.getElementById("f_status").value = row.forma_pagamento || "A Pagar";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
+              } else if (state.activeTab === "mei_fabio" || state.activeTab === "mei_silvia") {
                 document.getElementById("f_data").value = row.data_servico;
                 document.getElementById("f_seg").value = row.cliente_seguradora;
                 document.getElementById("f_nf").value = row.nota_fiscal || "";
-                document.getElementById("f_desc").value =
-                  row.servico_descricao || "";
-                document.getElementById("f_cat").value =
-                  row.categoria_reboque_taxi;
-                document.getElementById("f_valor").value = row.valor;
-                document.getElementById("f_status").value =
-                  row.status_pagamento || "Pendente";
-                document.getElementById("f_datapg").value =
-                  row.data_pagamento || "";
+                document.getElementById("f_desc").value = row.servico_descricao || "";
+                document.getElementById("f_cat").value = row.categoria_reboque_taxi;
+                document.getElementById("f_valor").value = valToBR(row.valor);
+                document.getElementById("f_status").value = row.status_pagamento || "Pendente";
+                document.getElementById("f_datapg").value = row.data_pagamento || "";
               }
               updateLiveFormulaPreview();
             }, 50);
@@ -4630,17 +4611,18 @@
               numero_nf: document.getElementById("f_nf").value,
               valor_bruto: val,
               imposto_retido: imp,
+              recibo_pedagio: document.getElementById("f_recibo_pedagio")?.value || null,
+              valor_pedagio: getVal("f_valor_pedagio"),
+              pedagio_recebido: document.getElementById("f_pedagio_recebido")?.value || "Não",
               situacao: document.getElementById("f_status").value,
               observacoes: document.getElementById("f_obs_extra")?.value,
             };
-            const dp = getDate("f_datapg");
-            if (dp) payload.data_pagamento = dp;
-            const dprev = getDate("f_previsao");
-            if (dprev) payload.previsao_pagamento = dprev;
-            memoryPayload = {
-              ...payload,
-              valor_liquido: +(val - imp).toFixed(2),
-            };
+            const dp = getDate("f_datapg"); if(dp) payload.data_pagamento = dp;
+            const dprev = getDate("f_previsao"); if(dprev) payload.previsao_pagamento = dprev;
+            const dtPed = getDate("f_data_pedagio"); if(dtPed) payload.data_pedagio = dtPed;
+            
+            memoryPayload = { ...payload, valor_liquido: +(val - imp).toFixed(2) };
+            
           } else if (tab === "despesas") {
             tbl = "despesas_gerais";
             payload = {
