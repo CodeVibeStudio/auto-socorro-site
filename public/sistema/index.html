@@ -4244,6 +4244,34 @@
 
         // TABELA OPERACIONAL: CLIQUE STATUS E EDITAR
         safeAddListener("tableBody", "click", async (e) => {
+          
+          // --- NOVA LÓGICA: TOGGLE PEDÁGIO NA ABA CRÉDITOS ---
+          const badgePedagio = e.target.closest(".inline-pedagio-toggle");
+          if (badgePedagio && state.activeTab === "creditos") {
+            const id = badgePedagio.getAttribute("data-id");
+            const row = state.creditos.find((r) => String(r.id) === String(id));
+            if (!row) return;
+
+            const curr = row.pedagio_recebido || "Não";
+            const newVal = (curr.toLowerCase() === "sim") ? "Não" : "Sim";
+
+            if (!window.confirm(`Tem a certeza que deseja alterar o status do pedágio de "${curr}" para "${newVal}"?`)) {
+              return;
+            }
+
+            if (state.supabaseClient) {
+              const { error } = await state.supabaseClient.from("creditos_faturamento").update({ pedagio_recebido: newVal }).eq("id", id);
+              if (error) {
+                showToast("Erro ao alterar pedágio: " + error.message);
+                return;
+              }
+            }
+            row.pedagio_recebido = newVal;
+            renderActiveTable();
+            showToast("✔ Status de pedágio alterado com sucesso!");
+            return;
+          }
+                    
           const badge = e.target.closest(".inline-status-toggle");
           if (badge) {
             const id = badge.getAttribute("data-id");
