@@ -2820,6 +2820,14 @@
           if (el) el.classList.add("hidden");
         });
 
+        // Limpa todos os filtros da tabela ao trocar de aba para evitar a sensação de "travado"
+        if (document.getElementById("searchInput")) document.getElementById("searchInput").value = "";
+        if (document.getElementById("statusFilter")) document.getElementById("statusFilter").value = "all";
+        if (document.getElementById("seguradoraFilter")) document.getElementById("seguradoraFilter").value = "all";
+        if (document.getElementById("baixaFilter")) document.getElementById("baixaFilter").value = "all";
+        if (document.getElementById("dateStartFilter")) document.getElementById("dateStartFilter").value = "";
+        if (document.getElementById("dateEndFilter")) document.getElementById("dateEndFilter").value = "";
+
         if (tabName === "dashboard") {
           document.getElementById("view-dashboard")?.classList.remove("hidden");
         } else if (tabName === "site") {
