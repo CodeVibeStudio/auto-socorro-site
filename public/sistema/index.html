@@ -1294,16 +1294,6 @@
               <option value="sem_data">Datas: Pendente (Vazio)</option>
             </select>
 
-            <select
-              id="baixaFilter"
-              class="px-3 py-2 text-xs rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-bold shadow-sm"
-              title="Filtra usando as colunas de Data de Pgto ou Data do Pix"
-            >
-              <option value="all">Datas: Todas as Baixas</option>
-              <option value="com_data">Datas: Baixado (Pago)</option>
-              <option value="sem_data">Datas: Pendente (Vazio)</option>
-            </select>
-
             <button
               id="btnExportCSV"
               type="button"
@@ -4241,7 +4231,7 @@
               valor_servico: val,
               status_pagamento: document.getElementById("f_status").value,
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
+            payload.data_pagamento = getDate("f_datapg");
             memoryPayload = { ...payload, outros_custos: das, despesa_estimada: desp, lucro_estimado: calcLucro };
           } else if (tab === "colaboradores") {
             tbl = "servicos_colaboradores";
@@ -4258,9 +4248,9 @@
               valor_recebido: val,
               valor_pago_colaborador: pagoCol,
               status_acerto: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg"),
+              data_pix: getDate("f_data_pix")
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
-            const dPix = getDate("f_data_pix"); if(dPix) payload.data_pix = dPix;
             memoryPayload = { ...payload, lucro_liquido: calcLucro };
           } else if (tab === "mateus") {
             tbl = "servicos_mateus";
@@ -4284,9 +4274,9 @@
               valor_ht_hp: getVal("f_ht_hp"),
               patins: getVal("f_patins"),
               status_pagamento: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg"),
+              data_pix: getDate("f_data_pix")
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
-            const dPix = getDate("f_data_pix"); if(dPix) payload.data_pix = dPix;
             memoryPayload = { ...payload, combustivel_manutencao: das, lucro_empresa: calcLucro };
           } else if (tab === "creditos") {
             tbl = "creditos_faturamento";
@@ -4302,11 +4292,10 @@
               pedagio_recebido: document.getElementById("f_pedagio_recebido")?.value || "Não",
               situacao: document.getElementById("f_status").value,
               observacoes: document.getElementById("f_obs_extra")?.value,
+              data_pagamento: getDate("f_datapg"),
+              previsao_pagamento: getDate("f_previsao"),
+              data_pedagio: getDate("f_data_pedagio")
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
-            const dprev = getDate("f_previsao"); if(dprev) payload.previsao_pagamento = dprev;
-            const dtPed = getDate("f_data_pedagio"); if(dtPed) payload.data_pedagio = dtPed;
-            
             memoryPayload = { ...payload, valor_liquido: +(val - imp).toFixed(2) };
           } else if (tab === "despesas") {
             tbl = "despesas_gerais";
@@ -4317,8 +4306,8 @@
               fornecedor: document.getElementById("f_forn").value,
               valor: val,
               forma_pagamento: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg")
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
             memoryPayload = { ...payload };
           } else if (tab === "mei_fabio" || tab === "mei_silvia") {
             tbl = tab === "mei_fabio" ? "mei_fabio_faturamento" : "mei_silvia_faturamento";
@@ -4330,8 +4319,8 @@
               categoria_reboque_taxi: document.getElementById("f_cat").value,
               valor: val,
               status_pagamento: document.getElementById("f_status").value,
+              data_pagamento: getDate("f_datapg")
             };
-            const dp = getDate("f_datapg"); if (dp) payload.data_pagamento = dp;
             memoryPayload = { ...payload };
           }
 
