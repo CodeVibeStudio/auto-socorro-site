@@ -3193,6 +3193,16 @@
         if (document.getElementById("tableSubtitleBadge")) document.getElementById("tableSubtitleBadge").classList.add("hidden");
         if (document.getElementById("tableDescription")) document.getElementById("tableDescription").textContent = meta.desc;
 
+        // Oculta o filtro de Baixa/PIX em abas onde ele não faz sentido (como Reboque, Despesas e MEIs)
+        const baixaFilterEl = document.getElementById("baixaFilter");
+        if (baixaFilterEl) {
+          if (tab === "colaboradores" || tab === "mateus" || tab === "creditos") {
+            baixaFilterEl.classList.remove("hidden");
+          } else {
+            baixaFilterEl.classList.add("hidden");
+          }
+        }
+
         const head = document.getElementById("tableHead");
         const body = document.getElementById("tableBody");
         if (!head || !body) return;
