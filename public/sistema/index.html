@@ -3783,6 +3783,53 @@
         }
       }
 
+      // =======================================================
+      // LÓGICA DA CALCULADORA B2C E ROTAS (PARTICULARES)
+      // =======================================================
+      let rotasParticulares = JSON.parse(localStorage.getItem("asl_rotas_b2c")) || [
+        { rota: "Laranjal (Urbano)", km: 10 },
+        { rota: "Laranjal x Muriaé", km: 60 },
+        { rota: "Laranjal x Leopoldina", km: 50 },
+        { rota: "Laranjal x Cataguases", km: 80 },
+        { rota: "Laranjal x Recreio", km: 40 },
+        { rota: "Laranjal x Palma", km: 55 }
+      ];
+
+      function renderRotasB2c() {
+        const select = document.getElementById("calcB2cRota");
+        if (!select) return;
+        select.innerHTML = '<option value="">Selecione uma rota rápida...</option>' + 
+          rotasParticulares.map((r, i) => `<option value="${r.km}">${r.rota} (${r.km}km total)</option>`).join("");
+      }
+
+      function calcularPrecoB2c() {
+        const kmTotal = Number(document.getElementById("calcB2cKm")?.value || 0);
+        const saida = Number(document.getElementById("calcB2cSaida")?.value || 0);
+        const valorKm = Number(document.getElementById("calcB2cValorKm")?.value || 0);
+        const cenario = Number(document.getElementById("calcB2cCenario")?.value || 0);
+        const pedagio = Number(document.getElementById("calcB2cPedagio")?.value || 0);
+        const extra = Number(document.getElementById("calcB2cExtra")?.value || 0);
+
+        let kmExcedente = 0;
+        let precoBase = saida;
+
+        // Aplica a Franquia da Saída (ex: 40km)
+        if (kmTotal > 40) {
+          kmExcedente = kmTotal - 40;
+          precoBase += (kmExcedente * valorKm);
+        }
+
+        const acrescimoCenario = precoBase * (cenario / 100);
+        const precoFinal = precoBase + acrescimoCenario + pedagio + extra;
+
+        if (document.getElementById("lblExcedente")) {
+          document.getElementById("lblExcedente").textContent = `KM Excedente: ${kmExcedente.toFixed(1)}km`;
+        }
+        if (document.getElementById("calcB2cTotal")) {
+          document.getElementById("calcB2cTotal").textContent = formatBRL(precoFinal);
+        }
+      }
+
       window.addEventListener("DOMContentLoaded", () => {
         initCharts();
         renderRotasB2c();
