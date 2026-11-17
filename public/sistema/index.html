@@ -3301,7 +3301,11 @@
               let sit = r.status_pagamento || "Pendente";
               if (sit.toLowerCase() === "a receber") sit = "Pendente";
               const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800";
-              const modBadge = `<span class="text-[9px] font-bold px-1 py-0.5 rounded ${r.veiculo === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${(r.veiculo || 'Reb').substring(0,3)}</span>`;
+              
+              const modFull = r.veiculo || 'Reboque';
+              const modBadge = `<span title="${modFull}" class="text-[9px] font-bold px-1 py-0.5 rounded ${modFull === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${modFull.substring(0,3)}</span>`;
+
+              const vSaida = Number(r.valor_saida) > 0 ? formatBRL(r.valor_saida) : '<span class="text-slate-400 font-medium">-</span>';
 
               const vSaida = Number(r.valor_saida) > 0 ? formatBRL(r.valor_saida) : '<span class="text-slate-400 font-medium">-</span>';
               const vKM = Number(r.km_rodado) > 0 ? Number(r.km_rodado) : '<span class="text-slate-400 font-medium">-</span>';
@@ -3338,7 +3342,9 @@
               
               const dataPg = r.data_pagamento || "-";
               const dataPix = r.data_pix || "-";
-              const modBadge = `<span class="text-[9px] font-bold px-1 py-0.5 rounded ${r.veiculo === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${(r.veiculo || 'Reb').substring(0,3)}</span>`;
+              
+              const modFull = r.veiculo || 'Reboque';
+              const modBadge = `<span title="${modFull}" class="text-[9px] font-bold px-1 py-0.5 rounded ${modFull === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${modFull.substring(0,3)}</span>`;
               
               const vPedagio = Number(r.pedagio) > 0 ? formatBRL(r.pedagio) : '<span class="text-slate-400 font-medium">-</span>';
               const vBruto = valBruto > 0 ? formatBRL(valBruto) : '<span class="text-slate-400 font-medium">-</span>';
@@ -3361,7 +3367,11 @@
               let sit = r.status_pagamento || "Pendente";
               if (sit.toLowerCase() === "a receber") sit = "Pendente";
               const bCls = sit === "Pago" ? "bg-emerald-100 text-emerald-800" : sit.toLowerCase() === "cancelada" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800";
-              const modBadge = `<span class="text-[9px] font-bold px-1 py-0.5 rounded ${r.veiculo === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${(r.veiculo || 'Reb').substring(0,3)}</span>`;
+              
+              const modFull = r.veiculo || 'Reboque';
+              const modBadge = `<span title="${modFull}" class="text-[9px] font-bold px-1 py-0.5 rounded ${modFull === 'Táxi' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">${modFull.substring(0,3)}</span>`;
+
+              const vSaida = Number(r.valor_saida) > 0 ? formatBRL(r.valor_saida) : '<span class="text-slate-400 font-medium">-</span>';
 
               const vSaida = Number(r.valor_saida) > 0 ? formatBRL(r.valor_saida) : '<span class="text-slate-400 font-medium">-</span>';
               const vKM = Number(r.km_rodado) > 0 ? Number(r.km_rodado) : '<span class="text-slate-400 font-medium">-</span>';
